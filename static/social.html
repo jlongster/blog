@@ -1,0 +1,29 @@
+<div>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-via="jlongster">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
+
+<div>
+  <div class="fb-like" data-send="false" data-layout="button_count" data-width="70" data-show-faces="false" data-font="verdana"></div>
+
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=203253883025618";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+</div>
+
+<div>
+  <a href="http://news.ycombinator.com/submit" class="hn-share-button" {% if post.hnurl %}data-url="{{ post.hnurl }}"{% endif %}>Vote on HN</a>
+  <script>
+    (function(d, t) {
+    var g = d.createElement(t),
+    s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+  </script>
+</div>

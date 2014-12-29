@@ -1,0 +1,32 @@
+
+.program {
+    overflow: hidden;
+    padding: 4px;
+    margin-top: 1.5em;
+}
+
+.compile {
+    clear: both;
+    padding: .5em 0;
+    text-align: center;
+}
+
+textarea { 
+    width: 49%;
+    height: 150px;
+    float: left;
+}
+
+.output {
+    background-color: #595959;
+    color: white;
+    width: 49%;
+    height: 150px;
+    float: right;
+    overflow: auto;
+}
+
+.output pre {
+    margin: .5em 1em;
+    color: white;
+}

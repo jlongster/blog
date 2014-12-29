@@ -1,0 +1,61 @@
+
+#screen {
+    margin: 2em 0;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    margin-top: .75em;
+    border: 1px solid #D9D9D9;
+    background-color: #F8F8F8;
+}
+
+:-moz-full-screen#screen {
+    margin: 0;
+}
+
+/* For some odd reason combining the following 2 rules doesn't work */
+:-moz-full-screen canvas {
+    position: absolute;
+    margin: auto;
+    width: 90%;
+    height: 50%;
+    top: 0; left: 0; right: 0; bottom: 0;
+    box-shadow: 0px 0px 4px white;
+    background-color: white;
+}
+
+:-webkit-full-screen canvas {
+    position: absolute;
+    margin: auto;
+    width: 90%;
+    height: 50%;
+    top: 0; left: 0; right: 0; bottom: 0;
+    box-shadow: 0px 0px 4px white;
+    background-color: white;
+}
+
+#screen {
+    text-align: center;
+}
+
+:-moz-full-screen button {
+   display: none;
+}
+
+a.footnote {
+     font-size: .8em;
+}
+
+div.footnote {
+     font-size: .8em;
+}
+
+#footnote1 {
+    margin-top: 4em;
+}
+
+#footnote3 {
+    margin-bottom: 2em;
+}

@@ -1,0 +1,72 @@
+
+body.edit {
+    & {
+        height: 100%;
+    }
+
+    &, .admin-header, .toolbar {
+        background-color: #3f3f3f;
+    }
+
+    .admin-header {
+        display: none;
+    }
+
+    .main-wrapper {
+        margin-top: 0;
+    }
+
+    .edit-container {
+        height: calc(~'100% - 35px');
+    }
+
+    main {
+        //height: calc(~'100% - 35px');
+        height: 100%;
+    }
+
+    .CodeMirror {
+        height: 100%;
+        font-size: 16px;
+        font-family: Monaco, 'Courier New';
+        line-height: 1.5em;
+    }
+
+    form.settings {
+        label {
+            color: white;
+        }
+
+        textarea {
+            height: 10em;
+        }
+
+        .error-message {
+            background-color: white;
+            color: #33333;
+            padding: 1em;
+        }
+
+        input.errored {
+            background-color: #F9F4D4;
+            box-shadow: inset 0 0 3px #fb9e95;
+        }
+    }
+
+
+    // feedback
+
+    .feedback {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 1000;
+    }
+
+    .feedback .error {
+        background-color: white;
+        color: #333333;
+        margin: 1em;
+        padding: .5em;
+    }
+}
