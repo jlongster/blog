@@ -48,17 +48,18 @@ gulp.task('6to5', function() {
       .pipe(sourcemaps.init())
       .pipe(to5())
       .pipe(jsheader("require('source-map-support').install();"))
-      .pipe(jsheader('var wrapGenerator = require("regenerator/runtime").wrapGenerator;'))
-      .pipe(sourcemaps.write('.'))
-      .pipe(es.through(function(file) {
-        if(file.path.slice(file.cwd.length).match(/^\/src/)) {
-          file.base = file.cwd;
-        }
-        this.emit('data', file);
-      }))
-      .pipe(gulp.dest(paths.build));
+      .pipe(jsheader('var wrapGenerator = require("regenerator/runtime").wrapGenerator;'));
 
-  return stream;
+  if(process.env.NODE_ENV !== 'production') {
+    stream = stream.pipe(sourcemaps.write('.'));
+  }
+
+  return stream.pipe(es.through(function(file) {
+    if(file.path.slice(file.cwd.length).match(/^\/src/)) {
+      file.base = file.cwd;
+    }
+    this.emit('data', file);
+  })).pipe(gulp.dest(paths.build));
 });
 
 gulp.task("bin", function() {
