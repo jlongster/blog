@@ -101,7 +101,6 @@ function _getPost(key) {
   let ch = chan();
   go(function*() {
     let post = yield db('hgetall', key);
-    yield put(ch, csp.Throw(new Error('uh oh')));
     if(post) {
       yield put(ch, _normalizePost(post));
     }
