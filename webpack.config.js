@@ -1,6 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+//var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var config = {
   cache: true,
@@ -36,8 +36,8 @@ var config = {
   plugins: [
     new webpack.ProvidePlugin({
       regeneratorRuntime: 'static/js/regenerator-runtime.js'
-    }),
-    new ExtractTextPlugin('styles.css')
+    })
+    //new ExtractTextPlugin('styles.css')
   ]
 };
 
