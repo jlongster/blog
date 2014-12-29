@@ -1,4 +1,5 @@
 node_modules
 .built
 static/output
-config
+config/config.json
+config/browser.json

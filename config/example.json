@@ -1,0 +1,15 @@
+{
+  "url": "http://localhost:4000/",
+  "http": {
+    "port": 4000
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379
+  },
+  "twitter": {
+    "app_key": "",
+    "app_secret": ""
+  },
+  "admins": []
+};
