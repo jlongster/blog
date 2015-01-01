@@ -1,0 +1,8 @@
+
+* Use volumes for redis db, s.jlongster.com, and other data
+* Do NOT push out the local copy of dump.rdb every time
+* Backup dump.rdb from the volume somehow
+* install zsh in docker images
+* copy .zshrc in ansible & docker
+* fix TERM and other environment variables
+* make `sv-runsvdir` able to be taken down

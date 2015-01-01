@@ -47,11 +47,11 @@ gulp.task('6to5', function() {
       .pipe(cache('6to5'))
       .pipe(sourcemaps.init())
       .pipe(to5())
-      .pipe(jsheader("require('source-map-support').install();"))
       .pipe(jsheader('var wrapGenerator = require("regenerator/runtime").wrapGenerator;'));
 
   if(process.env.NODE_ENV !== 'production') {
-    stream = stream.pipe(sourcemaps.write('.'));
+    stream = stream.pipe(jsheader("require('source-map-support').install();"))
+      .pipe(sourcemaps.write('.'));
   }
 
   return stream.pipe(es.through(function(file) {

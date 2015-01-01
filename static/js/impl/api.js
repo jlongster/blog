@@ -1,4 +1,3 @@
-const config = require('config.json');
 const t = require('transducers.js');
 const { filter } = t;
 const csp = require('src/lib/csp');
@@ -7,16 +6,6 @@ const xhr = require('src/lib/xhr');
 
 let postCache = [];
 let handlers = [];
-
-function maybeThrottle(func) {
-  if(process.env['NODE_ENV'] !== 'production' &&
-     config.simulateSlow) {
-    setTimeout(func, 500);
-  }
-  else {
-    func();
-  }
-}
 
 function addHandler(func) {
   handlers.push(func);
