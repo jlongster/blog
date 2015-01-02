@@ -1,6 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
-//var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var config = {
   cache: true,
@@ -26,18 +26,18 @@ var config = {
        exclude: [/static\/js\/lib\/.*\.js$/,
                  /node_modules\/.*/],
        loader: '6to5'},
-      {test: /\.less$/, loader: "style!css!less" },
-      {test: /\.css$/, loader: "style!css" },
-      // {test: /\.less$/, loader: ExtractTextPlugin.extract("style-loader", "css!less") },
-      // {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css") },
+      // {test: /\.less$/, loader: "style!css!less" },
+      // {test: /\.css$/, loader: "style!css" },
+      {test: /\.less$/, loader: ExtractTextPlugin.extract("style-loader", "css!less") },
+      {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css") },
       {test: /\.json$/, loader: "json"}
     ]
   },
   plugins: [
     new webpack.ProvidePlugin({
       regeneratorRuntime: 'static/js/regenerator-runtime.js'
-    })
-    //new ExtractTextPlugin('styles.css')
+    }),
+    new ExtractTextPlugin('styles.css')
   ]
 };
 

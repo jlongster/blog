@@ -1,7 +1,5 @@
 
-* Use volumes for redis db, s.jlongster.com, and other data
-* Do NOT push out the local copy of dump.rdb every time
-* Backup dump.rdb from the volume somehow
+* Be wiser and use volumes to manage data (especially redis db), and back them up somehow
 * install zsh in docker images
 * copy .zshrc in ansible & docker
 * fix TERM and other environment variables

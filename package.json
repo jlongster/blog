@@ -9,6 +9,7 @@
     "css-loader": "^0.9.0",
     "event-stream": "^3.2.0",
     "express": "^4.10.6",
+    "extract-text-webpack-plugin": "^0.3.6",
     "file-loader": "^0.8.1",
     "gulp": "git://github.com/gulpjs/gulp#4.0",
     "gulp-6to5": "^2.0.0",
