@@ -16,7 +16,10 @@ let Index = React.createClass({
   displayName: "Index",
   statics: {
     fetchData: function (api) {
-      return api.getPosts(7);
+      return api.queryPosts({
+        select: ['title', 'date', 'shorturl', 'abstract'],
+        limit: 7
+      });
     }
   },
 

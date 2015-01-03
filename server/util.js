@@ -29,23 +29,6 @@ function intToDate(x) {
   return moment(x.toString(), 'YYYYMMDD');
 }
 
-function dateToRFC3339(date) {
-  // For Atom Feeds
-  // http://tools.ietf.org/html/rfc3339
-  var utc = forcefulDate(date).utc();
-
-  function pad(n) {
-    return n < 10 ? '0' + n : n;
-  }
-
-  return utc.year() + '-'
-    + pad(utc.month() + 1) + '-'
-    + pad(utc.date()) + 'T'
-    + pad(utc.hours()) + ':'
-    + pad(utc.minutes()) + ':'
-    + pad(utc.seconds()) + 'Z';
-}
-
 function previousDates() {
   var current = moment();
   var end = moment().subtract('years', 2);
@@ -106,7 +89,6 @@ function base32(input) {
 
 module.exports = {
   formatDate,
-  dateToRFC3339,
   dateToInt,
   intToDate,
   previousDates,

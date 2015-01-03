@@ -1,4 +1,5 @@
 
+* Make page title change
 * Be wiser and use volumes to manage data (especially redis db), and back them up somehow
 * install zsh in docker images
 * copy .zshrc in ansible & docker

@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const React = require('react');
 const nconf = require('nconf');
 const oauth = require('oauth');
+const handlebars = require('handlebars');
 
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
@@ -16,6 +17,7 @@ const { encodeTextContent } = require('src/lib/util');
 const routes = require('src/routes');
 const Router = require('react-router');
 const api = require('./impl/api');
+const feed = require('./feed');
 const statics = require('./impl/statics');
 
 nconf.argv().env('_').file({
@@ -23,7 +25,6 @@ nconf.argv().env('_').file({
 }).defaults({
   'admins': []
 });
-
 
 let app = express();
 app.use(express.static(__dirname + '/../static'));
@@ -168,17 +169,13 @@ app.get('/api/*', function(req, res) {
 
 // page handler
 
-// app.get('*', function(req, res) {
-//   Router.run(routes, req.path, (Handler, state) => {
-//     go(function*() {
-//       let content = statics.baseHTML.replace(
-//         '{{ MOUNT_CONTENT }}', ''
-//       );
-
-//       res.send(content);
-//     });
-//   });
-// });
+app.get('/atom.xml', function(req, res) {
+  go(function*() {
+    let posts = yield api.getPosts(5);
+    res.set('Content-Type', 'application/atom+xml');
+    res.send(feed.render(posts));
+  });
+});
 
 app.get('*', function(req, res, next) {
   Router.run(routes, req.path, (Handler, state) => {
