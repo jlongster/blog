@@ -5,3 +5,10 @@
 * copy .zshrc in ansible & docker
 * fix TERM and other environment variables
 * make `sv-runsvdir` able to be taken down
+
+# Deployment
+
+NODE_ENV=production gulp 6to5
+NODE_ENV=production webpack
+docker build -t jlongster/jlongster4 .
+docker push jlongster/jlongster4

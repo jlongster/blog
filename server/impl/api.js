@@ -218,6 +218,9 @@ function savePost(post) {
       yield db('zadd', dbkey('posts'), post.date, key);
     }
 
+    // Make sure it persists to disk
+    client.save();
+
     // TODO: updatedDate
   }, { propagate: true });
 }
