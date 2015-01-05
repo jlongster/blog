@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>James Long</title>
-  <link href="{{base}}/atom.xml" rel="self" />
+  <link href="{{ base }}/atom.xml" rel="self" />
   <link href="{{ base }}/" />
   <updated>{{ updated }}</updated>
   <id>{{ base }}/</id>
@@ -9,15 +9,13 @@
 
   {{#each posts}}
   <entry>
-    <title type="html">{{ title }}</title>
-    <link href="{{ base }}/{{ shorturl }}" />
+    <title>{{ title }}</title>
+    <link href="{{ ../base }}/{{ shorturl }}" />
     <published>{{ date }}</published>
     <updated>{{ date }}</updated>
     <id>{{ ../base }}/{{ shorturl }}</id>
-    <summary type="html"><![CDATA[{{ summary }}]]></summary>
-    <content type="html">
-      <![CDATA[{{ content }}]]>
-    </content>
+    <summary type="html"><![CDATA[{{{ summary }}}]]></summary>
+    <content type="html"><![CDATA[{{{ content }}}]]></content>
   </entry>
   {{/each}}
 </feed>
