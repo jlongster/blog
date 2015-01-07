@@ -2,6 +2,7 @@ const React = require('react/addons');
 const nprogress = require('nprogress');
 const t = require("transducers.js");
 const { map, filter } = t;
+const debounce = require('debounce');
 const { displayDate } = require("../lib/date");
 const { Element, Elements } = require('../lib/react-util');
 const { slugify } = require('../lib/util');
@@ -14,6 +15,14 @@ const Feedback = Element(require('./feedback'));
 const dom = React.DOM;
 const cx = React.addons.classSet;
 const api = require('impl/api');
+const config = require('../lib/config');
+
+const updatePreview = debounce(function(previewWindow, post) {
+  if(previewWindow) {
+    // TODO: don't use * for target origin
+    previewWindow.postMessage({ post: post }, config.get('url'));
+  }
+}, 200);
 
 const Editor = Element(React.createClass({
   componentDidMount: function() {
@@ -111,7 +120,14 @@ const Toolbar = Element(React.createClass({
                 e.preventDefault();
                 this.props.onDelete();
               }},
-           'Delete')
+            'Delete'),
+      dom.a({ href: '#',
+              className: 'popout-preview',
+              onClick: e => {
+                e.preventDefault();
+                this.props.onPopout();
+              }},
+            '\u2197')
     );
   }
 }));
@@ -229,6 +245,12 @@ const Edit = React.createClass({
 
   componentDidMount: function() {
     require(['static/css/editor.less']);
+
+    window.addEventListener('unload', () => {
+      if(this.previewWindow) {
+        this.previewWindow.close();
+      }
+    });
   },
 
   getInitialState: function() {
@@ -329,11 +351,33 @@ const Edit = React.createClass({
       post.shorturl = post.title ? slugify(post.title) : '';
     }
 
+    updatePreview(this.previewWindow, post);
     this.setState({ post: post });
   },
 
   handleToolbarSelect: function(name) {
     this.setState({ tab: name });
+  },
+
+  handlePopout: function() {
+    go(function*() {
+      let preview = window.open(
+        '/preview',
+        'preview',
+        'width=800,height=600,resizable=1,scrollbars=1,dialog=1'
+      );
+      preview.focus();
+
+      if(!this.previewWindow) {
+        preview.addEventListener('load', () => {
+          preview.postMessage({ post: this.state.post }, config.get('url'));
+          preview.addEventListener('unload', () => {
+            this.previewWindow = null;
+          });
+        }, false);
+        this.previewWindow = preview;
+      }
+    }.bind(this));
   },
 
   render: function () {
@@ -356,9 +400,11 @@ const Edit = React.createClass({
       Toolbar({ currentTab: state.tab,
                 title: post.title,
                 date: post.date,
+                shorturl: post.shorturl,
                 onSelect: this.handleToolbarSelect,
                 onSave: this.handleSave,
-                onDelete: this.handleDelete }),
+                onDelete: this.handleDelete,
+                onPopout: this.handlePopout }),
       Main({ className: 'edit' },
            Editor({ style: { display: tab === 'editor' ? 'block' : 'none' },
                     content: doc,

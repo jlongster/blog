@@ -231,7 +231,10 @@ app.get('*', function(req, res, next) {
       let payload = {
         data: props.data,
         username: props.username,
-        isAdmin: props.isAdmin
+        isAdmin: props.isAdmin,
+        config: {
+          url: nconf.get('url')
+        }
       };
 
       content = rawReplace(

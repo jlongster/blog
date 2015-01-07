@@ -58,10 +58,7 @@ let Index = React.createClass({
       ),
       dom.div(
         { dangerouslySetInnerHTML: { __html: statics.projectsHTML }}
-      ),
-      dom.script({
-        src: 'http://jlongster.com/s/header-cloth-demo/main.min.js'
-      })
+      )
     );
   }
 });

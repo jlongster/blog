@@ -30,16 +30,16 @@ const Post = React.createClass({
     bodyClass: 'post'
   },
 
+  getInitialState: function() {
+    return { content: null };
+  },
+
   componentDidMount: function() {
     window_firePostMount(this.props.data['post']);
   },
 
   componentWillUnmount: function() {
     window_firePostUnmount(this.props.data['post']);
-  },
-
-  block: function() {
-    return 10;
   },
 
   render: function () {
@@ -90,7 +90,9 @@ const Post = React.createClass({
               dom.img({ src: post.headerimg })),
         dom.h1(null, post.title),
         div({ className: 'date' }, displayDate(post.date)),
-        div({ dangerouslySetInnerHTML: { __html: ghm.parse(post.content) }}),
+        div({ dangerouslySetInnerHTML: {
+          __html: ghm.parse(this.state.content || post.content)
+        }}),
         div({ className: 'tags' },
             post.tags && post.tags.map(tag => {
               return dom.a({ href: '/tag/' + tag }, tag);

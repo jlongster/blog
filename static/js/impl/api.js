@@ -107,15 +107,15 @@ function deletePost(shorturl) {
 }
 
 module.exports = {
-  setCache: setCache,
-  clearCache: clearCache,
-  getCached: getCached,
-  addHandler: addHandler,
-  removeHandler: removeHandler,
-  getPosts: getPosts,
-  queryPosts: queryPosts,
-  queryDrafts: queryDrafts,
-  getPost: getPost,
-  savePost: savePost,
-  deletePost: deletePost
+  setCache,
+  clearCache,
+  getCached,
+  addHandler,
+  removeHandler,
+  getPosts,
+  queryPosts,
+  queryDrafts,
+  getPost,
+  savePost,
+  deletePost
 }
