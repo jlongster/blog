@@ -19,7 +19,6 @@ const config = require('../lib/config');
 
 const updatePreview = debounce(function(previewWindow, post) {
   if(previewWindow) {
-    // TODO: don't use * for target origin
     previewWindow.postMessage({ post: post }, config.get('url'));
   }
 }, 200);
