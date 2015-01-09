@@ -1,4 +1,5 @@
-var React = require("react");
+const React = require("react");
+const invariant = require("react/lib/invariant");
 
 function encodeTextContent(str) {
   return str.replace(/[<>&]/g, function(str) {
@@ -35,9 +36,16 @@ function blockFor(name, children) {
   return block;
 }
 
+function assert(msg, val) {
+  if(val === undefined || val === null || val === false) {
+    throw new Error('assertion failure: ' + msg);
+  }
+}
+
 module.exports = {
   encodeTextContent,
   decodeTextContent,
   slugify,
-  blockFor
+  blockFor,
+  invariant
 };

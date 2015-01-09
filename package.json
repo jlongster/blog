@@ -40,5 +40,8 @@
     "transducers.js": "^0.2.3",
     "webpack": "^1.4.15",
     "xhr": "^2.0.0"
+  },
+  "devDependencies": {
+    "request": "^2.51.0"
   }
 }

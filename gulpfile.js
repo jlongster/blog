@@ -12,7 +12,7 @@ var cache = require('gulp-cached');
 var ignore = require('gulp-ignore');
 
 var paths = {
-  src: ['server/**/*.js', 'src/**/*.js'],
+  src: ['server/**/*.js', 'src/**/*.js', 'tests/**/*.js'],
   build: '.built'
 };
 
@@ -55,7 +55,8 @@ gulp.task('6to5', function() {
   }
 
   return stream.pipe(es.through(function(file) {
-    if(file.path.slice(file.cwd.length).match(/^\/src/)) {
+    var dir = file.path.slice(file.cwd.length);
+    if(dir.match(/^\/src/) || dir.match(/^\/tests/)) {
       file.base = file.cwd;
     }
     this.emit('data', file);

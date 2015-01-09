@@ -7,8 +7,8 @@ const { displayDate } = require("../lib/date");
 const { Element, Elements } = require('../lib/react-util');
 const { slugify } = require('../lib/util');
 const csp = require('../lib/csp');
-const { currentDate } = require("../lib/date");
 const { go, chan, take, put, ops } = csp;
+const { currentDate } = require("../lib/date");
 const { Link } = Elements(require("react-router"));
 const Main = Element(require('./main'));
 const Feedback = Element(require('./feedback'));
@@ -176,11 +176,6 @@ const Settings = Element(React.createClass({
     this.props.onUpdate(name, value);
   },
 
-  save: function(e) {
-    e.preventDefault();
-    this.props.onSave();
-  },
-
   render: function() {
     let post = this.props.post;
     let error = this.props.validationError;
@@ -226,9 +221,6 @@ const Settings = Element(React.createClass({
               value: post.readnext,
               errored: error.field === 'readnext',
               onChange: this.updateField.bind(this, 'readnext') })
-      // dom.button({ className: 'btn btn-default',
-      //              onClick: this.save },
-      //            'Update')
     );
   }
 }));

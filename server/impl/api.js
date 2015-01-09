@@ -183,7 +183,10 @@ function savePost(post) {
     let originalUrl = post.originalUrl;
     post = _denormalizePost(post);
 
-    if(post.shorturl === 'new') {
+    if(!post.shorturl) {
+      return csp.Throw(new Error('post must have shorturl'));
+    }
+    else if(post.shorturl === 'new') {
       return csp.Throw(new Error('the url `new` is reserved'));
     }
     else if(originalUrl && originalUrl !== post.shorturl) {
@@ -225,6 +228,28 @@ function savePost(post) {
   }, { propagate: true });
 }
 
+function updatePost(shorturl, props) {
+  return go(function*() {
+    props = _denormalizePost(props);
+    delete props.shorturl;
+    let key = dbkey('post', shorturl);
+
+    if(!yield db('exists', key)) {
+      return csp.Throw(new Error('post does not exist: ' + shorturl));
+    }
+
+    yield db('hmset', key, props);
+
+    // Make sure the index is up-to-date
+    if(props.date) {
+      yield db('zadd', dbkey('posts'), props.date, key);
+    }
+
+    // Make sure it persists to disk
+    client.save();
+  }, { propagate: true });
+}
+
 function deletePost(shorturl) {
   // Note: we don't literally remove the post in case you want to
   // recover it. We have plenty of memory, but in the future we could
@@ -240,7 +265,9 @@ module.exports = {
   queryPosts: queryPosts,
   queryDrafts: queryDrafts,
   savePost: savePost,
+  updatePost: updatePost,
   deletePost: deletePost,
+  db: db,
   dbkey: dbkey,
   getClient: function() {
     return client;

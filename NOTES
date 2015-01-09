@@ -1,4 +1,7 @@
 
+* Remove NODE_PATH munging and require src relatively, and use webpack
+  to replace "../server/impl/api" with path to frontend api
+* Integrate clustering?
 * Integrate slimerjs for testing, create docker image and somehow run in VM
 * Make page title change
 * Be wiser and use volumes to manage data (especially redis db), and back them up somehow
