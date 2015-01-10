@@ -8,7 +8,7 @@ const Block = Element(require('./block'));
 const NotFound = Element(require('./not-found'));
 const { displayDate } = require('../lib/date');
 const ghm = require('../lib/showdown-ghm.js');
-const statics = require("impl/statics");
+const statics = require('impl/statics');
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;

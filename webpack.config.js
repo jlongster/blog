@@ -11,11 +11,10 @@ var config = {
     filename: 'bundle.js'
   },
   resolve: {
-    extensions: ['', '.js', '.sjs'],
+    extensions: ['', '.js'],
     fallback: __dirname,
     alias: {
-      src: 'src',
-      impl: 'static/js/impl',
+      'impl': 'static/js/impl',
       'static': 'static',
       'config.json': 'config/browser.json'
     }

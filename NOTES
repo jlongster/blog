@@ -1,14 +1,10 @@
 
-* Remove NODE_PATH munging and require src relatively, and use webpack
-  to replace "../server/impl/api" with path to frontend api
+
+* Clean up util files and server/frontend bootstrap
 * Integrate clustering?
 * Integrate slimerjs for testing, create docker image and somehow run in VM
 * Make page title change
 * Be wiser and use volumes to manage data (especially redis db), and back them up somehow
-* install zsh in docker images
-* copy .zshrc in ansible & docker
-* fix TERM and other environment variables
-* make `sv-runsvdir` able to be taken down
 
 # Deployment
 
@@ -16,3 +12,7 @@ NODE_ENV=production gulp 6to5
 NODE_ENV=production webpack
 docker build -t jlongster/jlongster4 .
 docker push jlongster/jlongster4
+
+# Tests
+
+NODE_PATH=./.built mocha --harmony -b -R tap .built/tests/api.js

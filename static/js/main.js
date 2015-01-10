@@ -3,10 +3,10 @@ const Router = require('react-router');
 const { Routes, Route, DefaultRoute } = Router;
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
-const csp = require('src/lib/csp');
+const csp = require('../../src/lib/csp');
 const { go, chan, take, put, operations: ops } = csp;
-const { decodeTextContent } = require('src/lib/util');
-const config = require('src/lib/config');
+const { decodeTextContent } = require('../../src/lib/util');
+const config = require('../../src/lib/config');
 
 const routes = require('src/routes');
 const api = require('./impl/api');

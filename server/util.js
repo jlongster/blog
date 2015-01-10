@@ -1,5 +1,6 @@
 const moment = require('moment');
 const React = require('react');
+const path = require('path');
 
 // Util
 
@@ -87,6 +88,12 @@ function base32(input) {
   return res.join('');
 }
 
+function relativePath(p) {
+  // We are actually running in the .built directory which adds a
+  // level of nesting
+  return path.join(__dirname + '/..', p);
+}
+
 module.exports = {
   formatDate,
   dateToInt,
@@ -96,5 +103,6 @@ module.exports = {
   tmpFile,
   slugify,
   handleError,
-  base32
+  base32,
+  relativePath
 };

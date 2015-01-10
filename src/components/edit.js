@@ -297,7 +297,14 @@ const Edit = React.createClass({
     }
 
     go(function*() {
-      yield api.savePost(t.merge(post, { originalUrl: this.state.originalUrl }));
+      if(!this.state.originalUrl) {
+        yield api.createPost(post.shorturl);
+      }
+      else if(this.state.originalUrl !== post.shorturl) {
+        yield api.renamePost(this.state.originalUrl, post.shorturl);
+      }
+
+      yield api.updatePost(post.shorturl, post);
 
       if(this.state.originalUrl !== post.shorturl) {
         relocate('/edit/' + post.shorturl);

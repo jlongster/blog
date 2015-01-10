@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const { relativePath } = require('../util');
 
 function read(filename) {
-  return fs.readFileSync(path.join(__dirname, '/../../', filename),
+  return fs.readFileSync(path.join(relativePath('../'), filename),
                          'utf8');
 }
 

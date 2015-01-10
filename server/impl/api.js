@@ -1,10 +1,10 @@
 const redis = require('redis');
 const nconf = require('nconf');
-const csp = require('src/lib/csp');
+const csp = require('../../src/lib/csp');
 const { go, chan, take, put, operations: ops } = csp;
 const {
   invokeCallback, invokeCallbackM, takeAll
-} = require("src/lib/chan-util");
+} = require("../../src/lib/chan-util");
 const t = require("transducers.js");
 const { map, filter } = t;
 const { toObj } = t;
@@ -58,8 +58,8 @@ let postFields = [
 // db representation -> JSON type
 function _normalizePost(post) {
   post = toObj(post);
-  if(post.tags) {
-    post.tags = post.tags.split(',');
+  if(typeof post.tags === 'string') {
+    post.tags = post.tags === '' ? [] : post.tags.split(',');
   }
   if(post.date) {
     post.date = parseInt(post.date);
@@ -132,7 +132,7 @@ function _runQuery(opts) {
   if(opts.filter) {
     for(let name in opts.filter) {
       query.push(t.filter(x => {
-        if(x[name].length) {
+        if(x[name] && x[name].length) {
           return x[name].indexOf(opts.filter[name]) !== -1;
         }
         return x[name] === opts.filter[name];
@@ -157,6 +157,17 @@ function _runQuery(opts) {
   return takeAll(ch);
 }
 
+function _finalizeEdit(key, date) {
+  return go(function*() {
+    if(date) {
+      yield db('zadd', dbkey('posts'), date, key);
+    }
+
+    // Make sure it persists to disk
+    client.save();
+  });
+}
+
 // public API
 
 function getPosts(limit) {
@@ -178,53 +189,60 @@ function getPost(shorturl) {
   return _getPost(dbkey('post', shorturl));
 }
 
-function savePost(post) {
-  return go(function*() {
-    let originalUrl = post.originalUrl;
-    post = _denormalizePost(post);
+function createPost(shorturl, props = {}) {
+  props = _denormalizePost(t.merge({
+    date: dateToInt(),
+    tags: '',
+    published: false
+  }, props));
+  props.shorturl = shorturl;
 
-    if(!post.shorturl) {
-      return csp.Throw(new Error('post must have shorturl'));
-    }
-    else if(post.shorturl === 'new') {
+  return go(function*() {
+    if(shorturl === 'new') {
       return csp.Throw(new Error('the url `new` is reserved'));
     }
-    else if(originalUrl && originalUrl !== post.shorturl) {
-      // Attempt a url rename. This should only be possible on
-      // non-published posts, so we need to pull down the post from
-      // the db to check that
-      let savedPost = yield getPost(originalUrl);
-      if(!savedPost.published) {
-        let originalKey = dbkey('post', originalUrl);
-        let key = dbkey('post', post.shorturl);
 
-        yield db('rename', originalKey, key);
-        yield db('zrem', dbkey('posts'), originalKey);
-        yield db('zadd', dbkey('posts'), post.date, key);
-      }
-      else {
-        return csp.Throw(new Error('cannot change the url of a published post'));
-      }
-    }
-
-    let key = dbkey('post', post.shorturl);
-    if(!originalUrl && yield db('exists', key)) {
-      // error, a new post cannot overwrite an existing post
-      return csp.Throw(new Error('post already exists with url: ' + post.shorturl));
+    let key = dbkey('post', shorturl);
+    if(yield db('exists', key)) {
+      // A new post cannot overwrite an existing post
+      return csp.Throw(new Error('post already exists with url: ' + props.shorturl));
     }
     else {
-      yield db('hmset', key, post);
+      yield db('hmset', key, props);
     }
 
-    // Make sure the index is up-to-date
-    if(post.date) {
-      yield db('zadd', dbkey('posts'), post.date, key);
+    yield _finalizeEdit(key, props.date);
+  }, { propagate: true });
+}
+
+function renamePost(shorturl, newurl) {
+  return go(function*() {
+    if(newurl === 'new') {
+      return csp.Throw(new Error('the url `new` is reserved'));
+    }
+    else if(newurl === shorturl) {
+      return csp.Throw(new Error('renamed to the same url: ' + shorturl));
     }
 
-    // Make sure it persists to disk
-    client.save();
+    // Attempt a url rename. This should only be possible on
+    // non-published posts, so we need to pull down the post from
+    // the db to check that
+    let savedPost = yield getPost(shorturl);
+    if(!savedPost) {
+      return csp.Throw(new Error('post does not exist: ' + shorturl));
+    }
+    else if(!savedPost.published) {
+      let savedKey = dbkey('post', shorturl);
+      let key = dbkey('post', newurl);
 
-    // TODO: updatedDate
+      yield db('rename', savedKey, key);
+      yield db('hmset', key, { shorturl: newurl });
+      yield db('zrem', dbkey('posts'), savedKey);
+      _finalizeEdit(key, savedPost.date);
+    }
+    else {
+      return csp.Throw(new Error('cannot change the url of a published post'));
+    }
   }, { propagate: true });
 }
 
@@ -240,21 +258,19 @@ function updatePost(shorturl, props) {
 
     yield db('hmset', key, props);
 
-    // Make sure the index is up-to-date
-    if(props.date) {
-      yield db('zadd', dbkey('posts'), props.date, key);
-    }
-
-    // Make sure it persists to disk
-    client.save();
+    _finalizeEdit(key, props.date);
   }, { propagate: true });
 }
 
 function deletePost(shorturl) {
-  // Note: we don't literally remove the post in case you want to
-  // recover it. We have plenty of memory, but in the future we could
-  // add an option to remove it completely.
-  return db('zrem', dbkey('posts'), dbkey('post', shorturl));
+  return go(function*() {
+    let key = dbkey('post', shorturl);
+
+    // Note: we don't literally remove the post in case you want to
+    // recover it. We have plenty of memory, but in the future we could
+    // add an option to remove it completely.
+    yield db('zrem', dbkey('posts'), dbkey('post', shorturl));
+  });
 }
 
 module.exports = {
@@ -264,7 +280,8 @@ module.exports = {
   getPosts: getPosts,
   queryPosts: queryPosts,
   queryDrafts: queryDrafts,
-  savePost: savePost,
+  createPost: createPost,
+  renamePost: renamePost,
   updatePost: updatePost,
   deletePost: deletePost,
   db: db,

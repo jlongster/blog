@@ -1,6 +1,6 @@
 const http = require('http');
 const nconf = require('nconf');
-const api = require('./impl/api');
+const api = require('impl/api');
 const app = require('./app');
 
 api.connect();

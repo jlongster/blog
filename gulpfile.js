@@ -56,9 +56,7 @@ gulp.task('6to5', function() {
 
   return stream.pipe(es.through(function(file) {
     var dir = file.path.slice(file.cwd.length);
-    if(dir.match(/^\/src/) || dir.match(/^\/tests/)) {
-      file.base = file.cwd;
-    }
+    file.base = file.cwd;
     this.emit('data', file);
   })).pipe(gulp.dest(paths.build));
 });
@@ -80,11 +78,6 @@ gulp.task("bin", function() {
 gulp.task('rebuild', gulp.series('regenerate', '6to5'));
 
 gulp.task('run', gulp.series('6to5', function() {
-  process.env['NODE_PATH'] = (process.env['NODE_PATH'] + ':' +
-                              // Add the base directory so everything
-                              // can access `src` and `impl` dir as top-level
-                              path.join(__dirname, paths.build));
-
   gulp.watch(paths.src, gulp.series('6to5', function() {
     nodemon.restart();
   }));
@@ -93,7 +86,7 @@ gulp.task('run', gulp.series('6to5', function() {
     execMap: {
       js: 'node --harmony'
     },
-    script: path.join(paths.build, 'main'),
+    script: path.join(paths.build, 'server/main'),
     ext: 'noop'
   }).on('restart', function() {
     console.log('restarted!');

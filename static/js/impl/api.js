@@ -78,7 +78,6 @@ function queryPosts(query) {
 function getPost(shorturl) {
   let res = filter(postCache, post => post.shorturl === shorturl);
   if(res.length) {
-    console.log('getPost: cached!');
     let ch = chan();
     csp.putAsync(ch, res[0], () => ch.close());
     return ch;
@@ -89,20 +88,38 @@ function getPost(shorturl) {
   }
 }
 
-function savePost(post) {
+function createPost(shorturl, props) {
   clearCache();
   return runHandlers(xhr({
-    url: '/api/post',
+    url: '/api/post/' + shorturl,
+    method: 'put',
+    json: props
+  }));
+}
+
+function updatePost(shorturl, props) {
+  clearCache();
+  return runHandlers(xhr({
+    url: '/api/post/' + shorturl,
     method: 'post',
-    json: post
+    json: props
+  }));
+}
+
+function renamePost(oldurl, newurl) {
+  clearCache();
+  return runHandlers(xhr({
+    url: '/api/rename-post/' + oldurl,
+    method: 'post',
+    json: { shorturl: newurl }
   }));
 }
 
 function deletePost(shorturl) {
   clearCache();
   return runHandlers(xhr({
-    url: '/api/delete/' + shorturl,
-    method: 'post'
+    url: '/api/post/' + shorturl,
+    method: 'delete'
   }));
 }
 
@@ -116,6 +133,8 @@ module.exports = {
   queryPosts,
   queryDrafts,
   getPost,
-  savePost,
+  createPost,
+  updatePost,
+  renamePost,
   deletePost
 }

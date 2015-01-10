@@ -9,24 +9,25 @@ const handlebars = require('handlebars');
 
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
-const { go, chan, take, put, operations: ops } = require('src/lib/csp');
-const { Element, Elements } = require('src/lib/react-util');
-const { takeAll } = require('src/lib/chan-util');
-const { encodeTextContent } = require('src/lib/util');
-const routes = require('src/routes');
+const { go, chan, take, put, operations: ops } = require('../src/lib/csp');
+const { Element, Elements } = require('../src/lib/react-util');
+const { takeAll } = require('../src/lib/chan-util');
+const { encodeTextContent } = require('../src/lib/util');
+const routes = require('../src/routes');
 const Router = require('react-router');
 const api = require('./impl/api');
 const feed = require('./feed');
 const statics = require('./impl/statics');
+const { relativePath } = require('./util');
 
 nconf.argv().env('_').file({
-  file: __dirname + '/../config/config.json'
+  file: relativePath('../config/config.json')
 }).defaults({
   'admins': []
 });
 
 let app = express();
-app.use(express.static(__dirname + '/../static'));
+app.use(express.static(relativePath('../static')));
 app.use(session({ keys: ['foo'] }));
 app.use(bodyParser.json());
 
@@ -89,7 +90,7 @@ function sendOk(res, ch) {
       res.send('ok');
     }
     catch(e) {
-      res.send(500, e.message);
+      res.status(500).send(e.message);
     }
   });
 }
@@ -104,20 +105,24 @@ app.get('/api/drafts', requireAdmin, function(req, res) {
   send(res, api.queryDrafts(query));
 });
 
-app.get('/api/post', function(req, res) {
-  send(res, api.getPost(req.query.shorturl));
+app.get('/api/post/:post', function(req, res) {
+  send(res, api.getPost(req.params.post));
 });
 
-app.post('/api/delete/:post', requireAdmin, function(req, res) {
-  sendOk(res, api.deletePost(req.params.post));
+app.put('/api/post/:post', function(req, res) {
+  sendOk(res, api.createPost(req.params.post, req.body));
 });
 
 app.post('/api/post/:post', function(req, res) {
   sendOk(res, api.updatePost(req.params.post, req.body));
 });
 
-app.post('/api/post', function(req, res) {
-  sendOk(res, api.savePost(req.body));
+app.post('/api/rename-post/:post', function(req, res) {
+  sendOk(res, api.renamePost(req.params.post, req.body.shorturl));
+});
+
+app.delete('/api/post/:post', function(req, res) {
+  sendOk(res, api.deletePost(req.params.post));
 });
 
 // login

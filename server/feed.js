@@ -2,7 +2,7 @@ const handlebars = require('handlebars');
 const statics = require('./impl/statics');
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
-const ghm = require('src/lib/showdown-ghm.js');
+const ghm = require('../src/lib/showdown-ghm.js');
 const moment = require('moment');
 const nconf = require('nconf');
 

@@ -42,6 +42,8 @@
     "xhr": "^2.0.0"
   },
   "devDependencies": {
+    "casperjs": "^1.1.0-beta3",
+    "mocha-casperjs": "^0.5.3",
     "request": "^2.51.0"
   }
 }
