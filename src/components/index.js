@@ -1,10 +1,10 @@
 const t = require("transducers.js");
 const React = require("react");
 const dom = React.DOM;
-const { Element, Elements } = require("../lib/react-util");
+const { Element, Elements } = require("../lib/util");
 const { Link } = Elements(require("react-router"));
 
-const { takeAll } = require("../lib/chan-util");
+const { takeAll } = require("../lib/util");
 const { displayDate } = require("../lib/date");
 const csp = require("../lib/csp");
 const { go, chan, take, put, ops } = csp;

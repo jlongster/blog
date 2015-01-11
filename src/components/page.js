@@ -1,5 +1,5 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/react-util');
+const { Element, Elements } = require('../lib/util');
 const { RouteHandler, Link } = Elements(require('react-router'));
 const csp = require('../lib/csp');
 const { go, chan, take, put, ops } = csp;

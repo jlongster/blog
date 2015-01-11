@@ -1,7 +1,6 @@
 const React = require("react");
-const { Element, Elements } = require("../lib/react-util");
+const { Element, Elements } = require('../lib/util');
 const { Link } = Elements(require("react-router"));
-const { blockFor, filterBlocks } = require('../lib/util');
 
 const dom = React.DOM;
 

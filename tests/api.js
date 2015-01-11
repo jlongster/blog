@@ -1,7 +1,7 @@
 const assert = require('assert');
-const csp = require('src/lib/csp');
+const csp = require('../src/lib/csp');
 const { go, chan, take, put, operations: ops } = csp;
-const api = require('../impl/api');
+const api = require('../server/impl/api');
 
 api.connect(6379, '127.0.0.1');
 

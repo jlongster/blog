@@ -1,8 +1,8 @@
 const t = require('transducers.js');
-const { Element, Elements } = require('./lib/react-util');
+const { Element, Elements } = require('./lib/util');
 const csp = require('./lib/csp');
 const { go, chan, take, put, ops } = csp;
-const { takeAll } = require('./lib/chan-util');
+const { takeAll } = require('./lib/util');
 
 const App = require('./components/app');
 const Page = require('./components/page');

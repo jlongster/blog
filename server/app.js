@@ -10,15 +10,13 @@ const handlebars = require('handlebars');
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
 const { go, chan, take, put, operations: ops } = require('../src/lib/csp');
-const { Element, Elements } = require('../src/lib/react-util');
-const { takeAll } = require('../src/lib/chan-util');
-const { encodeTextContent } = require('../src/lib/util');
+const { encodeTextContent, Element, Elements } = require('../src/lib/util');
 const routes = require('../src/routes');
 const Router = require('react-router');
 const api = require('./impl/api');
 const feed = require('./feed');
 const statics = require('./impl/statics');
-const { relativePath } = require('./util');
+const relativePath = require('./relative-path');
 
 nconf.argv().env('_').file({
   file: relativePath('../config/config.json')
@@ -37,19 +35,7 @@ if(process.env.NODE_ENV === 'production') {
   });
 }
 
-// util
-
-// Similar to str.replace, but doesn't treat any characters like $
-// specially. The result will always have the raw version of `newsub`.
-function rawReplace(str, sub, newsub) {
-  let idx = str.indexOf(sub);
-  if(idx !== -1) {
-    return str.slice(0, idx) +
-      newsub +
-      str.slice(idx + sub.length);
-  }
-  return str;
-}
+let appTemplate = handlebars.compile(statics.baseHTML);
 
 // middleware
 
@@ -230,12 +216,6 @@ app.get('*', function(req, res, next) {
       props.routeState = state;
       props.params = state.params;
 
-      let content = rawReplace(
-        statics.baseHTML,
-        '{{ MOUNT_CONTENT }}',
-        React.renderToString(React.createElement(Handler, props))
-      );
-
       let payload = {
         data: props.data,
         username: props.username,
@@ -245,11 +225,10 @@ app.get('*', function(req, res, next) {
         }
       };
 
-      content = rawReplace(
-        content,
-        '{{ PAYLOAD }}',
-        encodeTextContent(JSON.stringify(payload))
-      );
+      let content = appTemplate({
+        content: React.renderToString(React.createElement(Handler, props)),
+        payload: encodeTextContent(JSON.stringify(payload))
+      });
 
       res.send(content);
     });

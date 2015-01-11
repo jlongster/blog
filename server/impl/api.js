@@ -4,11 +4,11 @@ const csp = require('../../src/lib/csp');
 const { go, chan, take, put, operations: ops } = csp;
 const {
   invokeCallback, invokeCallbackM, takeAll
-} = require("../../src/lib/chan-util");
+} = require("../../src/lib/util");
 const t = require("transducers.js");
 const { map, filter } = t;
 const { toObj } = t;
-const { dateToInt } = require('../util');
+const { currentDate } = require('../../src/lib/date');
 
 let client;
 
@@ -86,7 +86,7 @@ function _denormalizePost(post) {
                        x => x.length).join(',');
   }
   if(post.date) {
-    post.date = dateToInt(post.date).toString();
+    post.date = post.date.toString();
   }
   if(post.published !== undefined) {
     post.published = post.published ? 'y' : 'n';
@@ -100,7 +100,7 @@ function _denormalizePost(post) {
 function _getPost(key) {
   let ch = chan();
   go(function*() {
-    let post = yield db('hgetall', key);
+    let post = yield take(db('hgetall', key));
     if(post) {
       yield put(ch, _normalizePost(post));
     }
@@ -191,7 +191,7 @@ function getPost(shorturl) {
 
 function createPost(shorturl, props = {}) {
   props = _denormalizePost(t.merge({
-    date: dateToInt(),
+    date: currentDate(),
     tags: '',
     published: false
   }, props));

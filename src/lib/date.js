@@ -5,7 +5,7 @@ function displayDate(intDate) {
 }
 
 function currentDate() {
-  return moment().format('YYYYMMDD');
+  return parseInt(moment().format('YYYYMMDD'));
 }
 
 module.exports = { displayDate, currentDate };

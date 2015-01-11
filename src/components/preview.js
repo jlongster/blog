@@ -1,5 +1,5 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/react-util');
+const { Element, Elements } = require('../lib/util');
 const Post = Element(require('./post'));
 const t = require("transducers.js");
 const config = require('../lib/config');

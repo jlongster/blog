@@ -1,10 +1,9 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/react-util');
+const { Element, Elements } = require('../lib/util');
 const { RouteHandler, Link } = Elements(require('react-router'));
 const AuthError = Element(require('./auth-error'));
 const ServerError = Element(require('./server-error'));
 const Feedback = Element(require('./feedback'));
-const { Blocks } = require('../lib/util');
 
 const dom = React.DOM;
 

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { relativePath } = require('../util');
+const relativePath = require('../relative-path');
 
 function read(filename) {
   return fs.readFileSync(path.join(relativePath('../'), filename),

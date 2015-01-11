@@ -10,7 +10,7 @@ COPY ./run /service/site/run
 COPY ./package.json /service/site/package.json
 WORKDIR /service/site/
 RUN npm install
-RUN ln -s /service/site/.built/server/impl node_modules/impl
+RUN ln -s /service/site/src-built/server/impl node_modules/impl
 RUN mkdir log
 RUN ln -s /usr/bin/rsvlog ./log/run
 

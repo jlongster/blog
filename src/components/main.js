@@ -1,6 +1,5 @@
 const React = require("react");
-const { Element, Elements } = require("../lib/react-util");
-const { blockFor } = require('../lib/util');
+const { blockFor, Element, Elements } = require('../lib/util');
 const Footer = require('./footer');
 const dom = React.DOM;
 

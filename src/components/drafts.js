@@ -1,5 +1,5 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/react-util');
+const { Element, Elements } = require('../lib/util');
 const { Link } = Elements(require("react-router"));
 const csp = require('../lib/csp');
 const { displayDate } = require("../lib/date");
@@ -27,6 +27,7 @@ const Drafts = React.createClass({
       null,
       dom.h1(null, 'Drafts'),
       dom.ul(null, posts.map(post => {
+        console.log(post.shorturl);
         return dom.li(
           { key: post.shorturl },
           Link({ to: 'post',
