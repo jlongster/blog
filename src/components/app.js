@@ -50,7 +50,7 @@ const App = React.createClass({
       this.props.user.admin &&
         dom.div(
           { className: 'admin-header' },
-          dom.span(null, 'Welcome ', dom.strong(null, this.props.username)),
+          dom.span(null, 'Welcome ', dom.strong(null, this.props.user.name)),
           Link({ to: 'drafts' }, 'Drafts'),
           route.name === 'post' &&
             Link({ to: 'edit', params: { post: routeState.params.post }}, 'Edit'),

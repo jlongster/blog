@@ -4,8 +4,7 @@
 var fs = require("fs");
 var _ = require("transducers.js");
 var moment = require("moment");
-var util = require("../.built/util");
-var api = require("../.built/impl/api");
+var api = require("../.built/server/impl/api");
 var _ref = require("../.built/src/lib/csp");
 
 var go = _ref.go;
@@ -13,8 +12,9 @@ var chan = _ref.chan;
 var take = _ref.take;
 var put = _ref.put;
 var ops = _ref.operations;
-var _ref2 = require("../.built/src/lib/chan-util");
+var _ref2 = require("../.built/src/lib/util");
 
+var slugify = _ref2.slugify;
 var invokeCallbackM = _ref2.invokeCallbackM;
 var takeArray = _ref2.takeArray;
 var ipsum = fs.readFileSync(__dirname + "/ipsum.txt", "utf8");
@@ -27,37 +27,44 @@ var posts = _.range(50).map(function (x) {
   var title = ipsum.slice(idx, idx + 30 + (Math.random() * 40 | 0));
 
   return {
-    shorturl: util.slugify(title),
+    shorturl: slugify(title),
     content: ipsum.slice(idx),
     abstract: ipsum.slice(idx + 20, idx + 300),
     title: title,
     published: "y",
     tags: ["foo"],
-    date: moment()
+    date: parseInt(moment().format("YYYYMMDD"))
   };
 });
 
 go(regeneratorRuntime.mark(function callee$0$0() {
   var client, curPosts;
   return regeneratorRuntime.wrap(function callee$0$0$(context$1$0) {
-    while (true) switch (context$1$0.prev = context$1$0.next) {
-      case 0: client = api.getClient();
+    while (1) switch (context$1$0.prev = context$1$0.next) {
+      case 0:
+        client = api.getClient();
         context$1$0.next = 3;
         return take(invokeCallbackM(client, client.zrange, api.dbkey("posts"), 0, -1));
-      case 3: curPosts = context$1$0.sent;
+      case 3:
+        curPosts = context$1$0.sent;
         context$1$0.next = 6;
         return takeArray(curPosts.map(function (post) {
           return invokeCallbackM(client, client.del, api.dbkey("post", post));
         }));
-      case 6: context$1$0.next = 8;
+      case 6:
+        context$1$0.next = 8;
         return take(invokeCallbackM(client, client.del, api.dbkey("posts")));
-      case 8: context$1$0.next = 10;
-        return takeArray(posts.map(api.savePost));
+      case 8:
+        context$1$0.next = 10;
+        return takeArray(posts.map(function (post) {
+          return api.createPost(post.shorturl, post);
+        }));
       case 10:
         console.log("done!");
         api.quit();
       case 12:
-      case "end": return context$1$0.stop();
+      case "end":
+        return context$1$0.stop();
     }
   }, callee$0$0, this);
 }));
