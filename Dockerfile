@@ -14,4 +14,4 @@ RUN ln -s /service/site/src-built/server/impl node_modules/impl
 RUN mkdir log
 RUN ln -s /usr/bin/rsvlog ./log/run
 
-EXPOSE 4000
+EXPOSE 8080
