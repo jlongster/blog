@@ -37,7 +37,7 @@ const App = React.createClass({
       content = ServerError({ error: this.props.error });
     }
     else if(route.handler.requireAdmin) {
-      content = this.props.isAdmin ? RouteHandler(this.props) : AuthError()
+      content = this.props.user.admin ? RouteHandler(this.props) : AuthError()
     }
     else {
       content = RouteHandler(this.props);
@@ -45,8 +45,9 @@ const App = React.createClass({
 
     return dom.div(
       null,
+      Feedback(),
       content,
-      this.props.isAdmin &&
+      this.props.user.admin &&
         dom.div(
           { className: 'admin-header' },
           dom.span(null, 'Welcome ', dom.strong(null, this.props.username)),

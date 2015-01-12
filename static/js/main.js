@@ -7,79 +7,39 @@ const csp = require('../../src/lib/csp');
 const { go, chan, take, put, operations: ops } = csp;
 const { decodeTextContent } = require('../../src/lib/util');
 const config = require('../../src/lib/config');
+const bootstrap = require('../../src/bootstrap');
 
 const routes = require('src/routes');
 const api = require('./impl/api');
-require('./legacy');
 
-require('../css/main.less');
+// CSS dependencies
+
 require('nprogress/nprogress.css');
+require('../css/main.less');
+
+// App init
 
 let payload = JSON.parse(
   decodeTextContent(document.getElementById('payload').textContent)
 );
-let username = payload.username;
-let isAdmin = payload.isAdmin;
 config.load(payload.config);
-console.log(config.get('url'));
 
-let router = Router.run(routes, Router.RefreshLocation, function(Handler, state) {
-  go(function*() {
-    let props = {};
+let { router, pageChan } = bootstrap.run(
+  routes,
+  Router.RefreshLocation,
+  payload.user,
+  payload.data
+);
 
-    if(payload) {
-      props.data = payload.data;
-      // Specialize the index page and prime the cache with the data
-      // from it; we know it's the latest list of posts. There might
-      // be a better way to do this.
-      if(props.data.index) {
-        api.setCache(props.data.index);
-      }
-      payload = null;
-    }
-    else {
-      props.data = {};
-      let requests = seq(state.routes, compose(
-        filter(x => x.handler.fetchData),
-        map(x => {
-          let handler = x.handler;
-          return {
-            name: x.name,
-            request: (handler.requireAdmin && !isAdmin ?
-                      null :
-                      handler.fetchData(api, state.params, isAdmin))
-          };
-        }),
-        filter(x => !!x.request)
-      ));
-
-      for(let i in requests) {
-        let request = requests[i];
-        if(request) {
-          try {
-            props.data[request.name] = yield take(request.request);
-          }
-          catch(e) {
-            props.error = e.message;
-            break;
-          }
-        }
-      }
-    }
-
-    let route = state.routes[state.routes.length - 1];
-    if(route.handler.bodyClass) {
-      props.bodyClass = route.handler.bodyClass;
-    }
-
-    props.username = username;
-    props.isAdmin = isAdmin;
-    props.routeState = state;
-    props.params = state.params;
-
+go(function*() {
+  // Since we use RefreshLocation now, we actually don't need to loop
+  // here. All location changes will use a full refresh. But keep this
+  // here for reference until I pull this out into a generic app template.
+  while(true) {
+    let { Handler, props } = yield take(pageChan);
     React.render(React.createElement(Handler, props),
                  document.getElementById('mount'));
-  });
+  }
 });
 
 window.relocate = function(url) {

@@ -83,7 +83,7 @@ function getPost(shorturl) {
     return ch;
   }
   else {
-    return runHandlers(xhr({ url: '/api/post?shorturl=' + shorturl },
+    return runHandlers(xhr({ url: '/api/post/' + shorturl },
                            chan(1, t.map(x => x.json))));
   }
 }

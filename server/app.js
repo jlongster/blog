@@ -11,12 +11,13 @@ const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
 const { go, chan, take, put, operations: ops } = require('../src/lib/csp');
 const { encodeTextContent, Element, Elements } = require('../src/lib/util');
+const ServerError = require('../src/components/server-error');
 const routes = require('../src/routes');
-const Router = require('react-router');
 const api = require('./impl/api');
 const feed = require('./feed');
 const statics = require('./impl/statics');
 const relativePath = require('./relative-path');
+const bootstrap = require('../src/bootstrap');
 
 nconf.argv().env('_').file({
   file: relativePath('../config/config.json')
@@ -28,12 +29,6 @@ let app = express();
 app.use(express.static(relativePath('../static')));
 app.use(session({ keys: ['foo'] }));
 app.use(bodyParser.json());
-
-if(process.env.NODE_ENV === 'production') {
-  app.use(function(err, req, res, next) {
-    console.log(err);
-  });
-}
 
 let appTemplate = handlebars.compile(statics.baseHTML);
 
@@ -172,66 +167,34 @@ app.get('/atom.xml', function(req, res) {
 });
 
 app.get('*', function(req, res, next) {
-  Router.run(routes, req.path, (Handler, state) => {
-    go(function*() {
-      let props = {};
+  go(function*() {
+    let { router, pageChan } = bootstrap.run(
+      routes,
+      req.path,
+      { name: req.session.username,
+        admin: isAdmin(req.session.username) }
+    );
+    let { Handler, props } = yield take(pageChan);
 
-      // Call the `fetchData` method on each component that defines it
-      // and load in data before rendering
-      let requests = seq(state.routes, compose(
-        filter(x => x.handler.fetchData),
-        map(x => {
-          return {
-            name: x.name,
-            request: x.handler.fetchData(
-              api,
-              state.params,
-              isAdmin(req.session.username)
-            )
-          };
-        }),
-        filter(x => !!x.request)
-      ));
+    if(process.env.NODE_ENV !== 'production' && props.error) {
+      res.send(props.error.stack);
+      throw props.error;
+    }
 
-      // transducers should implement zip, keys, and values
-      props.data = {};
-      for(let i in requests) {
-        let request = requests[i];
-        try {
-          props.data[request.name] = yield take(request.request);
-        }
-        catch(e) {
-          next(e);
-          return;
-        }
+    let payload = {
+      data: props.data,
+      user: props.user,
+      config: {
+        url: nconf.get('url')
       }
+    };
 
-      let route = state.routes[state.routes.length - 1];
-      if(route.handler.bodyClass) {
-        props.bodyClass = route.handler.bodyClass;
-      }
-
-      props.username = req.session.username;
-      props.isAdmin = isAdmin(props.username);
-      props.routeState = state;
-      props.params = state.params;
-
-      let payload = {
-        data: props.data,
-        username: props.username,
-        isAdmin: props.isAdmin,
-        config: {
-          url: nconf.get('url')
-        }
-      };
-
-      let content = appTemplate({
-        content: React.renderToString(React.createElement(Handler, props)),
-        payload: encodeTextContent(JSON.stringify(payload))
-      });
-
-      res.send(content);
+    let content = appTemplate({
+      content: React.renderToString(React.createElement(Handler, props)),
+      payload: encodeTextContent(JSON.stringify(payload))
     });
+
+    res.send(content);
   });
 });
 

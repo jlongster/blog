@@ -3,16 +3,13 @@ const { Element, Elements } = require('../lib/util');
 const dom = React.DOM;
 const Main = Element(require('./main'));
 const Header = Element(require("./header"));
+const Page = Element(require('./page'));
 
 const ServerError = React.createClass({
   displayName: 'ServerError',
 
   render: function () {
-    return dom.div(
-      null,
-      Header(),
-      Main(null, 'An error occured on the server. Sorry!')
-    );
+    return Page(null, 'An error occured on the server. Sorry!');
   }
 });
 

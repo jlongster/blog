@@ -1,5 +1,4 @@
 const React = require('react/addons');
-const nprogress = require('nprogress');
 const t = require("transducers.js");
 const { map, filter } = t;
 const debounce = require('debounce');
@@ -393,7 +392,7 @@ const Edit = React.createClass({
 
     return dom.div(
       { className: 'edit-container' },
-      Feedback(),
+      //Feedback(),
       Toolbar({ currentTab: state.tab,
                 title: post.title,
                 date: post.date,

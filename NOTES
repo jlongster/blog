@@ -1,6 +1,5 @@
 
 
-* Clean up util files and server/frontend bootstrap
 * Integrate clustering?
 * Integrate slimerjs for testing, create docker image and somehow run in VM
 * Make page title change
@@ -15,4 +14,4 @@ docker push jlongster/jlongster4
 
 # Tests
 
-NODE_PATH=./.built mocha --harmony -b -R tap .built/tests/api.js
+mocha --harmony -b -R tap .built/tests/api.js

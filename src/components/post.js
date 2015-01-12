@@ -34,14 +34,6 @@ const Post = React.createClass({
     return { content: null };
   },
 
-  componentDidMount: function() {
-    window_firePostMount(this.props.data['post']);
-  },
-
-  componentWillUnmount: function() {
-    window_firePostUnmount(this.props.data['post']);
-  },
-
   render: function () {
     let post = this.props.data['post'].post;
     let next = this.props.data['post'].readnext;

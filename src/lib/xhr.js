@@ -15,7 +15,7 @@ function xhr(opts, ch) {
       value = csp.Throw(new Error(body));
     }
     else if(res.headers['content-type'].indexOf('application/json') !== -1) {
-      result.json = body || false;
+      result.json = JSON.parse(body) || false;
       value = result;
     }
     else {
