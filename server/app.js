@@ -90,19 +90,19 @@ app.get('/api/post/:post', function(req, res) {
   send(res, api.getPost(req.params.post));
 });
 
-app.put('/api/post/:post', function(req, res) {
+app.put('/api/post/:post', requireAdmin, function(req, res) {
   sendOk(res, api.createPost(req.params.post, req.body));
 });
 
-app.post('/api/post/:post', function(req, res) {
+app.post('/api/post/:post', requireAdmin, function(req, res) {
   sendOk(res, api.updatePost(req.params.post, req.body));
 });
 
-app.post('/api/rename-post/:post', function(req, res) {
+app.post('/api/rename-post/:post', requireAdmin, function(req, res) {
   sendOk(res, api.renamePost(req.params.post, req.body.shorturl));
 });
 
-app.delete('/api/post/:post', function(req, res) {
+app.delete('/api/post/:post', requireAdmin, function(req, res) {
   sendOk(res, api.deletePost(req.params.post));
 });
 
