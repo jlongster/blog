@@ -21,7 +21,7 @@ module.exports = React.createClass({
             a({ href: 'mailto:longster@gmail.com' }, 'get in touch'),
             ' with me.'
           ),
-          dom.p(null, '© James Long 2012-2013')
+          dom.p(null, '© James Long 2012-2015')
         )
       )
     );
