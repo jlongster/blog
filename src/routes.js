@@ -13,6 +13,7 @@ const Archive = require('./components/archive');
 const Drafts = require('./components/drafts');
 const Edit = require('./components/edit');
 const Preview = require('./components/preview');
+const NotFound = require('./components/not-found');
 
 const Router = require('react-router');
 const { Route, DefaultRoute, NotFoundRoute } = Elements(Router);
@@ -29,7 +30,8 @@ const routes = Route(
   Route({ name: 'drafts', handler: Drafts }),
   Route({ name: 'preview', handler: Preview }),
   Route({ name: 'post', path: '/:post', handler: Post }),
-  Route({ name: 'edit', path: '/edit/:post', handler: Edit })
+  Route({ name: 'edit', path: '/edit/:post', handler: Edit }),
+  NotFoundRoute({ handler: NotFound })
 );
 
 module.exports = routes;

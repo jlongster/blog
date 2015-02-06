@@ -21,7 +21,6 @@
  * the same directory.
  */
 
-!(function() {
   var hasOwn = Object.prototype.hasOwnProperty;
   var undefined; // More compressible than void 0.
   var iteratorSymbol =
@@ -475,4 +474,3 @@
       return ContinueSentinel;
     }
   };
-})();
