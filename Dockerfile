@@ -2,6 +2,7 @@ FROM jlongster/archlinux
 MAINTAINER James Long <longster@gmail.com>
 RUN pacman --noconfirm -Sy nodejs redis nginx git
 COPY ./sv/redis/ /service/redis
+RUN mkdir -p /var/log/nginx
 COPY ./sv/nginx/ /service/nginx
 COPY ./.built/ /service/site/src-built/
 COPY ./static/ /service/site/static/
