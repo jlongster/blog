@@ -27,7 +27,10 @@ const Post = React.createClass({
       }, { propagate: true });
     },
 
-    bodyClass: 'post'
+    bodyClass: 'post',
+    title: function(props) {
+      return props.post.post && props.post.post.title;
+    }
   },
 
   getInitialState: function() {
@@ -72,7 +75,9 @@ const Post = React.createClass({
                 a({ href: '/' + next.shorturl }, dom.h1(null, next.title)),
                 dom.p({ dangerouslySetInnerHTML: { __html: next.abstract }})
               ]),
-          div({ dangerouslySetInnerHTML: { __html: statics.commentsHTML }})
+          div({ className: 'comments' },
+              dom.a({ href: "https://twitter.com/jlongster" }, "Talk to me"),
+              " on twitter if you have comments.")
         )
       ),
       dom.article(

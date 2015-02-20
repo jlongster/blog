@@ -61,6 +61,7 @@ function run(routes, location, user, initialData) {
       let route = state.routes[state.routes.length - 1];
       if(route.handler.bodyClass) {
         props.bodyClass = route.handler.bodyClass;
+        props.title = route.handler.title
       }
 
       props.user = user;

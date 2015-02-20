@@ -189,9 +189,12 @@ app.get('*', function(req, res, next) {
       }
     };
 
+    let title = typeof props.title === 'function' ? props.title(props.data) : props.title;
     let content = appTemplate({
       content: React.renderToString(React.createElement(Handler, props)),
-      payload: encodeTextContent(JSON.stringify(payload))
+      payload: encodeTextContent(JSON.stringify(payload)),
+      bodyClass: props.bodyClass || '',
+      title: title || 'James Long'
     });
 
     res.send(content);

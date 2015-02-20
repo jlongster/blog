@@ -20,7 +20,6 @@ const Preview = React.createClass({
 
   componentDidMount: function() {
     window.addEventListener('message', ev => {
-      console.log(ev.data.content);
       if(ev.origin !== config.get('url')) {
         return;
       }
@@ -31,7 +30,6 @@ const Preview = React.createClass({
   },
 
   render: function() {
-    console.log(this.state.post);
     if(!this.state.post) {
       return div(null, 'Loading...');
     }

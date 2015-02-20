@@ -27,7 +27,6 @@ const Drafts = React.createClass({
       null,
       dom.h1(null, 'Drafts'),
       dom.ul(null, posts.map(post => {
-        console.log(post.shorturl);
         return dom.li(
           { key: post.shorturl },
           Link({ to: 'post',

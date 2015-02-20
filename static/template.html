@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>James Long</title>
+    <title>{{{ title }}}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
@@ -13,7 +13,7 @@
     <script type="text/javascript" src="//use.typekit.net/eeq3shn.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
   </head>
-  <body>
+  <body class="{{{ bodyClass }}}">
     <div id="mount">{{{ content }}}</div>
     <script id="payload" type="application/payload">{{{ payload }}}</script>
     <script src="/output/bundle.js"></script>
