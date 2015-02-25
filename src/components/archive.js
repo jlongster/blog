@@ -18,7 +18,8 @@ var Archive = React.createClass({
         select: ['title', 'date', 'shorturl']
       });
     },
-    bodyClass: 'posts'
+    bodyClass: 'posts',
+    title: 'All Posts - James Long'
   },
 
   render: function () {
@@ -26,14 +27,14 @@ var Archive = React.createClass({
     return Page(
       null,
       dom.h1(null, 'All Posts'),
-      dom.ul({ className: 'list' }, posts.map(post => {
+      dom.ul({ className: 'list post-list' }, posts.map(post => {
         return dom.li(
-          { className: 'clearfix',
-            key: post.shorturl },
+          { key: post.shorturl },
           Link({ to: 'post',
                  params: { post: post.shorturl }},
                post.title),
-          dom.div({ className: 'date' }, displayDate(post.date))
+          ' ',
+          dom.span({ className: 'date' }, displayDate(post.date))
         );
       }))
     )

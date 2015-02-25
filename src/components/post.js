@@ -22,12 +22,12 @@ const Post = React.createClass({
         if(!post) {
           return {};
         }
-        let readnext = yield api.getPost(post.readnext);
+        let readnext = post.readnext && yield api.getPost(post.readnext);
         return { post: post, readnext: readnext };
       }, { propagate: true });
     },
 
-    bodyClass: 'post',
+    bodyClass: 'post-page',
     title: function(props) {
       return props.post.post && props.post.post.title;
     }
@@ -45,59 +45,67 @@ const Post = React.createClass({
       return NotFound();
     }
 
+    let messages = [
+      'to tell me why I\'m wrong.',
+      'to discuss this post.',
+      'to tell me why you\'re disgusted.',
+      'to tell me what you love about this.',
+      'to hate on me.'
+    ];
+    let messageSuffix = messages[Math.random()*messages.length | 0];
+
     return Page(
-      null,
+      { id: post.shorturl },
       Block(
         { name: 'after-header' },
         post.headerimg && post.headerimgfull &&
-          div({ name: 'after-header' },
-              dom.img({ src: post.headerimg }))
-      ),
-      Block(
-        { name: 'before-content' },
-        div(
-          { className: 'extra' },
-          ul(
-            null,
-            li(null, a({ href: 'https://twitter.com/jlongster' }, 'twitter')),
-            li(null, a({ href: 'https://github.com/jlongster/' }, 'github')),
-            li(null, a({ href: 'http://feeds.feedburner.com/jlongster' }, 'rss'))
-          )
-        )
+          div(null, dom.img({ src: post.headerimg }))
       ),
       Block(
         { name: 'before-footer' },
         div(
-          null,
-          div({ className: 'readnext' },
-              next && [
-                dom.h3(null, 'Read Next'),
-                a({ href: '/' + next.shorturl }, dom.h1(null, next.title)),
-                dom.p({ dangerouslySetInnerHTML: { __html: next.abstract }})
-              ]),
-          div({ className: 'comments' },
-              dom.a({ href: "https://twitter.com/jlongster" }, "Talk to me"),
-              " on twitter if you have comments.")
+          { className: 'additional-footer' },
+          div(
+            { className: 'additional-footer-inner-ugh' },
+            div(
+              { className: 'meta' },
+              div(
+                { className: 'comments' },
+                a({ href: 'https://twitter.com/jlongster' }, 'Tweet at me'),
+                ' ' + messageSuffix
+              ),
+              div(
+                { className: 'social',
+                  dangerouslySetInnerHTML: { __html: statics.socialHTML }})
+            ),
+            next && div(
+              { className: 'readnext' },
+              dom.h3(
+                null,
+                'Read Next: ',
+                a({ href: '/' + next.shorturl }, next.title)
+              ),
+              dom.p({ dangerouslySetInnerHTML: { __html: next.abstract }})
+            )
+          )
         )
       ),
       dom.article(
-        { className: 'clearfix' },
+        { className: 'post' },
         post.headerimg && !post.headerimgfull &&
           div({ className: 'intro-img' },
               dom.img({ src: post.headerimg })),
+
         dom.h1(null, post.title),
         div({ className: 'date' }, displayDate(post.date)),
         div({ dangerouslySetInnerHTML: {
           __html: ghm.parse(this.state.content || post.content)
         }}),
-        div({ className: 'tags' },
-            post.tags && post.tags.map(tag => {
-              return dom.a({ href: '/tag/' + tag }, tag);
-            })),
         div(
-          { className: 'social' },
-          div({ className: 'social-buttons',
-                dangerouslySetInnerHTML: { __html: statics.socialHTML }})
+          { className: 'tags' },
+          post.tags && post.tags.map(tag => {
+            return dom.a({ href: '/tag/' + tag }, tag);
+          })
         )
       )
     );

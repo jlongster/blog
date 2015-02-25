@@ -150,6 +150,14 @@ app.get('/login-callback', function(req, res) {
   );
 });
 
+app.get('/logout', function(req, res) {
+  req.session.oauth_verifier = null;
+  req.session.oauth_token = null;
+  req.session.oauth_secret = null;
+  req.session.username = null;
+  res.redirect('/');
+});
+
 // catch-all 404
 
 app.get('/api/*', function(req, res) {

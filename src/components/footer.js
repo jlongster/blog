@@ -8,20 +8,19 @@ module.exports = React.createClass({
   render: function () {
     return dom.footer(
       null,
+      this.props.children,
       div(
         { className: 'footer-wrapper' },
-        this.props.children,
         div(
           { className: 'footer-text' },
           dom.p(
             null,
-            'Made by James Long, a devtools developer for ',
-            a({ href: 'http://mozilla.org' }, 'Mozilla'),
-            '. Feel free to ',
-            a({ href: 'mailto:longster@gmail.com' }, 'get in touch'),
-            ' with me.'
-          ),
-          dom.p(null, '© James Long 2012-2015')
+            'Written by ',
+            a({ href: 'https://twitter.com/jlongster' }, 'James Long'),
+            ', a developer for Mozilla. ',
+            a({ href: 'mailto:longster@gmail.com' }, 'Get in touch'),
+            '.'
+          )
         )
       )
     );

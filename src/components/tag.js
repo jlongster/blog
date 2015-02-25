@@ -16,22 +16,24 @@ var Tag = React.createClass({
         filter: { tags: params.tag },
         select: ['title', 'tags', 'shorturl', 'date']
       });
-    }
+    },
+
+    bodyClass: 'tag'
   },
 
   render: function () {
     let posts = this.props.data['tag'];
     return Page(
-      { className: 'posts' },
-      dom.h1(null, 'Tag: ' + this.props.routeState.params.tag),
-      dom.ul({ className: 'list' }, posts.map(post => {
+      null,
+      dom.h1(null, 'Posts tagged with "' + this.props.routeState.params.tag + '"'),
+      dom.ul({ className: 'list post-list' }, posts.map(post => {
         return dom.li(
-          { className: 'clearfix',
-            key: post.shorturl },
+          { key: post.shorturl },
           Link({ to: 'post',
                  params: { post: post.shorturl }},
                post.title),
-          dom.div({ className: 'date' }, displayDate(post.date))
+          ' ',
+          dom.span({ className: 'date' }, displayDate(post.date))
         );
       }))
     )

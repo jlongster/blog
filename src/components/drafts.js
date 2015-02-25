@@ -26,13 +26,14 @@ const Drafts = React.createClass({
     return Page(
       null,
       dom.h1(null, 'Drafts'),
-      dom.ul(null, posts.map(post => {
+      dom.ul({ className: 'list post-list' }, posts.map(post => {
         return dom.li(
           { key: post.shorturl },
           Link({ to: 'post',
                  params: { post: post.shorturl }},
                post.title),
-          dom.div({ className: 'date' }, displayDate(post.date))
+          ' ',
+          dom.span({ className: 'date' }, displayDate(post.date))
         );
       }))
     );

@@ -2,8 +2,9 @@ const React = require('react/addons');
 const t = require("transducers.js");
 const { map, filter } = t;
 const debounce = require('debounce');
-const { displayDate } = require("../lib/date");
 const { slugify, Element, Elements } = require('../lib/util');
+const { TextField, Checkbox, Paper } = Elements(require('material-ui'));
+const { displayDate } = require("../lib/date");
 const csp = require('../lib/csp');
 const { go, chan, take, put, ops } = csp;
 const { currentDate } = require("../lib/date");
@@ -134,7 +135,7 @@ const Input = Element(React.createClass({
     return dom.div(
       { className: 'form-group' },
       dom.label(null, this.props.label),
-      (this.props.type === 'textarea' ? dom.textarea : dom.input)({
+      (this.props.type === 'textarea' ? dom.textarea : TextField)({
         type: 'input',
         name: this.props.name,
         value: this.props.value,
@@ -146,29 +147,33 @@ const Input = Element(React.createClass({
   }
 }));
 
-const Checkbox = Element(React.createClass({
-  render: function() {
-    return dom.div(
-      { className: 'checkbox' },
-      dom.label(
-        null,
-        dom.input({ type: 'checkbox',
-                    name: this.props.name,
-                    value: this.props.value,
-                    checked: this.props.checked,
-                    onChange: this.props.onChange }),
-        this.props.label
-      )
-    );
-  }
-}));
+// const Checkbox = Element(React.createClass({
+//   render: function() {
+//     return dom.div(
+//       { className: 'checkbox' },
+//       dom.label(
+//         null,
+//         dom.input({ type: 'checkbox',
+//                     name: this.props.name,
+//                     value: this.props.value,
+//                     checked: this.props.checked,
+//                     onChange: this.props.onChange }),
+//         this.props.label
+//       )
+//     );
+//   }
+// }));
 
 const Settings = Element(React.createClass({
   updateField: function(name, e) {
     let value = e.target.value;
-    if((e.target.type === 'radio' || e.target.type === 'checkbox') &&
-       !e.target.checked) {
-      value = null;
+    if(e.target.type === 'radio' || e.target.type === 'checkbox') {
+      if(!e.target.checked) {
+        value = false;
+      }
+      else {
+        value = true;
+      }
     }
 
     this.props.onUpdate(name, value);
@@ -178,47 +183,62 @@ const Settings = Element(React.createClass({
     let post = this.props.post;
     let error = this.props.validationError;
 
+    function getError(error, field) {
+      return error.field === field ? error.msg : null;
+    }
+
     return dom.form(
       { className: 'settings',
         method: 'post',
         style: this.props.style },
-      dom.div({ className: cx({'error-message': t.toArray(error).length}) },
-              error.msg),
-      Input({ label: 'Abstract',
-              type: 'textarea',
-              name: 'abstract',
-              value: post.abstract,
-              onChange: this.updateField.bind(this, 'abstract') }),
+      dom.div(
+        { className: 'abstract' },
+        dom.label(null, 'Abstract'),
+        Paper(
+          { zDepth: 1 },
+          dom.textarea({
+            type: 'textarea',
+            name: 'abstract',
+            value: post.abstract,
+            onChange: this.updateField.bind(this, 'abstract')
+          })
+        )
+      ),
+      TextField({ floatingLabelText: 'URL',
+                  name: 'shorturl',
+                  value: post.shorturl,
+                  errorText: getError(error, 'shorturl'),
+                  onChange: this.updateField.bind(this, 'shorturl') }),
+      dom.div(
+        { className: 'form-inline' },
+        TextField({ floatingLabelText: 'Tags (comma-separated)',
+                    name: 'tags',
+                    value: post.tags ? post.tags.join(',') : '',
+                    onChange: this.updateField.bind(this, 'tags') }),
+        TextField({ floatingLabelText: 'Read Next',
+                    name: 'readnext',
+                    value: post.readnext,
+                    onChange: this.updateField.bind(this, 'readnext') })
+      ),
+      dom.div(
+        { className: 'form-inline' },
+        TextField({ floatingLabelText: 'Header Image URL',
+                    name: 'headerimg',
+                    value: post.headerimg,
+                    onChange: this.updateField.bind(this, 'headerimg') }),
+        Checkbox({ label: 'Cover Image',
+                   name: 'headerimgfull',
+                   value: 'y',
+                   defaultSwitched: post.headerimgfull,
+                   onCheck: this.updateField.bind(this, 'headerimgfull') })
+      ),
       Checkbox({ label: 'Published',
+                 className: 'published',
                  name: 'published',
-                 value: true,
-                 checked: post.published,
-                 onChange: this.updateField.bind(this, 'published') }),
-      Input({ label: 'Tags',
-              name: 'tags',
-              value: post.tags ? post.tags.join(',') : '',
-              errored: error.field === 'tags',
-              onChange: this.updateField.bind(this, 'tags') }),
-      Input({ label: 'URL',
-              name: 'shorturl',
-              value: post.shorturl,
-              errored: error.field === 'shorturl',
-              onChange: this.updateField.bind(this, 'shorturl') }),
-      Input({ label: 'Header Image',
-              name: 'headerimg',
-              value: post.headerimg,
-              errored: error.field === 'headerimg',
-              onChange: this.updateField.bind(this, 'headerimg') }),
-      Checkbox({ label: 'Full Width Header',
-                 name: 'headerimgfull',
-                 value: true,
-                 checked: post.headerimgfull,
-                 onChange: this.updateField.bind(this, 'headerimgfull') }),
-      Input({ label: 'Read Next',
-              name: 'readnext',
-              value: post.readnext,
-              errored: error.field === 'readnext',
-              onChange: this.updateField.bind(this, 'readnext') })
+                 value: 'y',
+                 defaultSwitched: post.published,
+                 onCheck: this.updateField.bind(this, 'published') })
+
     );
   }
 }));

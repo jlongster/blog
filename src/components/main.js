@@ -9,7 +9,7 @@ module.exports = React.createClass({
     return dom.main(
       null,
       blockFor('before-content', this.props.children),
-      dom.div({ className: "main-wrapper clearfix" },
+      dom.div({ className: "main-wrapper" },
               this.props.children)
     );
   }

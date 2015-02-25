@@ -54,7 +54,8 @@ const App = React.createClass({
           Link({ to: 'drafts' }, 'Drafts'),
           route.name === 'post' &&
             Link({ to: 'edit', params: { post: routeState.params.post }}, 'Edit'),
-          Link({ to: 'edit', params: { post: 'new' }}, 'New')
+          Link({ to: 'edit', params: { post: 'new' }}, 'New'),
+          dom.a({ href: '/logout' }, 'Logout')
         )
     );
   }

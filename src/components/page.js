@@ -15,16 +15,23 @@ const Page = React.createClass({
   displayName: 'Page',
 
   render: function() {
+    let extraHeader = blockFor('after-header', this.props.children);
+
     return dom.div(
-      { className: this.props.className },
-      Header(null, blockFor('after-header', this.props.children)),
+      { className: this.props.className,
+        id: this.props.id },
+      Header(
+        { className: extraHeader ? 'collapse' : '' },
+        extraHeader
+      ),
       Main(
         null,
         Block({ name: 'before-content' },
               blockFor('before-content', this.props.children)),
         this.props.children
       ),
-      Footer(null, blockFor('before-footer', this.props.children))
+      blockFor('before-footer', this.props.children),
+      Footer(null)
     );
   }
 });
