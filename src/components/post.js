@@ -22,7 +22,15 @@ const Post = React.createClass({
         if(!post) {
           return {};
         }
-        let readnext = post.readnext && yield api.getPost(post.readnext);
+
+        let readnext;
+        if(post.readnext) {
+          let results = yield api.queryPosts({
+            select: ['title', 'abstract'],
+            filter: { shorturl: post.readnext }
+          });
+          readnext = results[0];
+        }
         return { post: post, readnext: readnext };
       }, { propagate: true });
     },
@@ -34,7 +42,39 @@ const Post = React.createClass({
   },
 
   getInitialState: function() {
-    return { content: null };
+    // We have to keep this in state because we randomly choose one of
+    // these, but we can't run that on the server so do it in
+    // componentDidMount
+    let messages = [
+      'to tell me why I\'m wrong.',
+      'to discuss this post.',
+      'to tell me why you\'re disgusted.',
+      'to tell me what you love about this.',
+      'to hate on me.'
+    ];
+    return { messages: messages, messageSuffix: '' };
+  },
+
+  componentDidMount: function() {
+    let messages = this.state.messages;
+    let messageSuffix = messages[Math.random()*messages.length | 0];
+    this.setState({ messageSuffix: messageSuffix });
+
+    // TODO: turn markdown into React nodes
+    let article = this.getDOMNode().querySelector('article');
+    let articleRect = article.getBoundingClientRect();
+
+    let anchorables = this.getDOMNode().querySelectorAll(
+      'article h2, article h3, article h4'
+    );
+    for(var i=0; i<anchorables.length; i++) {
+      let anchorable = anchorables[i];
+      let anchor = document.createElement('a');
+      anchor.href = '#' + anchorable.id;
+      anchor.className = 'text-anchor';
+      anchor.textContent = '#';
+      anchorable.appendChild(anchor);
+    }
   },
 
   render: function () {
@@ -45,22 +85,17 @@ const Post = React.createClass({
       return NotFound();
     }
 
-    let messages = [
-      'to tell me why I\'m wrong.',
-      'to discuss this post.',
-      'to tell me why you\'re disgusted.',
-      'to tell me what you love about this.',
-      'to hate on me.'
-    ];
-    let messageSuffix = messages[Math.random()*messages.length | 0];
-
     return Page(
-      { id: post.shorturl },
+      // TODO: Hack to replace commas because those aren't valid ids.
+      // Need to disallows commas in URLs.
+      { id: post.shorturl.replace(',', '-') },
+
       Block(
         { name: 'after-header' },
         post.headerimg && post.headerimgfull &&
           div(null, dom.img({ src: post.headerimg }))
       ),
+
       Block(
         { name: 'before-footer' },
         div(
@@ -72,11 +107,10 @@ const Post = React.createClass({
               div(
                 { className: 'comments' },
                 a({ href: 'https://twitter.com/jlongster' }, 'Tweet at me'),
-                ' ' + messageSuffix
+                ' ' + this.state.messageSuffix
               ),
-              div(
-                { className: 'social',
-                  dangerouslySetInnerHTML: { __html: statics.socialHTML }})
+              div({ className: 'social',
+                    dangerouslySetInnerHTML: { __html: statics.socialHTML }})
             ),
             next && div(
               { className: 'readnext' },
@@ -90,6 +124,7 @@ const Post = React.createClass({
           )
         )
       ),
+
       dom.article(
         { className: 'post' },
         post.headerimg && !post.headerimgfull &&
@@ -99,7 +134,7 @@ const Post = React.createClass({
         dom.h1(null, post.title),
         div({ className: 'date' }, displayDate(post.date)),
         div({ dangerouslySetInnerHTML: {
-          __html: ghm.parse(this.state.content || post.content)
+          __html: ghm.parse(post.content)
         }}),
         div(
           { className: 'tags' },

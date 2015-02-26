@@ -132,6 +132,11 @@ var g_html_blocks;
 // Used to track when we're inside an ordered or unordered list
 // (see _ProcessListItems() for details):
 var g_list_level = 0;
+var g_curAnchor = 1;
+
+function nextAnchor() {
+  return g_curAnchor++;
+}
 
 // isaacs - Allow passing in the GitHub object as an argument.
 this.makeHtml = function(text, gh) {
@@ -153,7 +158,8 @@ this.makeHtml = function(text, gh) {
 	// articles):
 	g_urls = new Array();
 	g_titles = new Array();
-	g_html_blocks = new Array();
+    g_html_blocks = new Array();
+    g_curAnchor = 1;
 
 	// attacklab: Replace ~ with ~T
 	// This lets us use tilde as an escape char to avoid md5 hashes
@@ -452,7 +458,7 @@ var _RunBlockGamut = function(text) {
 //
 // These are all the transformations that form block-level
 // tags like paragraphs, headers, and list items.
-//
+  //
 	text = _DoHeaders(text);
 
 	// Do Horizontal Rules:
@@ -799,8 +805,10 @@ var _DoHeaders = function(text) {
 
 	text = text.replace(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,
 		function(wholeMatch,m1,m2) {
-			var h_level = m1.length;
-			return hashBlock("<h" + h_level + ">" + _RunSpanGamut(m2) + "</h" + h_level + ">");
+		  var h_level = m1.length;
+          var id = m2.replace(/[ \n!@#$%^&*()\[\]`:"'|?=<>]/g, '-').slice(0, 20);
+          id = id.replace(/(^-*|-*$)/g, '');
+		  return hashBlock("<h" + h_level + " id=\"" + id + "\">" + _RunSpanGamut(m2) + "</h" + h_level + ">");
 		});
 
 	return text;
@@ -943,7 +951,7 @@ _ProcessListItems = function(list_str) {
 				item = _RunSpanGamut(item);
 			}
 
-			return  "<li>" + item + "</li>\n";
+  		  return  "<li id=\"li" + nextAnchor() + "\">" + item + "</li>\n";
 		}
 	);
 
@@ -1218,7 +1226,7 @@ var _FormParagraphs = function(text) {
 		else if (str.search(/\S/) >= 0) {
 			str = _RunSpanGamut(str);
 			str = str.replace(/\n/g,"<br />");  // ** GFM **
-			str = str.replace(/^([ \t]*)/g,"<p>");
+   		    str = str.replace(/^([ \t]*)/g,"<p id=\"p" + nextAnchor() + "\">");
 			str += "</p>"
 			grafsOut.push(str);
 		}

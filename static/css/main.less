@@ -172,7 +172,7 @@ a, a:active {
    .link-underline();
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
     a {
         .link-underline-none();
     }
@@ -222,14 +222,7 @@ button {
 
 .right-link {
     text-align: right;
-
-    a {
-        .bare-link();
-    }
-    
-    a::after {
-        content: " →";
-    }
+    a::after { content: " →"; }
 }
 
 /* header */
@@ -482,6 +475,35 @@ footer {
     }
 
     article h2, article h3, article h4 {
+        position: relative;
+        padding-left: 1.25em;
+        margin-left: -1.25em;
+
+        .text-anchor {
+            display: none;
+        }
+
+        &:hover .text-anchor {
+            display: block;
+        }
+    }
+    
+    article p, article li {
+        position: relative;
+    }
+
+    article .text-anchor {
+        display: block;
+        position: absolute;
+        top: -1px;
+        left: 0;
+        font-weight: normal;
+        color: #b0b0b0;
+        font-size: 1.2em;
+        &:hover { .link-underline-none(); }
+    }
+
+    article h2, article h3, article h4 {
         margin-top: 2em;
     }
     
@@ -534,4 +556,10 @@ footer {
 #Stop-Writing-JavaScript-Compilers--Make-Macros-Instead {
     header .links a { color: inherit; }
     header .links a:hover { color: @darkOrange; }
+}
+
+#Removing-User-Interface-Complexity--or-Why-React-is-Awesome {
+    article .text-anchor {
+        left: .25em;
+    }
 }

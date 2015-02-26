@@ -31,18 +31,16 @@ let { router, pageChan } = bootstrap.run(
   payload.data
 );
 
-if(window.location.pathname.indexOf('/edit') === 0) {
-  go(function*() {
-    // Since we use RefreshLocation now, we actually don't need to loop
-    // here. All location changes will use a full refresh. But keep this
-    // here for reference until I pull this out into a generic app template.
-    while(true) {
-      let { Handler, props } = yield take(pageChan);
-      React.render(React.createElement(Handler, props),
-                   document.getElementById('mount'));
-    }
-  });
-}
+go(function*() {
+  // Since we use RefreshLocation now, we actually don't need to loop
+  // here. All location changes will use a full refresh. But keep this
+  // here for reference until I pull this out into a generic app template.
+  while(true) {
+    let { Handler, props } = yield take(pageChan);
+    React.render(React.createElement(Handler, props),
+                 document.getElementById('mount'));
+  }
+});
 
 window.relocate = function(url) {
   router.replaceWith(url);
