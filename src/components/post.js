@@ -26,7 +26,7 @@ const Post = React.createClass({
         let readnext;
         if(post.readnext) {
           let results = yield api.queryPosts({
-            select: ['title', 'abstract'],
+            select: ['title', 'abstract', 'shorturl'],
             filter: { shorturl: post.readnext }
           });
           readnext = results[0];

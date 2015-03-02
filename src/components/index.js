@@ -69,7 +69,7 @@ let Index = React.createClass({
       ),
       div({ className: 'additional-footer attribute' },
           div({ className: 'additional-footer-inner-ugh' },
-              'Header image derived from Steve Gildea, ',
+              'Header image derived with permission from Steve Gildea, ',
               a({ href: 'http://suite3d.com/' }, 'suite3d.com'))),
       Footer()
     )
