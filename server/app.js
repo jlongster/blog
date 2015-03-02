@@ -9,7 +9,7 @@ const handlebars = require('handlebars');
 
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
-const { go, chan, take, put, operations: ops } = require('../src/lib/csp');
+const { go, chan, take, put, operations: ops } = require('js-csp');
 const { encodeTextContent, Element, Elements } = require('../src/lib/util');
 const ServerError = require('../src/components/server-error');
 const routes = require('../src/routes');

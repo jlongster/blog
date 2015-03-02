@@ -1,9 +1,9 @@
 var fs = require('fs');
 var _ = require('transducers.js');
 var moment = require('moment');
-var api = require('../.built/server/impl/api');
-var { go, chan, take, put, operations: ops } = require('../.built/src/lib/csp');
-var { slugify, invokeCallbackM, takeArray } = require('../.built/src/lib/util');
+var api = require('impl/api');
+var { go, chan, take, put, operations: ops } = require('js-csp');
+var { slugify, invokeCallbackM, takeArray } = require('../src/lib/util');
 var ipsum = fs.readFileSync(__dirname + '/ipsum.txt', 'utf8');
 var len = ipsum.length;
 

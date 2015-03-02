@@ -1,9 +1,5 @@
 
-* Get host-forwarded-for IP working in nginx logs
-* Make section titles linkable
-* Integrate clustering?
-* Integrate slimerjs for testing, create docker image and somehow run in VM
-* Be wiser and use volumes to manage data (especially redis db), and back them up somehow
+* Back up database
 
 # Deployment
 

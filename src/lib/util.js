@@ -1,6 +1,6 @@
 const React = require("react");
 const invariant = require("react/lib/invariant");
-var csp = require('./csp');
+var csp = require('js-csp');
 var { go, chan, take, put } = csp;
 
 function encodeTextContent(str) {

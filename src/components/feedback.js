@@ -1,7 +1,7 @@
 const t = require("transducers.js");
 const React = require("react");
 const dom = React.DOM;
-const csp = require("../lib/csp");
+const csp = require("js-csp");
 const { go, chan, take, put, ops } = csp;
 const { Element, Elements } = require("../lib/util");
 const { Link } = Elements(require("react-router"));

@@ -1,6 +1,6 @@
 const React = require('react');
 const { Element, Elements } = require('../lib/util');
-const csp = require('../lib/csp');
+const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
 const Page = Element(require('./page'));
 

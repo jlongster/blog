@@ -1,6 +1,6 @@
 const redis = require('redis');
 const nconf = require('nconf');
-const csp = require('../../src/lib/csp');
+const csp = require('js-csp');
 const { go, chan, take, put, operations: ops } = csp;
 const {
   invokeCallback, invokeCallbackM, takeAll

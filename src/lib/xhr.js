@@ -1,4 +1,4 @@
-const csp = require('./csp');
+const csp = require('js-csp');
 const { go, chan, take, put } = csp;
 const _xhr = require('xhr');
 

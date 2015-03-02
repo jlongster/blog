@@ -1,6 +1,6 @@
 const t = require('transducers.js');
 const { filter } = t;
-const csp = require('src/lib/csp');
+const csp = require('js-csp');
 const { go, chan, take, put, operations: ops } = csp;
 const xhr = require('src/lib/xhr');
 

@@ -1,7 +1,7 @@
 const Router = require('react-router');
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
-const csp = require('./lib/csp');
+const csp = require('js-csp');
 const { go, chan, take, put, Throw, operations: ops } = csp;
 const api = require('impl/api');
 

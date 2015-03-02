@@ -1,7 +1,7 @@
 const React = require('react');
 const { Element, Elements } = require('../lib/util');
 const { Link } = Elements(require("react-router"));
-const csp = require('../lib/csp');
+const csp = require('js-csp');
 const { displayDate } = require("../lib/date");
 const { go, chan, take, put, ops } = csp;
 const Main = Element(require('./main'));
