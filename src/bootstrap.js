@@ -39,7 +39,7 @@ function fetchData(state, user) {
   });
 }
 
-function run(routes, location, user, initialData) {
+function run(routes, location, additionalProps, initialData) {
   let ch = chan();
   let router = Router.run(routes, location, (Handler, state) => {
     go(function*() {
@@ -51,7 +51,7 @@ function run(routes, location, user, initialData) {
       }
       else {
         try {
-          props.data = yield fetchData(state, user);
+          props.data = yield fetchData(state, additionalProps.user);
         }
         catch(e) {
           props.error = e;
@@ -61,10 +61,14 @@ function run(routes, location, user, initialData) {
       let route = state.routes[state.routes.length - 1];
       if(route.handler.bodyClass) {
         props.bodyClass = route.handler.bodyClass;
-        props.title = route.handler.title
       }
 
-      props.user = user;
+      if(route.handler.title) {
+        let title = route.handler.title;
+        props.title = typeof title === 'function' ? title(props.data) : title;
+      }
+
+      props = t.merge(props, additionalProps);
       props.routeState = state;
       props.params = state.params;
 

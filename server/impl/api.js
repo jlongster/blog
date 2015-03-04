@@ -52,7 +52,8 @@ let postFields = [
   'tags',
   'headerimg',
   'headerimgfull',
-  'readnext'
+  'readnext',
+  'assets'
 ];
 
 // db representation -> JSON type
@@ -256,6 +257,7 @@ function updatePost(shorturl, props) {
       return csp.Throw(new Error('post does not exist: ' + shorturl));
     }
 
+    console.log(props);
     yield db('hmset', key, props);
 
     _finalizeEdit(key, props.date);

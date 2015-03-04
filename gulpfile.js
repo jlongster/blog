@@ -1,18 +1,21 @@
-var path = require('path');
 var fs = require('fs');
+var path = require('path');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
 var rename = require('gulp-rename');
 var to5 = require('gulp-6to5');
-var webpack = require('webpack');
 var gutil = require('gulp-util');
+var webpack = require('webpack');
 var DeepMerge = require('deep-merge');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var nodemon = require('nodemon');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var t = require('transducers.js');
 
 var deepmerge = DeepMerge(function(target, source, key) {
-  return [].concat(target, source);
+  if(target instanceof Array) {
+    return [].concat(target, source);
+  }
+  return source;
 });
 
 // generic config
@@ -43,50 +46,36 @@ if(process.env.NODE_ENV === 'production') {
     new webpack.optimize.OccurenceOrderPlugin()
   ]);
 }
+else {
+  defaultConfig.devtool = 'sourcemap';
+  defaultConfig.debug = true;
+}
 
-function config(overrides, isFrontend) {
-  var c = deepmerge(defaultConfig, overrides || {});
+function config(overrides) {
+  return deepmerge(defaultConfig, overrides || {});
+}
 
-  if(isFrontend) {
-    c = deepmerge(c, {
-      module: {
-        loaders: [
-          {test: /\.less$/, loader: ExtractTextPlugin.extract("style-loader", "css!less") },
-          {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css") }
-        ]
-      },
-      plugins: [new ExtractTextPlugin('styles.css')]
-    });
+// output
 
-    if(process.env.NODE_ENV === 'production') {
-      c = deepmerge({
-        plugins: [
-          new webpack.DefinePlugin({
-            "process.env": {
-              NODE_ENV: JSON.stringify("production")
-            }
-          }),
-          new webpack.optimize.DedupePlugin(),
-          new webpack.optimize.UglifyJsPlugin({
-            mangle: {
-              except: ['GeneratorFunction', 'GeneratorFunctionPrototype']
-            }
-          })
-        ]
-      });
-    }
-    else {
-      c.devtool = 'sourcemap';
-      c.debug = true;
+var outputOptions = {
+  cached: false,
+  cachedAssets: false,
+  context: process.cwd(),
+  json: false,
+  colors: true,
+  modules: true,
+  chunks: false,
+  reasons: false,
+  errorDetails: false,
+  chunkOrigins: false,
+  exclude: ["node_modules", "components"]
+};
 
-    }
+function onBuild(err, stats) {
+  if(err) {
+    throw new Error(err);
   }
-  else {
-    c.devtool = 'sourcemap';
-    c.debug = true;
-  }
-
-  return c;
+  console.log(stats.toString(outputOptions));
 }
 
 // frontend
@@ -94,9 +83,15 @@ function config(overrides, isFrontend) {
 var frontendConfig = config({
   entry: './static/js/main.js',
   output: {
-    path: path.join(__dirname, 'build/static'),
-    publicPath: '/static/',
+    path: path.join(__dirname, 'static/build'),
+    publicPath: '/build/',
     filename: 'frontend.js'
+  },
+  module: {
+    loaders: [
+      {test: /\.less$/, loader: ExtractTextPlugin.extract("style-loader", "css!less") },
+      {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css") }
+    ]
   },
   resolve: {
     alias: {
@@ -104,8 +99,25 @@ var frontendConfig = config({
       'static': 'static',
       'config.json': 'config/browser.json'
     }
-  }
-}, true);
+  },
+  plugins: [new ExtractTextPlugin('styles.css')]
+});
+
+if(process.env.NODE_ENV === 'production') {
+  frontendConfig.plugins = frontendConfig.plugins.concat([
+    new webpack.DefinePlugin({
+      "process.env": {
+        NODE_ENV: JSON.stringify("production")
+      }
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      mangle: {
+        except: ['GeneratorFunction', 'GeneratorFunctionPrototype']
+      }
+    })
+  ]);
+}
 
 // backend
 
@@ -137,16 +149,22 @@ var backendConfig = config({
     cb();
   },
   plugins: [
-    new webpack.IgnorePlugin(/\.(css|less)$/)
-  ]
+    new webpack.IgnorePlugin(/\.(css|less)$/),
+    new webpack.BannerPlugin('require("source-map-support").install();',
+                             { raw: true, entryOnly: false }),
+  ],
+  devtool: 'sourcemap'
 });
 
-if(process.env.NODE_ENV !== 'production') {
-  backendConfig.plugins.unshift(
-    new webpack.BannerPlugin('require("source-map-support").install();',
-                             { raw: true, entryOnly: false })
-  )
-}
+// if(process.env.NODE_ENV !== 'production') {
+//   // Disable server rendering in development because it makes build
+//   // times longer (and makes debugging more predictable)
+//   backendConfig.plugins.push(
+//     new webpack.DefinePlugin({
+//       "process.env.NO_SERVER_RENDERING": true
+//     })
+//   );
+// }
 
 // bin scripts
 
@@ -154,36 +172,14 @@ var bin_modules = t.toObj(fs.readdirSync('bin'), t.compose(
   t.filter(function(x) { return x.indexOf('.js') !== -1; }),
   t.map(function(x) { return [x.replace('.js', ''), path.join('./bin', x)]; })
 ));
-var binConfig = deepmerge(backendConfig, {});
+var binConfig = deepmerge(backendConfig, {
+  output: {
+    path: path.join(__dirname, 'build/bin'),
+    filename: 'populate.js'
+  },
+  node: { __dirname: true }
+});
 binConfig.entry = bin_modules;
-binConfig.output = {
-  path: path.join(__dirname, 'build/bin'),
-  filename: 'populate.js'
-};
-binConfig.node.__dirname = true;
-
-// output
-
-var outputOptions = {
-  cached: false,
-  cachedAssets: false,
-  context: process.cwd(),
-  json: false,
-  colors: true,
-  modules: true,
-  chunks: false,
-  reasons: false,
-  errorDetails: false,
-  chunkOrigins: false,
-  exclude: ["node_modules", "components"]
-};
-
-function onBuild(err, stats) {
-  if(err) {
-    throw new gutil.PluginError("webpack", err);
-  }
-  gutil.log(stats.toString(outputOptions));
-}
 
 // tasks
 
@@ -194,69 +190,62 @@ gulp.task("transform-modules", function() {
     .pipe(gulp.dest('build/csp'));
 });
 
-gulp.task("bin", function(done) {
-  webpack(binConfig, function(err, stats) {
+gulp.task("backend", function(done) {
+  webpack(backendConfig).run(function(err, stats) {
     onBuild(err, stats);
     done();
   });
-});
-
-gulp.task("bin-run", function() {
-  webpack(binConfig).watch(100, onBuild);
 });
 
 gulp.task("frontend", function(done) {
-  webpack(frontendConfig, function(err, stats) {
+  webpack(frontendConfig).run(function(err, stats) {
     onBuild(err, stats);
     done();
   });
 });
 
-gulp.task("frontend-run", function() {
-  webpack(frontendConfig).watch(100, onBuild);
+gulp.task("bin", function() {
+  webpack(binConfig).run(onBuild);
 });
 
-gulp.task("backend", function(done) {
-  webpack(backendConfig, function(err, stats) {
-    onBuild(err, stats);
-    done();
-  });
-});
-
-gulp.task("backend-run", ["nodemon"], function(done) {
-  done();
-  gutil.log('Backend warming up');
-
+gulp.task("backend-watch", function(done) {
+  gutil.log('Backend warming up...');
+  var firedDone = false;
   webpack(backendConfig).watch(100, function(err, stats) {
+    if(!firedDone) { done(); firedDone = true; }
     onBuild(err, stats);
     nodemon.restart();
   });
 });
 
-gulp.task("nodemon", function() {
+gulp.task('frontend-watch', function(done) {
+  gutil.log('Frontend warming up...');
+  var firedDone = false;
+  webpack(frontendConfig).watch(100, function(err, stats) {
+    if(!firedDone) { done(); firedDone = true; }
+    onBuild(err, stats);
+  });
+});
+
+gulp.task("bin-watch", function(done) {
+  done();
+  webpack(binConfig).watch(100, onBuild);
+});
+
+gulp.task("build", ["backend", "frontend"]);
+gulp.task("watch", ["backend-watch", "frontend-watch"]);
+
+gulp.task("run", ["watch"], function() {
   nodemon({
     execMap: {
       js: 'node'
     },
+    ignore: ["*"],
+    watch: ["bin/"],
     script: path.join(__dirname, 'build/backend'),
-    ext: 'noop'
+    ext: 'noop',
+    env: process.env
   }).on('restart', function() {
     console.log('restarted!');
-  });
-});
-
-gulp.task("build", function(done) {
-  webpack([frontendConfig, backendConfig], function(err, stats) {
-    onBuild(err, stats);
-    done();
-  });
-});
-
-gulp.task("run", ["nodemon"], function(done) {
-  done();
-  gutil.log('Frontend & backend warming up');
-  webpack([frontendConfig, backendConfig]).watch(100, function(err, stats) {
-    onBuild(err, stats);
-    nodemon.restart();
   });
 });

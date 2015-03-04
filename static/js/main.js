@@ -3,8 +3,9 @@ const Router = require('react-router');
 const { Routes, Route, DefaultRoute } = Router;
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
+const cookie = require('cookie');
 const csp = require('js-csp');
-const { go, chan, take, put, operations: ops } = csp;
+const { go, chan, take, put, timeout, operations: ops } = csp;
 const { decodeTextContent } = require('../../src/lib/util');
 const config = require('../../src/lib/config');
 const bootstrap = require('../../src/bootstrap');
@@ -27,19 +28,14 @@ config.load(payload.config);
 let { router, pageChan } = bootstrap.run(
   routes,
   Router.RefreshLocation,
-  payload.user,
+  { user: payload.user },
   payload.data
 );
 
 go(function*() {
-  // Since we use RefreshLocation now, we actually don't need to loop
-  // here. All location changes will use a full refresh. But keep this
-  // here for reference until I pull this out into a generic app template.
-  while(true) {
-    let { Handler, props } = yield take(pageChan);
-    React.render(React.createElement(Handler, props),
-                 document.getElementById('mount'));
-  }
+  let { Handler, props } = yield take(pageChan);
+  React.render(React.createElement(Handler, props),
+               document.getElementById('mount'));
 });
 
 window.relocate = function(url) {

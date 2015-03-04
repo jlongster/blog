@@ -50,7 +50,8 @@ let Index = React.createClass({
           { className: 'posts' },
           posts.map(post => {
             return div(
-              { className: 'post' },
+              { className: 'post',
+                key: post.shorturl },
               dom.h1(null,
                      Link({ to: 'post',
                             params: { post: post.shorturl }},

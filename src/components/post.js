@@ -13,6 +13,36 @@ const statics = require('impl/statics');
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
 
+const RandomMessage = Element(React.createClass({
+  getInitialState: function() {
+    // We have to keep this in state because we randomly choose one of
+    // these, but we can't run that on the server so do it in
+    // componentDidMount
+    let messages = [
+      'to tell me why I\'m wrong.',
+      'to discuss this post.',
+      'to tell me why you\'re disgusted.',
+      'to tell me what you love about this.',
+      'to hate on me.'
+    ];
+    return { messages: messages, messageSuffix: '' };
+  },
+
+  componentDidMount: function() {
+    let messages = this.state.messages;
+    let messageSuffix = messages[Math.random()*messages.length | 0];
+    this.setState({ messageSuffix: messageSuffix });
+  },
+
+  render: function() {
+    return dom.div(
+      null,
+      a({ href: 'https://twitter.com/jlongster' }, 'Tweet at me'),
+      ' ' + this.state.messageSuffix
+    );
+  }
+}));
+
 const Post = React.createClass({
   displayName: 'Post',
   statics: {
@@ -41,25 +71,7 @@ const Post = React.createClass({
     }
   },
 
-  getInitialState: function() {
-    // We have to keep this in state because we randomly choose one of
-    // these, but we can't run that on the server so do it in
-    // componentDidMount
-    let messages = [
-      'to tell me why I\'m wrong.',
-      'to discuss this post.',
-      'to tell me why you\'re disgusted.',
-      'to tell me what you love about this.',
-      'to hate on me.'
-    ];
-    return { messages: messages, messageSuffix: '' };
-  },
-
   componentDidMount: function() {
-    let messages = this.state.messages;
-    let messageSuffix = messages[Math.random()*messages.length | 0];
-    this.setState({ messageSuffix: messageSuffix });
-
     // TODO: turn markdown into React nodes
     let article = this.getDOMNode().querySelector('article');
     let articleRect = article.getBoundingClientRect();
@@ -74,6 +86,15 @@ const Post = React.createClass({
       anchor.className = 'text-anchor';
       anchor.textContent = '#';
       anchorable.appendChild(anchor);
+    }
+
+    let post = this.props.data['post'].post;
+    if(post.assets) {
+      // TODO: this is a big hack right now and I'm not even going to
+      // explain why... let's just say I need to fix this
+      let script = document.createElement('script');
+      script.src = post.assets;
+      this.getDOMNode().appendChild(script);
     }
   },
 
@@ -106,8 +127,7 @@ const Post = React.createClass({
               { className: 'meta' },
               div(
                 { className: 'comments' },
-                a({ href: 'https://twitter.com/jlongster' }, 'Tweet at me'),
-                ' ' + this.state.messageSuffix
+                RandomMessage()
               ),
               div({ className: 'social',
                     dangerouslySetInnerHTML: { __html: statics.socialHTML }})
@@ -139,7 +159,7 @@ const Post = React.createClass({
         div(
           { className: 'tags' },
           post.tags && post.tags.map(tag => {
-            return dom.a({ href: '/tag/' + tag }, tag);
+            return dom.a({ key: tag, href: '/tag/' + tag }, tag);
           })
         )
       )

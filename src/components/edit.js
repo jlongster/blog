@@ -23,6 +23,10 @@ const updatePreview = debounce(function(previewWindow, post) {
 }, 200);
 
 const Editor = Element(React.createClass({
+  getInitialState: function() {
+    return { dragging: false };
+  },
+
   componentDidMount: function() {
     require(
       ['static/js/editor/editor.js', 'static/css/codemirror-zenburn.css'],
@@ -51,6 +55,33 @@ const Editor = Element(React.createClass({
             this.props.onChange(m.getValue());
           }
         });
+
+        mirror.on('drop', (m, e) => {
+          let { line, ch } = m.coordsChar({ left: e.clientX,
+                                            top: e.clientY});
+
+          e.preventDefault();
+          let files = e.dataTransfer.files;
+          let formdata = new FormData();
+          for(var i=0; i<files.length; i++) {
+            formdata.append('file', files[i]);
+          }
+
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/upload');
+          xhr.onload = function() {
+            m.setCursor(line, ch);
+            if(xhr.status === 200) {
+              m.replaceRange('![](' + xhr.response + ')', { line: line, ch: ch });
+            }
+            else {
+              m.replaceRange('(error uploading)', { line: line, ch: ch });
+            }
+          };
+
+          xhr.send(formdata);
+        });
+
         this.mirror = mirror;
       }
     );
@@ -79,9 +110,16 @@ const Editor = Element(React.createClass({
     this.changeFired = false;
   },
 
+  handleDragOver: function() {
+    this.setState({ dragging: true });
+  },
+
   render: function() {
-    return dom.div({ className: 'editor',
-                     style: this.props.style });
+    return dom.div({ className: cx({ 'editor': true, 'dragging': this.state.dragging }),
+                     style: this.props.style,
+                     onDragOver: this.handleDragOver,
+                     onDragEnd: this.handleDragEnd,
+                     onDrop: this.handleDrop });
   }
 }));
 
@@ -232,6 +270,10 @@ const Settings = Element(React.createClass({
                    defaultSwitched: post.headerimgfull,
                    onCheck: this.updateField.bind(this, 'headerimgfull') })
       ),
+      TextField({ floatingLabelText: 'External Assets',
+                  name: 'resource',
+                  value: post.assets,
+                  onChange: this.updateField.bind(this, 'assets') }),
       Checkbox({ label: 'Published',
                  className: 'published',
                  name: 'published',

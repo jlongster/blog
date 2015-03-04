@@ -1,7 +1,10 @@
 const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const session = require('cookie-session');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const busboy = require('connect-busboy');
 const React = require('react');
 const nconf = require('nconf');
 const oauth = require('oauth');
@@ -9,15 +12,12 @@ const handlebars = require('handlebars');
 
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
-const { go, chan, take, put, operations: ops } = require('js-csp');
+const { go, chan, take, put, timeout, operations: ops } = require('js-csp');
 const { encodeTextContent, Element, Elements } = require('../src/lib/util');
-const ServerError = require('../src/components/server-error');
-const routes = require('../src/routes');
 const api = require('./impl/api');
 const feed = require('./feed');
 const statics = require('./impl/statics');
 const relativePath = require('./relative-path');
-const bootstrap = require('../src/bootstrap');
 
 nconf.argv().env('_').file({
   file: relativePath('../config/config.json')
@@ -29,6 +29,8 @@ let app = express();
 app.use(express.static(relativePath('../static')));
 app.use(session({ keys: ['foo'] }));
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(busboy());
 
 let appTemplate = handlebars.compile(statics.baseHTML);
 
@@ -106,6 +108,22 @@ app.delete('/api/post/:post', requireAdmin, function(req, res) {
   sendOk(res, api.deletePost(req.params.post));
 });
 
+app.post('/api/upload', requireAdmin, function(req, res) {
+  req.busboy.on('file', function(fieldname, file, filename) {
+    let dir = nconf.get('uploadDir');
+    if(!dir) {
+      throw new Error('uploadDir config not set');
+    }
+
+    let fstream = fs.createWriteStream(path.join(dir, filename));
+    file.pipe(fstream);
+    fstream.on('close', function () {
+      res.send(nconf.get('url') + nconf.get('uploadURL') + '/' + filename);
+    })
+  });
+  req.pipe(req.busboy);
+});
+
 // login
 
 let oauthManager = new oauth.OAuth(
@@ -174,35 +192,61 @@ app.get('/atom.xml', function(req, res) {
   });
 });
 
+let routes, bootstrap;
+if(!process.env.NO_SERVER_RENDERING) {
+  // Only pull this in if we are server-rendering so that development
+  // build times are fast
+  routes = require('../src/routes');
+  bootstrap = require('../src/bootstrap');
+}
+
 app.get('*', function(req, res, next) {
+  let disableServerRendering = (
+    process.env.NO_SERVER_RENDERING || req.cookies.renderOnServer === 'n'
+  );
+
   go(function*() {
-    let { router, pageChan } = bootstrap.run(
-      routes,
-      req.path,
-      { name: req.session.username,
-        admin: isAdmin(req.session.username) }
-    );
-    let { Handler, props } = yield take(pageChan);
-
-    if(process.env.NODE_ENV !== 'production' && props.error) {
-      res.send(props.error.stack);
-      throw props.error;
-    }
-
     let payload = {
-      data: props.data,
-      user: props.user,
+      user: { name: req.session.username,
+              admin: isAdmin(req.session.username) },
       config: {
         url: nconf.get('url')
       }
     };
+    let title = 'James Long';
+    let bodyClass = '';
+    let content = 'Loading...';
 
-    let title = typeof props.title === 'function' ? props.title(props.data) : props.title;
+    if(!disableServerRendering) {
+      let { router, pageChan } = bootstrap.run(
+        routes,
+        req.path,
+        { user: payload.user }
+      );
+      let { Handler, props } = yield take(pageChan);
+      payload.data = props.data;
+
+      if(process.env.NODE_ENV !== 'production' && props.error) {
+        res.send(props.error.stack);
+        throw props.error;
+      }
+
+      if(props.title) {
+        title = typeof props.title === 'function' ?
+          props.title(props.data) :
+          props.title;
+      }
+      if(props.bodyClass) {
+        bodyClass = props.bodyClass;
+      }
+      content = React.renderToString(React.createElement(Handler, props))
+    }
+
     let content = appTemplate({
-      content: React.renderToString(React.createElement(Handler, props)),
+      content: content,
       payload: encodeTextContent(JSON.stringify(payload)),
-      bodyClass: props.bodyClass || '',
-      title: title || 'James Long'
+      bodyClass: bodyClass,
+      title: title
     });
 
     res.send(content);

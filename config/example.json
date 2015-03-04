@@ -11,5 +11,7 @@
     "app_key": "",
     "app_secret": ""
   },
-  "admins": []
+  "admins": [],
+  "uploadDir": "",
+  "uploadURL": ""
 };

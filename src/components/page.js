@@ -31,7 +31,7 @@ const Page = React.createClass({
         this.props.children
       ),
       blockFor('before-footer', this.props.children),
-      Footer(null)
+      Footer()
     );
   }
 });

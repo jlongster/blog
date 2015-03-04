@@ -336,6 +336,68 @@ footer {
     }
 }
 
+/* fun little server-rendering config */
+
+.app-config {
+    .sansserifFace();
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    background-color: #eceff1;
+    z-index: 2000;
+    padding: 16px 20px;
+    margin-right: 2em;
+    border: 1px solid #e0e0e0;
+    border-top: 0;
+    display: none;
+    font-size: 16px;
+    line-height: 1.5em;
+    
+    input[type=text] { width: 5em; }
+}
+
+.app-config .field {
+    margin: 1em 0;
+}
+
+.app-config .field-subtext {
+    margin-top: -16px;
+    margin-left: 3px;
+    font-size: 13px;
+    color: @lightFont;
+}
+
+.app-config .close {
+    color: @lightFont;
+    display: block;
+    position: absolute;
+    top: -2px;
+    left: 4px;
+    .link-underline-none();
+    z-index: 2000;
+}
+
+.app-config button {
+    position: relative;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    box-shadow: 1px 2px 1px #999999;
+    color: @textColor;
+    font-size: 1em;
+    padding: .25em;
+}
+
+.app-config button:active {
+    box-shadow: 0 0 1px #999999;
+    top: 2px;
+}
+
+.show-render-config .app-config {
+    display: block;
+}
+
 /* responsive */
 
 @media screen and (max-width: @smallScreen) {

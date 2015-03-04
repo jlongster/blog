@@ -14,8 +14,8 @@ const Drafts = require('./components/drafts');
 const Edit = require('./components/edit');
 const Preview = require('./components/preview');
 const NotFound = require('./components/not-found');
-
 const Router = require('react-router');
+
 const { Route, DefaultRoute, NotFoundRoute } = Elements(Router);
 
 var hljs = require('highlight.js/lib/highlight.js'); // (jwl)
