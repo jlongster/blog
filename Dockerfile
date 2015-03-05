@@ -4,7 +4,7 @@ RUN pacman --noconfirm -Sy nodejs redis nginx git
 COPY ./sv/redis/ /service/redis
 RUN mkdir -p /var/log/nginx
 COPY ./sv/nginx/ /service/nginx
-COPY ./.built/ /service/site/src-built/
+COPY ./build /service/site/build
 COPY ./static/ /service/site/static/
 COPY ./config/config-prod.json /service/site/config/config.json
 COPY ./run /service/site/run

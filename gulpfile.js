@@ -31,7 +31,7 @@ var defaultConfig = {
   module: {
     loaders: [
       {test: /\.js$/, exclude: /node_modules/, loader: '6to5'},
-      {test: /\.json$/, loader: "json"}
+      {test: /\.json$/, loader: 'json'}
     ]
   },
   plugins: [
@@ -68,7 +68,7 @@ var outputOptions = {
   reasons: false,
   errorDetails: false,
   chunkOrigins: false,
-  exclude: ["node_modules", "components"]
+  exclude: ['node_modules', 'components']
 };
 
 function onBuild(err, stats) {
@@ -89,8 +89,8 @@ var frontendConfig = config({
   },
   module: {
     loaders: [
-      {test: /\.less$/, loader: ExtractTextPlugin.extract("style-loader", "css!less") },
-      {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css") }
+      {test: /\.less$/, loader: ExtractTextPlugin.extract('style-loader', 'css!less') },
+      {test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'css') }
     ]
   },
   resolve: {
@@ -106,8 +106,8 @@ var frontendConfig = config({
 if(process.env.NODE_ENV === 'production') {
   frontendConfig.plugins = frontendConfig.plugins.concat([
     new webpack.DefinePlugin({
-      "process.env": {
-        NODE_ENV: JSON.stringify("production")
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
       }
     }),
     new webpack.optimize.DedupePlugin(),
@@ -161,7 +161,7 @@ var backendConfig = config({
 //   // times longer (and makes debugging more predictable)
 //   backendConfig.plugins.push(
 //     new webpack.DefinePlugin({
-//       "process.env.NO_SERVER_RENDERING": true
+//       'process.env.NO_SERVER_RENDERING': true
 //     })
 //   );
 // }
@@ -183,32 +183,32 @@ binConfig.entry = bin_modules;
 
 // tasks
 
-gulp.task("transform-modules", function() {
+gulp.task('transform-modules', function() {
   return gulp.src('node_modules/js-csp/src/**/*.js')
     .pipe(gulpif(/src\/csp.js/, rename('index.js')))
     .pipe(to5())
     .pipe(gulp.dest('build/csp'));
 });
 
-gulp.task("backend", function(done) {
+gulp.task('backend', function(done) {
   webpack(backendConfig).run(function(err, stats) {
     onBuild(err, stats);
     done();
   });
 });
 
-gulp.task("frontend", function(done) {
+gulp.task('frontend', function(done) {
   webpack(frontendConfig).run(function(err, stats) {
     onBuild(err, stats);
     done();
   });
 });
 
-gulp.task("bin", function() {
+gulp.task('bin', function() {
   webpack(binConfig).run(onBuild);
 });
 
-gulp.task("backend-watch", function(done) {
+gulp.task('backend-watch', function(done) {
   gutil.log('Backend warming up...');
   var firedDone = false;
   webpack(backendConfig).watch(100, function(err, stats) {
@@ -227,21 +227,21 @@ gulp.task('frontend-watch', function(done) {
   });
 });
 
-gulp.task("bin-watch", function(done) {
+gulp.task('bin-watch', function(done) {
   done();
   webpack(binConfig).watch(100, onBuild);
 });
 
-gulp.task("build", ["backend", "frontend"]);
-gulp.task("watch", ["backend-watch", "frontend-watch"]);
+gulp.task('build', ['backend', 'frontend']);
+gulp.task('watch', ['backend-watch', 'frontend-watch']);
 
-gulp.task("run", ["watch"], function() {
+gulp.task('run', function() {
   nodemon({
     execMap: {
       js: 'node'
     },
-    ignore: ["*"],
-    watch: ["bin/"],
+    ignore: ['*'],
+    watch: ['bin/'],
     script: path.join(__dirname, 'build/backend'),
     ext: 'noop',
     env: process.env
@@ -249,3 +249,5 @@ gulp.task("run", ["watch"], function() {
     console.log('restarted!');
   });
 });
+
+gulp.task('run-watch', ['watch', 'run']);
