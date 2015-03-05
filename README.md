@@ -11,3 +11,9 @@ Visit the [demo site](http://test.jlongster.com/) to see client-side page transi
 **I have no intention into making this a platform**. This is my site. I will evolve it for my needs. I *will* make backwards incompatible changes, probably big ones especially in the near future. The database structure will generally stay the same though, since I have already have a lot of content in it.
 
 I open-sourced this mainly because I thought others could learn a few things from it. Eventually it may become more modular so it's easy to version and use with various modules.
+
+To get running:
+
+* `npm install`
+* Create a css file at `static/css/main.less` (you can copy `static/css/STARTER.less`)
+* `gulp run-watch`
