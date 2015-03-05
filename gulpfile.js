@@ -18,6 +18,13 @@ var deepmerge = DeepMerge(function(target, source, key) {
   return source;
 });
 
+// This file is the One Ring. I have created 3 webpack instances
+// to build frontend, backend, and bin scripts. This gulpfile gives
+// you control over them (see the end of the file for the tasks).
+// The backend is built into a single `build/backend.js`, the frontend
+// is built into `static/build/frontend.js`, and bin scripts are
+// individually compiled into `build/bin/<name>.js`.
+
 // generic config
 
 var defaultConfig = {
@@ -30,6 +37,7 @@ var defaultConfig = {
   },
   module: {
     loaders: [
+      // TODO: add sweet.js macros here
       {test: /\.js$/, exclude: /node_modules/, loader: '6to5'},
       {test: /\.json$/, loader: 'json'}
     ]
@@ -57,6 +65,9 @@ function config(overrides) {
 
 // output
 
+// This produces the exact same output as the webpack CLI tool, which
+// is truncated unlike the default API output, and gives a good
+// summarization of what happened.
 var outputOptions = {
   cached: false,
   cachedAssets: false,
@@ -95,6 +106,7 @@ var frontendConfig = config({
   },
   resolve: {
     alias: {
+      // TODO: I think some of these can be removed now
       'impl': 'static/js/impl',
       'static': 'static',
       'config.json': 'config/browser.json'
@@ -121,6 +133,8 @@ if(process.env.NODE_ENV === 'production') {
 
 // backend
 
+// Don't make .bin or js-csp external. We manually transform js-csp
+// and alias it into the transformed version.
 var blacklist = ['.bin', 'js-csp'];
 var node_modules = fs.readdirSync('node_modules').filter(
   function(x) { return blacklist.indexOf(x) === -1; }
@@ -156,18 +170,19 @@ var backendConfig = config({
   devtool: 'sourcemap'
 });
 
-// if(process.env.NODE_ENV !== 'production') {
-//   // Disable server rendering in development because it makes build
-//   // times longer (and makes debugging more predictable)
-//   backendConfig.plugins.push(
-//     new webpack.DefinePlugin({
-//       'process.env.NO_SERVER_RENDERING': true
-//     })
-//   );
-// }
+if(process.env.NODE_ENV !== 'production') {
+  // Disable server rendering in development because it makes build
+  // times longer (and makes debugging more predictable)
+  backendConfig.plugins.push(
+    new webpack.DefinePlugin({
+      'process.env.NO_SERVER_RENDERING': true
+    })
+  );
+}
 
 // bin scripts
 
+// Gather all the bin scripts and create an entry point for each one
 var bin_modules = t.toObj(fs.readdirSync('bin'), t.compose(
   t.filter(function(x) { return x.indexOf('.js') !== -1; }),
   t.map(function(x) { return [x.replace('.js', ''), path.join('./bin', x)]; })
