@@ -15,5 +15,4 @@ I open-sourced this mainly because I thought others could learn a few things fro
 To get running:
 
 * `npm install`
-* Create a css file at `static/css/main.less` (you can copy `static/css/STARTER.less`)
 * `gulp run-watch`
