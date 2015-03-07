@@ -1,5 +1,6 @@
 {
   "url": "http://localhost:4000/",
+  "webpackURL": "/build",
   "http": {
     "port": 4000
   },

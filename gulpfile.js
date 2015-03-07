@@ -6,6 +6,7 @@ var rename = require('gulp-rename');
 var to5 = require('gulp-6to5');
 var gutil = require('gulp-util');
 var webpack = require('webpack');
+var WebpackDevServer = require('webpack-dev-server');
 var DeepMerge = require('deep-merge');
 var nodemon = require('nodemon');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -38,7 +39,7 @@ var defaultConfig = {
   module: {
     loaders: [
       // TODO: add sweet.js macros here
-      {test: /\.js$/, exclude: /node_modules/, loader: '6to5'},
+      {test: /\.js$/, exclude: /node_modules/, loaders: ['react-hot', '6to5'] },
       {test: /\.json$/, loader: 'json'}
     ]
   },
@@ -55,8 +56,8 @@ if(process.env.NODE_ENV === 'production') {
   ]);
 }
 else {
-  defaultConfig.devtool = 'sourcemap';
-  defaultConfig.debug = true;
+  // defaultConfig.devtool = '#eval-source-map';
+  // defaultConfig.debug = true;
 }
 
 function config(overrides) {
@@ -92,16 +93,21 @@ function onBuild(err, stats) {
 // frontend
 
 var frontendConfig = config({
-  entry: './static/js/main.js',
+  entry: [
+    'webpack-dev-server/client?http://localhost:3000',
+    'webpack/hot/only-dev-server',
+    './static/js/main.js'
+  ],
   output: {
     path: path.join(__dirname, 'static/build'),
+    //publicPath: '/build/',
     publicPath: '/build/',
     filename: 'frontend.js'
   },
   module: {
     loaders: [
-      {test: /\.less$/, loader: ExtractTextPlugin.extract('style-loader', 'css!less') },
-      {test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'css') }
+      {test: /\.less$/, loader: 'style!css!less' },
+      {test: /\.css$/, loader: 'style!css' }
     ]
   },
   resolve: {
@@ -112,8 +118,15 @@ var frontendConfig = config({
       'config.json': 'config/browser.json'
     }
   },
-  plugins: [new ExtractTextPlugin('styles.css')]
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
+    //new ExtractTextPlugin('styles.css'),
+  ]
 });
+// frontendConfig.module.loaders.unshift(
+//   { test: /components\/.*\.js$/, loaders: ['react-hot', '6to5'], exclude: /node_modules/ }
+// );
 
 if(process.env.NODE_ENV === 'production') {
   frontendConfig.plugins = frontendConfig.plugins.concat([
@@ -126,7 +139,8 @@ if(process.env.NODE_ENV === 'production') {
     new webpack.optimize.UglifyJsPlugin({
       mangle: {
         except: ['GeneratorFunction', 'GeneratorFunctionPrototype']
-      }
+      },
+      sourceMap: false
     })
   ]);
 }
@@ -235,10 +249,26 @@ gulp.task('backend-watch', function(done) {
 
 gulp.task('frontend-watch', function(done) {
   gutil.log('Frontend warming up...');
-  var firedDone = false;
-  webpack(frontendConfig).watch(100, function(err, stats) {
-    if(!firedDone) { done(); firedDone = true; }
-    onBuild(err, stats);
+
+  // var firedDone = false;
+  // webpack(frontendConfig).watch(100, function(err, stats) {
+  //   if(!firedDone) { done(); firedDone = true; }
+  //   onBuild(err, stats);
+  // });
+
+  done();
+
+  new WebpackDevServer(webpack(frontendConfig), {
+    contentBase: frontendConfig.output.path,
+    publicPath: frontendConfig.output.publicPath,
+    hot: true,
+    historyApiFallback: true
+  }).listen(3000, 'localhost', function (err, result) {
+    if(err) {
+      console.log(err);
+    }
+
+    console.log('webpack dev server listening at localhost:3000');
   });
 });
 

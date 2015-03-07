@@ -246,7 +246,8 @@ app.get('*', function(req, res, next) {
       content: content,
       payload: encodeTextContent(JSON.stringify(payload)),
       bodyClass: bodyClass,
-      title: title
+      title: title,
+      webpackURL: nconf.get('webpackURL')
     });
 
     res.send(content);
