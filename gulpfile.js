@@ -101,7 +101,7 @@ var frontendConfig = config({
   output: {
     path: path.join(__dirname, 'static/build'),
     //publicPath: '/build/',
-    publicPath: '/build/',
+    publicPath: 'http://localhost:3000/build/',
     filename: 'frontend.js'
   },
   module: {
@@ -259,10 +259,9 @@ gulp.task('frontend-watch', function(done) {
   done();
 
   new WebpackDevServer(webpack(frontendConfig), {
-    contentBase: frontendConfig.output.path,
     publicPath: frontendConfig.output.publicPath,
     hot: true,
-    historyApiFallback: true
+    stats: outputOptions
   }).listen(3000, 'localhost', function (err, result) {
     if(err) {
       console.log(err);
