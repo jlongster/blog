@@ -213,7 +213,7 @@ app.get('*', function(req, res, next) {
         url: nconf.get('url')
       }
     };
-    let title = 'James Long';
+    let title = 'WHAT';
     let bodyClass = '';
     let content = 'Loading...';
 

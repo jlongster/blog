@@ -11,6 +11,8 @@ var DeepMerge = require('deep-merge');
 var nodemon = require('nodemon');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var t = require('transducers.js');
+var MemoryFileSystem = require("memory-fs");
+var net = require('net');
 
 var deepmerge = DeepMerge(function(target, source, key) {
   if(target instanceof Array) {
@@ -56,8 +58,8 @@ if(process.env.NODE_ENV === 'production') {
   ]);
 }
 else {
-  // defaultConfig.devtool = '#eval-source-map';
-  // defaultConfig.debug = true;
+  defaultConfig.devtool = '#eval-source-map';
+  defaultConfig.debug = true;
 }
 
 function config(overrides) {
@@ -154,7 +156,10 @@ var node_modules = fs.readdirSync('node_modules').filter(
   function(x) { return blacklist.indexOf(x) === -1; }
 );
 var backendConfig = config({
-  entry: './server/main.js',
+  entry: [
+    './server/hot.js',
+    './server/main.js'
+  ],
   target: 'node',
   node: {
     __filename: true,
@@ -176,10 +181,12 @@ var backendConfig = config({
     }
     cb();
   },
+  recordsPath: path.join(__dirname, 'build/_records'),
   plugins: [
     new webpack.IgnorePlugin(/\.(css|less)$/),
     new webpack.BannerPlugin('require("source-map-support").install();',
                              { raw: true, entryOnly: false }),
+    new webpack.HotModuleReplacementPlugin()
   ],
   devtool: 'sourcemap'
 });
@@ -240,10 +247,14 @@ gulp.task('bin', function() {
 gulp.task('backend-watch', function(done) {
   gutil.log('Backend warming up...');
   var firedDone = false;
+
   webpack(backendConfig).watch(100, function(err, stats) {
+    if(HMRClient) {
+      HMRClient.write(stats.hash);
+    }
+
     if(!firedDone) { done(); firedDone = true; }
     onBuild(err, stats);
-    nodemon.restart();
   });
 });
 
@@ -279,7 +290,9 @@ gulp.task('bin-watch', function(done) {
 gulp.task('build', ['backend', 'frontend']);
 gulp.task('watch', ['backend-watch', 'frontend-watch']);
 
-gulp.task('run', function() {
+var HMRClient = null;
+
+gulp.task('run', ['backend-watch'], function() {
   nodemon({
     execMap: {
       js: 'node'
@@ -289,9 +302,16 @@ gulp.task('run', function() {
     script: path.join(__dirname, 'build/backend'),
     ext: 'noop',
     env: process.env
+  }).on('start', function() {
+    // Start a connection to the HMR server
+    setTimeout(function() {
+      var client = HMRClient = new net.Socket();
+      client.connect('3567');
+      client.on('data', function(data) {
+        console.log('client received data', data);
+      });
+    }, 100);
   }).on('restart', function() {
     console.log('restarted!');
   });
 });
-
-gulp.task('run-watch', ['watch', 'run']);
