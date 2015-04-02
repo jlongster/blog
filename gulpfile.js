@@ -98,7 +98,7 @@ var frontendConfig = config({
   module: {
     loaders: [
       {test: /\.less$/, loader: ExtractTextPlugin.extract('style-loader', 'css!less') },
-      {test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'style!css') }
+      {test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'css!less') }
     ]
   },
   resolve: {
@@ -247,26 +247,26 @@ gulp.task('backend-watch', function(done) {
 gulp.task('frontend-watch', function(done) {
   gutil.log('Frontend warming up...');
 
-  // var firedDone = false;
-  // webpack(frontendConfig).watch(100, function(err, stats) {
-  //   if(!firedDone) { done(); firedDone = true; }
-  //   onBuild(err, stats);
-  // });
-
-  done();
-
-  new WebpackDevServer(webpack(frontendConfig), {
-    publicPath: frontendConfig.output.publicPath,
-    hot: true,
-    stats: outputOptions
-  }).listen(3000, 'localhost', function (err, result) {
-    if(err) {
-      console.log(err);
-    }
-    else {
-      console.log('webpack dev server listening at localhost:3000');
-    }
+  var firedDone = false;
+  webpack(frontendConfig).watch(100, function(err, stats) {
+    if(!firedDone) { done(); firedDone = true; }
+    onBuild(err, stats);
   });
+
+  // done();
+
+  // new WebpackDevServer(webpack(frontendConfig), {
+  //   publicPath: frontendConfig.output.publicPath,
+  //   hot: true,
+  //   stats: outputOptions
+  // }).listen(3000, 'localhost', function (err, result) {
+  //   if(err) {
+  //     console.log(err);
+  //   }
+  //   else {
+  //     console.log('webpack dev server listening at localhost:3000');
+  //   }
+  // });
 });
 
 gulp.task('bin-watch', function(done) {
