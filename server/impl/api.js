@@ -13,11 +13,13 @@ const { currentDate } = require('../../src/lib/date');
 let client;
 
 function connect(port, host) {
-  client = redis.createClient(port || nconf.get('redis:port'),
-                              host || nconf.get('redis:host'));
-  client.on('error', function(err) {
-    console.log('error: ' + err);
-  });
+  if(!client) {
+    client = redis.createClient(port || nconf.get('redis:port') || 6379,
+                                host || nconf.get('redis:host'));
+    client.on('error', function(err) {
+      console.log('error: ' + err);
+    });
+  }
 }
 
 function quit() {
@@ -275,6 +277,18 @@ function deletePost(shorturl) {
   });
 }
 
+function __eval(state) {
+  connect();
+
+  // Playing with my blog API
+  // go(function*() {
+  //   console.log(yield queryPosts({
+  //     select: ['title', 'date'],
+  //     limit: 2
+  //   }));
+  // });
+}
+
 module.exports = {
   connect: connect,
   quit: quit,
@@ -292,3 +306,13 @@ module.exports = {
     return client;
   }
 };
+
+if(module.hot) {
+  if(module.hot.data) {
+    client = module.hot.data.client;
+  }
+
+  module.hot.dispose(function(data) {
+    data.client = client;
+  });
+}

@@ -41,6 +41,7 @@ function fetchData(state, user) {
 
 function run(routes, location, additionalProps, initialData) {
   let ch = chan();
+  console.log(location);
   let router = Router.run(routes, location, (Handler, state) => {
     go(function*() {
       let props = {};

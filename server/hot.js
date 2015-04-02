@@ -1,25 +1,26 @@
 var fs = require('fs');
 var net = require('net');
-
-var lastHash = null;
-
-function upToDate() {
-  return lastHash === __webpack_hash__;
-}
+var port = typeof __resourceQuery === 'string' && __resourceQuery ?
+    __resourceQuery.substr(1) :
+    3567;
 
 if(module.hot) {
-  var server = net.createServer();
-  console.log('listening...');
-  server.listen('3567');
-  server.on('connection', function(sock) {
-    sock.on('data', function(data) {
-      lastHash = data.toString();
-      console.log('got', lastHash, __webpack_hash__, module.hot.status());
+  var lastHash = null;
 
-      if(!upToDate() && module.hot.status() === 'idle') {
-        check();
-      }
-    });
+  function upToDate() {
+    return lastHash === __webpack_hash__;
+  }
+
+  var client = net.Socket();
+  client.connect(port);
+  console.log('[HMR] Connected');
+
+  client.on('data', function(data) {
+    lastHash = data.toString();
+
+    if(!upToDate() && module.hot.status() === 'idle') {
+      check();
+    }
   });
 
   function check() {
@@ -28,7 +29,7 @@ if(module.hot) {
         console.log('[HMR] Error: ' + err);
         return;
       }
-      console.log('[HMR] checked', updatedModules);
+
       if(!updatedModules) {
         return;
       }
@@ -36,8 +37,6 @@ if(module.hot) {
       module.hot.apply({
         ignoreUnaccepted: true
       }, function(err, renewedModules) {
-        console.log('[HMR] renewed', renewedModules);
-
         if(!upToDate()) {
           check();
         }

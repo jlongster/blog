@@ -218,6 +218,8 @@ app.get('*', function(req, res, next) {
     let content = 'Loading...';
 
     if(!disableServerRendering) {
+      console.log('server rendering')
+
       let { router, pageChan } = bootstrap.run(
         routes,
         req.path,

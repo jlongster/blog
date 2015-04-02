@@ -13,6 +13,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var t = require('transducers.js');
 var MemoryFileSystem = require("memory-fs");
 var net = require('net');
+var BackendHotServer = require('./server/hot-server');
 
 var deepmerge = DeepMerge(function(target, source, key) {
   if(target instanceof Array) {
@@ -31,7 +32,6 @@ var deepmerge = DeepMerge(function(target, source, key) {
 // generic config
 
 var defaultConfig = {
-  cache: true,
   resolve: {
     fallback: __dirname,
     alias: {
@@ -41,7 +41,7 @@ var defaultConfig = {
   module: {
     loaders: [
       // TODO: add sweet.js macros here
-      {test: /\.js$/, exclude: /node_modules/, loaders: ['react-hot', '6to5'] },
+      {test: /\.js$/, exclude: /node_modules/, loaders: ['monkey-hot', '6to5'] },
       {test: /\.json$/, loader: 'json'}
     ]
   },
@@ -68,20 +68,9 @@ function config(overrides) {
 
 // output
 
-// This produces the exact same output as the webpack CLI tool, which
-// is truncated unlike the default API output, and gives a good
-// summarization of what happened.
 var outputOptions = {
   cached: false,
   cachedAssets: false,
-  context: process.cwd(),
-  json: false,
-  colors: true,
-  modules: true,
-  chunks: false,
-  reasons: false,
-  errorDetails: false,
-  chunkOrigins: false,
   exclude: ['node_modules', 'components']
 };
 
@@ -102,7 +91,7 @@ var frontendConfig = config({
   ],
   output: {
     path: path.join(__dirname, 'static/build'),
-    //publicPath: '/build/',
+    // publicPath: '/build/',
     publicPath: 'http://localhost:3000/build/',
     filename: 'frontend.js'
   },
@@ -121,10 +110,11 @@ var frontendConfig = config({
     }
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
+    new webpack.HotModuleReplacementPlugin({ quiet: true }),
     new webpack.NoErrorsPlugin()
     //new ExtractTextPlugin('styles.css'),
-  ]
+  ],
+  profile: true
 });
 // frontendConfig.module.loaders.unshift(
 //   { test: /components\/.*\.js$/, loaders: ['react-hot', '6to5'], exclude: /node_modules/ }
@@ -149,15 +139,20 @@ if(process.env.NODE_ENV === 'production') {
 
 // backend
 
-// Don't make .bin or js-csp external. We manually transform js-csp
-// and alias it into the transformed version.
-var blacklist = ['.bin', 'js-csp'];
-var node_modules = fs.readdirSync('node_modules').filter(
-  function(x) { return blacklist.indexOf(x) === -1; }
-);
+var node_modules = {};
+fs.readdirSync('node_modules')
+  .filter(function(x) {
+    // Don't make .bin or js-csp external. We manually transform
+    // js-csp and alias it into the transformed version.
+    return ['.bin', 'js-csp'].indexOf(x) === -1;
+  })
+  .forEach(function(mod) {
+    node_modules[mod] = 'commonjs ' + mod;
+  });
+
 var backendConfig = config({
   entry: [
-    './server/hot.js',
+    'webpack/hot/signal.js',
     './server/main.js'
   ],
   target: 'node',
@@ -174,19 +169,13 @@ var backendConfig = config({
       'impl': 'server/impl'
     },
   },
-  externals: function(context, request, cb) {
-    if(node_modules.indexOf(request) !== -1) {
-      cb(null, 'commonjs ' + request);
-      return;
-    }
-    cb();
-  },
+  externals: node_modules,
   recordsPath: path.join(__dirname, 'build/_records'),
   plugins: [
     new webpack.IgnorePlugin(/\.(css|less)$/),
     new webpack.BannerPlugin('require("source-map-support").install();',
                              { raw: true, entryOnly: false }),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin({ quiet: true })
   ],
   devtool: 'sourcemap'
 });
@@ -227,6 +216,7 @@ gulp.task('transform-modules', function() {
 });
 
 gulp.task('backend', function(done) {
+  console.log(backendConfig);
   webpack(backendConfig).run(function(err, stats) {
     onBuild(err, stats);
     done();
@@ -237,6 +227,8 @@ gulp.task('frontend', function(done) {
   webpack(frontendConfig).run(function(err, stats) {
     onBuild(err, stats);
     done();
+
+    fs.writeFileSync('stats.json', JSON.stringify(stats.toJson()));
   });
 });
 
@@ -249,12 +241,9 @@ gulp.task('backend-watch', function(done) {
   var firedDone = false;
 
   webpack(backendConfig).watch(100, function(err, stats) {
-    if(HMRClient) {
-      HMRClient.write(stats.hash);
-    }
-
     if(!firedDone) { done(); firedDone = true; }
-    onBuild(err, stats);
+    //onBuild(err, stats);
+    nodemon.restart();
   });
 });
 
@@ -277,8 +266,9 @@ gulp.task('frontend-watch', function(done) {
     if(err) {
       console.log(err);
     }
-
-    console.log('webpack dev server listening at localhost:3000');
+    else {
+      console.log('webpack dev server listening at localhost:3000');
+    }
   });
 });
 
@@ -290,28 +280,16 @@ gulp.task('bin-watch', function(done) {
 gulp.task('build', ['backend', 'frontend']);
 gulp.task('watch', ['backend-watch', 'frontend-watch']);
 
-var HMRClient = null;
-
-gulp.task('run', ['backend-watch'], function() {
+gulp.task('run', ['backend-watch', 'frontend-watch'], function() {
   nodemon({
     execMap: {
       js: 'node'
     },
-    ignore: ['*'],
-    watch: ['bin/'],
     script: path.join(__dirname, 'build/backend'),
-    ext: 'noop',
-    env: process.env
-  }).on('start', function() {
-    // Start a connection to the HMR server
-    setTimeout(function() {
-      var client = HMRClient = new net.Socket();
-      client.connect('3567');
-      client.on('data', function(data) {
-        console.log('client received data', data);
-      });
-    }, 100);
+    ignore: ['*'],
+    watch: ['foo/'],
+    ext: 'noop'
   }).on('restart', function() {
-    console.log('restarted!');
+    console.log('Restarted!');
   });
 });

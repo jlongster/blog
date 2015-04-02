@@ -11,7 +11,7 @@ const Preview = React.createClass({
   displayName: 'Preview',
 
   statics: {
-    bodyClass: 'post'
+    bodyClass: 'post-page'
   },
 
   getInitialState: function() {

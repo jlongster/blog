@@ -123,6 +123,15 @@ function deletePost(shorturl) {
   }));
 }
 
+function __eval() {
+  go(function*() {
+    console.log(JSON.stringify(yield queryPosts({
+      select: ['title'],
+      limit: 2
+    }), null, 2));
+  });
+}
+
 module.exports = {
   setCache,
   clearCache,

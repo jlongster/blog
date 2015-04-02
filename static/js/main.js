@@ -27,15 +27,17 @@ config.load(payload.config);
 
 let { router, pageChan } = bootstrap.run(
   routes,
-  Router.RefreshLocation,
+  Router.HistoryLocation,
   { user: payload.user },
   payload.data
 );
 
 go(function*() {
-  let { Handler, props } = yield take(pageChan);
-  React.render(React.createElement(Handler, props),
-               document.getElementById('mount'));
+  while(true) {
+    let { Handler, props } = yield take(pageChan);
+    React.render(React.createElement(Handler, props),
+                 document.getElementById('mount'));
+  }
 });
 
 window.relocate = function(url) {
