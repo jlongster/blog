@@ -85,20 +85,20 @@ function onBuild(err, stats) {
 
 var frontendConfig = config({
   entry: [
-    'webpack-dev-server/client?http://localhost:3000',
-    'webpack/hot/only-dev-server',
+    // 'webpack-dev-server/client?http://localhost:3000',
+    // 'webpack/hot/only-dev-server',
     './static/js/main.js'
   ],
   output: {
     path: path.join(__dirname, 'static/build'),
-    // publicPath: '/build/',
-    publicPath: 'http://localhost:3000/build/',
+    publicPath: '/build/',
+    //publicPath: 'http://localhost:3000/build/',
     filename: 'frontend.js'
   },
   module: {
     loaders: [
-      {test: /\.less$/, loader: 'style!css!less' },
-      {test: /\.css$/, loader: 'style!css' }
+      {test: /\.less$/, loader: ExtractTextPlugin.extract('style-loader', 'css!less') },
+      {test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'style!css') }
     ]
   },
   resolve: {
@@ -110,15 +110,12 @@ var frontendConfig = config({
     }
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin({ quiet: true }),
-    new webpack.NoErrorsPlugin()
-    //new ExtractTextPlugin('styles.css'),
+    // new webpack.HotModuleReplacementPlugin({ quiet: true }),
+    // new webpack.NoErrorsPlugin()
+    new ExtractTextPlugin('styles.css')
   ],
   profile: true
 });
-// frontendConfig.module.loaders.unshift(
-//   { test: /components\/.*\.js$/, loaders: ['react-hot', '6to5'], exclude: /node_modules/ }
-// );
 
 if(process.env.NODE_ENV === 'production') {
   frontendConfig.plugins = frontendConfig.plugins.concat([
@@ -152,7 +149,7 @@ fs.readdirSync('node_modules')
 
 var backendConfig = config({
   entry: [
-    'webpack/hot/signal.js',
+    // 'webpack/hot/signal.js',
     './server/main.js'
   ],
   target: 'node',
@@ -174,8 +171,8 @@ var backendConfig = config({
   plugins: [
     new webpack.IgnorePlugin(/\.(css|less)$/),
     new webpack.BannerPlugin('require("source-map-support").install();',
-                             { raw: true, entryOnly: false }),
-    new webpack.HotModuleReplacementPlugin({ quiet: true })
+                             { raw: true, entryOnly: false })
+    // new webpack.HotModuleReplacementPlugin({ quiet: true })
   ],
   devtool: 'sourcemap'
 });
