@@ -244,7 +244,7 @@ app.get('*', function(req, res, next) {
       content = React.renderToString(React.createElement(Handler, props))
     }
 
-    let content = appTemplate({
+    let result = appTemplate({
       content: content,
       payload: encodeTextContent(JSON.stringify(payload)),
       bodyClass: bodyClass,
@@ -252,7 +252,7 @@ app.get('*', function(req, res, next) {
       webpackURL: nconf.get('webpackURL')
     });
 
-    res.send(content);
+    res.send(result);
   });
 });
 

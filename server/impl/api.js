@@ -120,7 +120,7 @@ function _getPosts(keys) {
       if(!post) {
         throw new Error('cannot find post: ' + keys[i]);
       }
-      else if(!yield put(ch, post)) {
+      else if(!(yield put(ch, post))) {
         break;
       }
     }
@@ -255,7 +255,7 @@ function updatePost(shorturl, props) {
     delete props.shorturl;
     let key = dbkey('post', shorturl);
 
-    if(!yield db('exists', key)) {
+    if(!(yield db('exists', key))) {
       return csp.Throw(new Error('post does not exist: ' + shorturl));
     }
 

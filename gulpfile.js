@@ -3,7 +3,7 @@ var path = require('path');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
 var rename = require('gulp-rename');
-var to5 = require('gulp-6to5');
+var gulpBabel = require('gulp-babel');
 var gutil = require('gulp-util');
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
@@ -33,23 +33,15 @@ var deepmerge = DeepMerge(function(target, source, key) {
 
 // generic config
 
+var babelLoader = 'babel?optional=runtime';
+
 var defaultConfig = {
   resolve: {
-    fallback: __dirname,
     alias: {
-      'js-csp': 'build/csp'
+      'js-csp': path.join(__dirname, 'build/csp')
     }
   },
-  module: {
-    loaders: [
-      // TODO: add sweet.js macros here
-    ]
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      regeneratorRuntime: 'static/js/regenerator-runtime.js'
-    })
-  ]
+  plugins: []
 };
 
 if(PROD) {
@@ -96,7 +88,7 @@ var frontendConfig = config({
     loaders: [
       {test: /\.js$/,
        exclude: /node_modules/,
-       loaders: PROD ? ['6to5'] : ['react-hot', '6to5'] },
+       loaders: PROD ? [babelLoader] : ['react-hot', babelLoader] },
       {test: /\.less$/,
        loader: (PROD ?
                 ExtractTextPlugin.extract('style-loader', 'css!less') :
@@ -169,7 +161,7 @@ var backendConfig = config({
     loaders: [
       {test: /\.js$/,
        exclude: /node_modules/,
-       loaders: PROD ? ['6to5'] : ['monkey-hot', '6to5'] }
+       loaders: PROD ? [babelLoader] : ['monkey-hot', babelLoader] }
     ]
   },
   node: {
@@ -231,7 +223,7 @@ binConfig.entry = bin_modules;
 gulp.task('transform-modules', function() {
   return gulp.src('node_modules/js-csp/src/**/*.js')
     .pipe(gulpif(/src\/csp.js/, rename('index.js')))
-    .pipe(to5())
+    .pipe(gulpBabel())
     .pipe(gulp.dest('build/csp'));
 });
 
