@@ -276,7 +276,7 @@ function deletePost(shorturl) {
   });
 }
 
-function __eval(state) {
+function __eval() {
   // Playing with my blog API
   // go(function*() {
   //   console.log(yield queryPosts({

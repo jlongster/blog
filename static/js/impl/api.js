@@ -2,7 +2,7 @@ const t = require('transducers.js');
 const { filter } = t;
 const csp = require('js-csp');
 const { go, chan, take, put, operations: ops } = csp;
-const xhr = require('src/lib/xhr');
+const xhr = require('../../../src/lib/xhr');
 
 let postCache = [];
 let handlers = [];

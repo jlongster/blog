@@ -10,7 +10,7 @@ const { decodeTextContent } = require('../../src/lib/util');
 const config = require('../../src/lib/config');
 const bootstrap = require('../../src/bootstrap');
 
-const routes = require('src/routes');
+const routes = require('../../src/routes');
 const api = require('./impl/api');
 
 // CSS dependencies

@@ -200,7 +200,7 @@ if(!process.env.NO_SERVER_RENDERING) {
   bootstrap = require('../src/bootstrap');
 }
 
-app.get('*', function(req, res, next) {
+app.get('*', function (req, res, next) {
   let disableServerRendering = (
     process.env.NO_SERVER_RENDERING || req.cookies.renderOnServer === 'n'
   );
@@ -213,13 +213,11 @@ app.get('*', function(req, res, next) {
         url: nconf.get('url')
       }
     };
-    let title = 'WHAT';
+    let title = 'James Long';
     let bodyClass = '';
     let content = 'Loading...';
 
     if(!disableServerRendering) {
-      console.log('server rendering')
-
       let { router, pageChan } = bootstrap.run(
         routes,
         req.path,

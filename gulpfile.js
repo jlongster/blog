@@ -38,7 +38,8 @@ var babelLoader = 'babel?optional=runtime';
 var defaultConfig = {
   resolve: {
     alias: {
-      'js-csp': path.join(__dirname, 'build/csp')
+      'js-csp': path.join(__dirname, 'build/csp'),
+      'static': path.join(__dirname, 'static')
     }
   },
   plugins: []
@@ -101,10 +102,7 @@ var frontendConfig = config({
   },
   resolve: {
     alias: {
-      // TODO: I think some of these can be removed now
-      'impl': 'static/js/impl',
-      'static': 'static',
-      'config.json': 'config/browser.json'
+      'impl': path.join(__dirname, 'static/js/impl'),
     }
   },
   profile: true
@@ -153,9 +151,7 @@ fs.readdirSync('node_modules')
   });
 
 var backendConfig = config({
-  entry: [
-    './server/main.js'
-  ],
+  entry: ['./server/main.js'],
   target: 'node',
   module: {
     loaders: [
@@ -174,7 +170,7 @@ var backendConfig = config({
   },
   resolve: {
     alias: {
-      'impl': 'server/impl'
+      'impl': path.join(__dirname, 'server/impl')
     },
   },
   externals: node_modules,
@@ -251,7 +247,7 @@ gulp.task('backend-watch', function(done) {
 
   webpack(backendConfig).watch(100, function(err, stats) {
     if(!firedDone) { done(); firedDone = true; }
-    // onBuild(err, stats);
+    onBuild(err, stats);
     nodemon.restart();
   });
 });
