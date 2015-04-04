@@ -15,6 +15,8 @@ var MemoryFileSystem = require("memory-fs");
 var net = require('net');
 var BackendHotServer = require('./server/hot-server');
 
+var PROD = process.env.NODE_ENV === 'production';
+
 var deepmerge = DeepMerge(function(target, source, key) {
   if(target instanceof Array) {
     return [].concat(target, source);
@@ -41,8 +43,6 @@ var defaultConfig = {
   module: {
     loaders: [
       // TODO: add sweet.js macros here
-      {test: /\.js$/, exclude: /node_modules/, loaders: ['monkey-hot', '6to5'] },
-      {test: /\.json$/, loader: 'json'}
     ]
   },
   plugins: [
@@ -52,7 +52,7 @@ var defaultConfig = {
   ]
 };
 
-if(process.env.NODE_ENV === 'production') {
+if(PROD) {
   defaultConfig.plugins = defaultConfig.plugins.concat([
     new webpack.optimize.OccurenceOrderPlugin()
   ]);
@@ -85,20 +85,26 @@ function onBuild(err, stats) {
 
 var frontendConfig = config({
   entry: [
-    // 'webpack-dev-server/client?http://localhost:3000',
-    // 'webpack/hot/only-dev-server',
     './static/js/main.js'
   ],
   output: {
     path: path.join(__dirname, 'static/build'),
-    publicPath: '/build/',
-    //publicPath: 'http://localhost:3000/build/',
+    publicPath: PROD ? '/build/' : 'http://localhost:3000/build/',
     filename: 'frontend.js'
   },
   module: {
     loaders: [
-      {test: /\.less$/, loader: ExtractTextPlugin.extract('style-loader', 'css!less') },
-      {test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'css!less') }
+      {test: /\.js$/,
+       exclude: /node_modules/,
+       loaders: PROD ? ['6to5'] : ['react-hot', '6to5'] },
+      {test: /\.less$/,
+       loader: (PROD ?
+                ExtractTextPlugin.extract('style-loader', 'css!less') :
+                'style!css!less') },
+      {test: /\.css$/,
+       loader: (PROD ?
+                ExtractTextPlugin.extract('style-loader', 'css!less') :
+                'style!css!less') }
     ]
   },
   resolve: {
@@ -109,16 +115,23 @@ var frontendConfig = config({
       'config.json': 'config/browser.json'
     }
   },
-  plugins: [
-    // new webpack.HotModuleReplacementPlugin({ quiet: true }),
-    // new webpack.NoErrorsPlugin()
-    new ExtractTextPlugin('styles.css')
-  ],
   profile: true
 });
 
-if(process.env.NODE_ENV === 'production') {
+if(!PROD) {
+  frontendConfig.entry = [
+    'webpack-dev-server/client?http://localhost:3000',
+    'webpack/hot/only-dev-server'
+  ].concat(frontendConfig.entry);
+
   frontendConfig.plugins = frontendConfig.plugins.concat([
+    new webpack.HotModuleReplacementPlugin({ quiet: true }),
+    new webpack.NoErrorsPlugin()
+  ]);
+}
+else {
+  frontendConfig.plugins = frontendConfig.plugins.concat([
+    new ExtractTextPlugin('styles.css'),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production')
@@ -149,10 +162,16 @@ fs.readdirSync('node_modules')
 
 var backendConfig = config({
   entry: [
-    // 'webpack/hot/signal.js',
     './server/main.js'
   ],
   target: 'node',
+  module: {
+    loaders: [
+      {test: /\.js$/,
+       exclude: /node_modules/,
+       loaders: PROD ? ['6to5'] : ['monkey-hot', '6to5'] }
+    ]
+  },
   node: {
     __filename: true,
     __dirname: false
@@ -172,19 +191,23 @@ var backendConfig = config({
     new webpack.IgnorePlugin(/\.(css|less)$/),
     new webpack.BannerPlugin('require("source-map-support").install();',
                              { raw: true, entryOnly: false })
-    // new webpack.HotModuleReplacementPlugin({ quiet: true })
   ],
   devtool: 'sourcemap'
 });
 
-if(process.env.NODE_ENV !== 'production') {
+if(!PROD) {
+  backendConfig.entry.unshift('webpack/hot/signal.js');
+
   // Disable server rendering in development because it makes build
-  // times longer (and makes debugging more predictable)
-  backendConfig.plugins.push(
+  // times longer (and makes debugging more predictable).
+  // And add Hot Module Replacement functionality
+  backendConfig.plugins = backendConfig.plugins.concat([
     new webpack.DefinePlugin({
       'process.env.NO_SERVER_RENDERING': true
-    })
-  );
+    }),
+    new webpack.HotModuleReplacementPlugin({ quiet: true }),
+    new webpack.NoErrorsPlugin()
+  ]);
 }
 
 // bin scripts
@@ -213,7 +236,6 @@ gulp.task('transform-modules', function() {
 });
 
 gulp.task('backend', function(done) {
-  console.log(backendConfig);
   webpack(backendConfig).run(function(err, stats) {
     onBuild(err, stats);
     done();
@@ -224,8 +246,6 @@ gulp.task('frontend', function(done) {
   webpack(frontendConfig).run(function(err, stats) {
     onBuild(err, stats);
     done();
-
-    fs.writeFileSync('stats.json', JSON.stringify(stats.toJson()));
   });
 });
 
@@ -239,7 +259,7 @@ gulp.task('backend-watch', function(done) {
 
   webpack(backendConfig).watch(100, function(err, stats) {
     if(!firedDone) { done(); firedDone = true; }
-    //onBuild(err, stats);
+    // onBuild(err, stats);
     nodemon.restart();
   });
 });
@@ -247,26 +267,29 @@ gulp.task('backend-watch', function(done) {
 gulp.task('frontend-watch', function(done) {
   gutil.log('Frontend warming up...');
 
-  var firedDone = false;
-  webpack(frontendConfig).watch(100, function(err, stats) {
-    if(!firedDone) { done(); firedDone = true; }
-    onBuild(err, stats);
-  });
+  if(PROD) {
+    var firedDone = false;
+    webpack(frontendConfig).watch(100, function(err, stats) {
+      if(!firedDone) { done(); firedDone = true; }
+      onBuild(err, stats);
+    });
+  }
+  else {
+    done();
 
-  // done();
-
-  // new WebpackDevServer(webpack(frontendConfig), {
-  //   publicPath: frontendConfig.output.publicPath,
-  //   hot: true,
-  //   stats: outputOptions
-  // }).listen(3000, 'localhost', function (err, result) {
-  //   if(err) {
-  //     console.log(err);
-  //   }
-  //   else {
-  //     console.log('webpack dev server listening at localhost:3000');
-  //   }
-  // });
+    new WebpackDevServer(webpack(frontendConfig), {
+      publicPath: frontendConfig.output.publicPath,
+      hot: true,
+      stats: outputOptions
+    }).listen(3000, 'localhost', function (err, result) {
+      if(err) {
+        console.log(err);
+      }
+      else {
+        console.log('webpack dev server listening at localhost:3000');
+      }
+    });
+  }
 });
 
 gulp.task('bin-watch', function(done) {
@@ -287,6 +310,6 @@ gulp.task('run', ['backend-watch', 'frontend-watch'], function() {
     watch: ['foo/'],
     ext: 'noop'
   }).on('restart', function() {
-    console.log('Restarted!');
+    console.log('Patched!');
   });
 });
