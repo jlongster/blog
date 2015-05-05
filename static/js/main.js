@@ -27,7 +27,7 @@ config.load(payload.config);
 
 let { router, pageChan } = bootstrap.run(
   routes,
-  Router.HistoryLocation,
+  Router.RefreshLocation,
   { user: payload.user },
   payload.data
 );

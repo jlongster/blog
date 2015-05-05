@@ -5,7 +5,7 @@
 
 # Deployment
 
-NODE_ENV=production gulp 6to5
+NODE_ENV=production gulp backend
 NODE_ENV=production webpack
 docker build -t jlongster/jlongster4 .
 docker push jlongster/jlongster4

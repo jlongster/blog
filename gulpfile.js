@@ -96,8 +96,8 @@ var frontendConfig = config({
                 'style!css!less') },
       {test: /\.css$/,
        loader: (PROD ?
-                ExtractTextPlugin.extract('style-loader', 'css!less') :
-                'style!css!less') }
+                ExtractTextPlugin.extract('style-loader', 'css') :
+                'style!css') }
     ]
   },
   resolve: {
