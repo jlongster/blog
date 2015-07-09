@@ -3,7 +3,8 @@ const t = require("transducers.js");
 const { map, filter } = t;
 const debounce = require('debounce');
 const { slugify, Element, Elements } = require('../lib/util');
-const { TextField, Checkbox, Paper } = Elements(require('material-ui'));
+const materialui = require('material-ui');
+const { TextField, Checkbox, Paper } = Elements(materialui);
 const { displayDate } = require("../lib/date");
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
@@ -15,6 +16,9 @@ const dom = React.DOM;
 const cx = React.addons.classSet;
 const api = require('impl/api');
 const config = require('../lib/config');
+
+const ThemeManager = new materialui.Styles.ThemeManager();
+ThemeManager.setTheme(ThemeManager.types.LIGHT);
 
 const updatePreview = debounce(function(previewWindow, post) {
   if(previewWindow) {
@@ -292,6 +296,16 @@ const Edit = React.createClass({
       return api.getPost(decodeURI(params.post));
     },
     bodyClass: 'edit'
+  },
+
+  childContextTypes: {
+    muiTheme: React.PropTypes.object
+  },
+
+  getChildContext: function() {
+    return {
+      muiTheme: ThemeManager.getCurrentTheme()
+    };
   },
 
   componentDidMount: function() {

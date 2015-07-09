@@ -12,11 +12,6 @@ const dom = React.DOM;
 const App = React.createClass({
   displayName: 'App',
 
-  contextTypes: {
-    getRouteAtDepth: React.PropTypes.func.isRequired,
-    routeHandlers: React.PropTypes.array.isRequired
-  },
-
   getInitialState: function() {
     // If we are told to wait, set the timeout state. It's important
     // when server rendering for this cookie is null on both sides so

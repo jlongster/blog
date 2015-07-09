@@ -11,9 +11,6 @@ var DeepMerge = require('deep-merge');
 var nodemon = require('nodemon');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var t = require('transducers.js');
-var MemoryFileSystem = require("memory-fs");
-var net = require('net');
-var BackendHotServer = require('./server/hot-server');
 
 var PROD = process.env.NODE_ENV === 'production';
 
@@ -51,7 +48,9 @@ if(PROD) {
   ]);
 }
 else {
-  defaultConfig.devtool = '#eval-source-map';
+  //defaultConfig.devtool = '#eval-source-map';
+  defaultConfig.devtool = '#source-map';
+  //defaultConfig.devtool = 'eval';
   defaultConfig.debug = true;
 }
 
@@ -82,7 +81,8 @@ var frontendConfig = config({
   ],
   output: {
     path: path.join(__dirname, 'static/build'),
-    publicPath: PROD ? '/build/' : 'http://localhost:3000/build/',
+    //publicPath: PROD ? '/build/' : 'http://localhost:3000/build/',
+    publicPath: '/build/',
     filename: 'frontend.js'
   },
   module: {
@@ -109,15 +109,15 @@ var frontendConfig = config({
 });
 
 if(!PROD) {
-  frontendConfig.entry = [
-    'webpack-dev-server/client?http://localhost:3000',
-    'webpack/hot/only-dev-server'
-  ].concat(frontendConfig.entry);
+  // frontendConfig.entry = [
+  //   'webpack-dev-server/client?http://localhost:3000',
+  //   'webpack/hot/only-dev-server'
+  // ].concat(frontendConfig.entry);
 
-  frontendConfig.plugins = frontendConfig.plugins.concat([
-    new webpack.HotModuleReplacementPlugin({ quiet: true }),
-    new webpack.NoErrorsPlugin()
-  ]);
+  // frontendConfig.plugins = frontendConfig.plugins.concat([
+  //   new webpack.HotModuleReplacementPlugin({ quiet: true }),
+  //   new webpack.NoErrorsPlugin()
+  // ]);
 }
 else {
   frontendConfig.plugins = frontendConfig.plugins.concat([
@@ -157,7 +157,7 @@ var backendConfig = config({
     loaders: [
       {test: /\.js$/,
        exclude: /node_modules/,
-       loaders: PROD ? [babelLoader] : ['monkey-hot', babelLoader] }
+       loaders: [babelLoader] }
     ]
   },
   node: {
@@ -255,29 +255,29 @@ gulp.task('backend-watch', function(done) {
 gulp.task('frontend-watch', function(done) {
   gutil.log('Frontend warming up...');
 
-  if(PROD) {
+  // if(PROD) {
     var firedDone = false;
     webpack(frontendConfig).watch(100, function(err, stats) {
       if(!firedDone) { done(); firedDone = true; }
       onBuild(err, stats);
     });
-  }
-  else {
-    done();
+  // }
+  // else {
+  //   done();
 
-    new WebpackDevServer(webpack(frontendConfig), {
-      publicPath: frontendConfig.output.publicPath,
-      hot: true,
-      stats: outputOptions
-    }).listen(3000, 'localhost', function (err, result) {
-      if(err) {
-        console.log(err);
-      }
-      else {
-        console.log('webpack dev server listening at localhost:3000');
-      }
-    });
-  }
+  //   new WebpackDevServer(webpack(frontendConfig), {
+  //     publicPath: frontendConfig.output.publicPath,
+  //     hot: true,
+  //     stats: outputOptions
+  //   }).listen(3000, 'localhost', function (err, result) {
+  //     if(err) {
+  //       console.log(err);
+  //     }
+  //     else {
+  //       console.log('webpack dev server listening at localhost:3000');
+  //     }
+  //   });
+  // }
 });
 
 gulp.task('bin-watch', function(done) {

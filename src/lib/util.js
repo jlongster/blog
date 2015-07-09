@@ -96,9 +96,12 @@ function Element(el) {
 
 function Elements(obj) {
   var res = {};
-  for (var k in obj) {
+  for(var k in obj) {
     var el = obj[k];
-    if (typeof el === "function" && el.isReactLegacyFactory) {
+    // TODO: Argh, I need to figure out a better way to interact with
+    // factories
+    if((typeof el === "function" && el.isReactLegacyFactory) ||
+       (el.prototype && el.prototype.render)) {
       res[k] = React.createFactory(obj[k]);
     }
   }
