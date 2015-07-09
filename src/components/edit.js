@@ -3,8 +3,6 @@ const t = require("transducers.js");
 const { map, filter } = t;
 const debounce = require('debounce');
 const { slugify, Element, Elements } = require('../lib/util');
-const materialui = require('material-ui');
-const { TextField, Checkbox, Paper } = Elements(materialui);
 const { displayDate } = require("../lib/date");
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
@@ -17,8 +15,10 @@ const cx = React.addons.classSet;
 const api = require('impl/api');
 const config = require('../lib/config');
 
-const ThemeManager = new materialui.Styles.ThemeManager();
-ThemeManager.setTheme(ThemeManager.types.LIGHT);
+const Button = Element(require('./ui/Button'));
+const Checkbox = Element(require('./ui/Checkbox'));
+const TextField = Element(require('./ui/TextField'));
+const Card = Element(require('./ui/Card'));
 
 const updatePreview = debounce(function(previewWindow, post) {
   if(previewWindow) {
@@ -172,40 +172,6 @@ const Toolbar = Element(React.createClass({
   }
 }));
 
-const Input = Element(React.createClass({
-  render: function() {
-    return dom.div(
-      { className: 'form-group' },
-      dom.label(null, this.props.label),
-      (this.props.type === 'textarea' ? dom.textarea : TextField)({
-        type: 'input',
-        name: this.props.name,
-        value: this.props.value,
-        className: cx({ 'form-control': true,
-                        'errored': this.props.errored }),
-        onChange: this.props.onChange
-      })
-    );
-  }
-}));
-
-// const Checkbox = Element(React.createClass({
-//   render: function() {
-//     return dom.div(
-//       { className: 'checkbox' },
-//       dom.label(
-//         null,
-//         dom.input({ type: 'checkbox',
-//                     name: this.props.name,
-//                     value: this.props.value,
-//                     checked: this.props.checked,
-//                     onChange: this.props.onChange }),
-//         this.props.label
-//       )
-//     );
-//   }
-// }));
-
 const Settings = Element(React.createClass({
   updateField: function(name, e) {
     let value = e.target.value;
@@ -236,8 +202,8 @@ const Settings = Element(React.createClass({
       dom.div(
         { className: 'abstract' },
         dom.label(null, 'Abstract'),
-        Paper(
-          { zDepth: 1 },
+        Card(
+          null,
           dom.textarea({
             type: 'textarea',
             name: 'abstract',
@@ -246,25 +212,26 @@ const Settings = Element(React.createClass({
           })
         )
       ),
-      TextField({ floatingLabelText: 'URL',
+      TextField({ label: 'URL',
                   name: 'shorturl',
                   value: post.shorturl,
                   errorText: getError(error, 'shorturl'),
                   onChange: this.updateField.bind(this, 'shorturl') }),
       dom.div(
         { className: 'form-inline' },
-        TextField({ floatingLabelText: 'Tags (comma-separated)',
+        TextField({ label: 'Tags (comma-separated)',
                     name: 'tags',
                     value: post.tags ? post.tags.join(',') : '',
                     onChange: this.updateField.bind(this, 'tags') }),
-        TextField({ floatingLabelText: 'Read Next',
+
+        TextField({ label: 'Read Next',
                     name: 'readnext',
                     value: post.readnext,
                     onChange: this.updateField.bind(this, 'readnext') })
       ),
       dom.div(
         { className: 'form-inline' },
-        TextField({ floatingLabelText: 'Header Image URL',
+        TextField({ label: 'Header Image URL',
                     name: 'headerimg',
                     value: post.headerimg,
                     onChange: this.updateField.bind(this, 'headerimg') }),
@@ -274,7 +241,7 @@ const Settings = Element(React.createClass({
                    defaultSwitched: post.headerimgfull,
                    onCheck: this.updateField.bind(this, 'headerimgfull') })
       ),
-      TextField({ floatingLabelText: 'External Assets',
+      TextField({ label: 'External Assets',
                   name: 'resource',
                   value: post.assets,
                   onChange: this.updateField.bind(this, 'assets') }),
@@ -283,8 +250,8 @@ const Settings = Element(React.createClass({
                  name: 'published',
                  value: 'y',
                  defaultSwitched: post.published,
-                 onCheck: this.updateField.bind(this, 'published') })
-
+                 onCheck: this.updateField.bind(this, 'published') }),
+      Button(null, "Hello")
     );
   }
 }));
@@ -296,16 +263,6 @@ const Edit = React.createClass({
       return api.getPost(decodeURI(params.post));
     },
     bodyClass: 'edit'
-  },
-
-  childContextTypes: {
-    muiTheme: React.PropTypes.object
-  },
-
-  getChildContext: function() {
-    return {
-      muiTheme: ThemeManager.getCurrentTheme()
-    };
   },
 
   componentDidMount: function() {

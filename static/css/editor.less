@@ -12,6 +12,14 @@ body.edit {
         background-color: #3f3f3f;
     }
 
+    /* input { */
+    /*     color: @body-text-color; */
+    /* } */
+
+    optgroup, select, textarea {
+        color: inherit;
+    }
+
     .toolbar .popout-preview {
         position: absolute;
         top: 0;
@@ -62,7 +70,7 @@ body.edit {
         margin-right: 8px;
     }
 
-    .form-inline > div {
+    .form-inline > * {
         display: inline-block;
         width: calc(~"50% - .5em");
     }
@@ -80,7 +88,7 @@ body.edit {
         margin-top: 1em;
     }
 
-    .mui-paper {
+    .mdl-card {
         background-color: #f0f0f0;
     }
 
@@ -89,7 +97,12 @@ body.edit {
         font-size: 14px;
         color: fade(@body-text-color, 50%);
     }
-    
+
+    .abstract .mdl-card {
+        width: 100%;
+        min-height: 0;
+    }
+
     .abstract textarea {
         display: block;
         border: 0;
@@ -99,7 +112,7 @@ body.edit {
     }
 
     .abstract textarea,
-    .abstract .mui-paper {
+    .abstract .mdl-card {
         background-color: #4f4f4f;
     }
 
