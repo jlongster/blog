@@ -2,7 +2,12 @@ const csp = require('js-csp');
 const { go, chan, take, put } = csp;
 const _xhr = require('xhr');
 
-function xhr(opts, ch) {
+function xhr(optsOrURL, ch) {
+  let opts = optsOrURL;
+  if(typeof opts === "string") {
+    opts = { url: optsOrURL };
+  }
+
   ch = ch || chan();
   _xhr(opts, function(err, res, body) {
     let result = { raw: res, body: body };

@@ -9,6 +9,8 @@ const NotFound = Element(require('./not-found'));
 const { displayDate } = require('../lib/date');
 const ghm = require('../lib/showdown-ghm.js');
 const statics = require('impl/statics');
+const actions = require("../actions/blog");
+const { connect } = require("../lib/redux");
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
@@ -45,33 +47,12 @@ const RandomMessage = Element(React.createClass({
 
 const Post = React.createClass({
   displayName: 'Post',
-  statics: {
-    fetchData: function (api, params) {
-      return go(function*() {
-        let post = yield api.getPost(decodeURI(params.post));
-        if(!post) {
-          return {};
-        }
-
-        let readnext;
-        if(post.readnext) {
-          let results = yield api.queryPosts({
-            select: ['title', 'abstract', 'shorturl'],
-            filter: { shorturl: post.readnext }
-          });
-          readnext = results[0];
-        }
-        return { post: post, readnext: readnext };
-      }, { propagate: true });
-    },
-
-    bodyClass: 'post-page',
-    title: function(props) {
-      return props.post.post && props.post.post.title;
-    }
-  },
 
   componentDidMount: function() {
+    if(!this.getDOMNode()) {
+      return;
+    }
+
     // TODO: turn markdown into React nodes
     let article = this.getDOMNode().querySelector('article');
     let articleRect = article.getBoundingClientRect();
@@ -88,7 +69,7 @@ const Post = React.createClass({
       anchorable.appendChild(anchor);
     }
 
-    let post = this.props.data['post'].post;
+    let post = this.props.post;
     if(post.assets) {
       // TODO: this is a big hack right now and I'm not even going to
       // explain why... let's just say I need to fix this
@@ -99,11 +80,11 @@ const Post = React.createClass({
   },
 
   render: function () {
-    let post = this.props.data['post'].post;
-    let next = this.props.data['post'].readnext;
+    let post = this.props.post;
+    let next = this.props.readnext;
 
     if(!post) {
-      return NotFound();
+      return null;
     }
 
     return Page(
@@ -167,4 +148,35 @@ const Post = React.createClass({
   }
 });
 
-module.exports = Post;
+module.exports = connect(Post, {
+  pageClass: 'post-page',
+
+  runQueries: function (dispatch, state, params) {
+    const id = decodeURI(params.post);
+
+    go(function*() {
+      const post = yield dispatch(actions.getPost(id));
+
+      if(post && post.readnext) {
+        dispatch(actions.queryPosts({
+          name: 'readnext',
+          select: ['title', 'abstract', 'shorturl'],
+          filter: { shorturl: post.readnext }
+        }));
+      }
+
+      dispatch(actions.updatePage({
+        title: post.title
+      }));
+    });
+  },
+
+  select: function(state, params) {
+    const id = decodeURI(params.post);
+    const readnextQuery = state.getIn(['posts', 'postsByQueryName', 'readnext']);
+    return {
+      post: state.getIn(['posts', 'postsById', id]),
+      readnext: readnextQuery ? readnextQuery[0] : null
+    };
+  }
+});

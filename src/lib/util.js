@@ -27,6 +27,16 @@ function slugify(name) {
   return name.replace(/[ \n!@#$%^&*():"'|?=]/g, '-');
 }
 
+function mergeObj(...args) {
+  const obj = {};
+  args.forEach(arg => {
+    Object.keys(arg).forEach(k => {
+      obj[k] = arg[k];
+    });
+  });
+  return obj;
+}
+
 // channel utils
 
 function invokeCallback(func /*, args... */) {
@@ -108,6 +118,8 @@ function Elements(obj) {
   return res;
 }
 
+// now later a store can check `action instanceof AsyncStatus`?
+
 // Assertions
 
 function assert(msg, val) {
@@ -120,6 +132,7 @@ module.exports = {
   encodeTextContent,
   decodeTextContent,
   slugify,
+  mergeObj,
   invokeCallback,
   invokeCallbackM,
   takeArray,

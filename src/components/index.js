@@ -3,11 +3,12 @@ const React = require("react");
 const { Element, Elements } = require("../lib/util");
 const { Link } = Elements(require("react-router"));
 const { takeAll } = require("../lib/util");
+const { connect } = require("../lib/redux");
 const { displayDate } = require("../lib/date");
 const csp = require("js-csp");
 const { go, chan, take, put, ops } = csp;
-const api = require("impl/api");
 const statics = require("impl/statics");
+const actions = require("../actions/blog");
 
 const Header = Element(require('./header'));
 const Footer = Element(require('./footer'));
@@ -17,19 +18,13 @@ const { div, a } = dom;
 
 let Index = React.createClass({
   displayName: "Index",
-  statics: {
-    fetchData: function (api) {
-      return api.queryPosts({
-        select: ['title', 'date', 'shorturl', 'abstract'],
-        limit: 5
-      });
-    },
-
-    bodyClass: 'index'
-  },
 
   render: function () {
-    var posts = this.props.data['index'];
+    if(!this.props.posts) {
+      return null;
+    }
+    const posts = this.props.posts;
+
     return div(
       null,
       Header(
@@ -77,4 +72,20 @@ let Index = React.createClass({
   }
 });
 
-module.exports = Index;
+module.exports = connect(Index, {
+  pageClass: 'index',
+
+  runQueries: function (dispatch, state) {
+    dispatch(actions.queryPosts({
+      name: 'index',
+      select: ['title', 'date', 'shorturl', 'abstract'],
+      limit: 5
+    }));
+  },
+
+  select: function(state) {
+    return {
+      posts: state.getIn(['posts', 'postsByQueryName', 'index'])
+    };
+  }
+});

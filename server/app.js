@@ -218,27 +218,28 @@ app.get('*', function (req, res, next) {
     let content = 'Loading...';
 
     if(!disableServerRendering) {
-      let { router, pageChan } = bootstrap.run(
-        routes,
-        req.path,
-        { user: payload.user }
-      );
-      let { Handler, props } = yield take(pageChan);
-      payload.data = props.data;
+      let { router, routeChan, store } = bootstrap.run(routes, {
+        location: req.path,
+        user: payload.user,
+        prefetchData: true
+      });
 
-      if(process.env.NODE_ENV !== 'production' && props.error) {
-        res.send(props.error.stack);
-        throw props.error;
-      }
+      // Wait for all data to be loaded for the page
+      yield take(pageChan);
+      // TODO(jwl): need to use transit to serialize the state and send
+      // it across.
+      payload.data = store.getState();
 
-      if(props.title) {
-        title = typeof props.title === 'function' ?
-          props.title(props.data) :
-          props.title;
-      }
-      if(props.bodyClass) {
-        bodyClass = props.bodyClass;
-      }
+      // TODO(jwl): show this error
+      // if(process.env.NODE_ENV !== 'production' && props.error) {
+      //   res.send(props.error.stack);
+      //   throw props.error;
+      // }
+
+      const state = store.getState();
+      title = state.get('route').title;
+      bodyClass = state.get('route').bodyClass;
+
       content = React.renderToString(React.createElement(Handler, props))
     }
 

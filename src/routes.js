@@ -11,12 +11,10 @@ const Post = require('./components/post');
 const Tag = require('./components/tag');
 const Archive = require('./components/archive');
 const Drafts = require('./components/drafts');
-const Edit = require('./components/edit');
+const Edit = require('./admin/edit');
 const Preview = require('./components/preview');
 const NotFound = require('./components/not-found');
 const Router = require('react-router');
-
-
 
 const { Route, DefaultRoute, NotFoundRoute } = Elements(Router);
 

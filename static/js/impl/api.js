@@ -75,7 +75,7 @@ function queryPosts(query) {
   );
 }
 
-function getPost(shorturl) {
+function getPost(shorturl, actionType) {
   let res = filter(postCache, post => post.shorturl === shorturl);
   if(res.length) {
     let ch = chan();
@@ -121,15 +121,6 @@ function deletePost(shorturl) {
     url: '/api/post/' + shorturl,
     method: 'delete'
   }));
-}
-
-function __eval() {
-  go(function*() {
-    console.log(JSON.stringify(yield queryPosts({
-      select: ['title'],
-      limit: 2
-    }), null, 2));
-  });
 }
 
 module.exports = {

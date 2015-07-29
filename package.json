@@ -2,7 +2,7 @@
   "name": "jlongster.com",
   "author": "James Long",
   "dependencies": {
-    "babel": "^5.0.7",
+    "babel": "^5.6.14",
     "babel-core": "^5.0.7",
     "babel-loader": "^5.0.0",
     "babel-runtime": "^5.0.7",
@@ -44,6 +44,7 @@
     "react-hot-loader": "1.2.8",
     "react-router": "0.13.3",
     "redis": "0.12.1",
+    "redux-thunk": "^0.1.0",
     "regenerator": "0.8.2",
     "source-map-support": "0.2.8",
     "style-loader": "0.8.2",

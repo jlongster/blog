@@ -7,22 +7,20 @@ const { go, chan, take, put, ops } = csp;
 const Main = Element(require('./main'));
 const Header = Element(require("./header"));
 const Page = Element(require('./page'));
+const actions = require("../actions/blog");
+const { connect } = require("../lib/redux");
 
 const dom = React.DOM;
 
 const Drafts = React.createClass({
   displayName: 'Drafts',
-  statics: {
-    fetchData: function (api, params, isAdmin) {
-      return api.queryDrafts({
-        select: ['title', 'date', 'shorturl'],
-      });
-    },
-    requireAdmin: true
-  },
 
   render: function () {
-    let posts = this.props.data['drafts'];
+    let posts = this.props.posts;
+    if(!posts) {
+      return null;
+    }
+
     return Page(
       null,
       dom.h1(null, 'Drafts'),
@@ -40,4 +38,19 @@ const Drafts = React.createClass({
   }
 });
 
-module.exports = Drafts;
+module.exports = connect(Drafts, {
+  requireAdmin: true,
+
+  runQueries: function (dispatch) {
+    dispatch(actions.queryDrafts({
+      name: 'drafts',
+      select: ['title', 'date', 'shorturl'],
+    }));
+  },
+
+  select: function(state) {
+    return {
+      posts: state.getIn(['posts', 'postsByQueryName', 'drafts'])
+    };
+  }
+});

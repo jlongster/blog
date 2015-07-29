@@ -30,7 +30,7 @@ var deepmerge = DeepMerge(function(target, source, key) {
 
 // generic config
 
-var babelLoader = 'babel?optional=runtime';
+var babelLoader = 'babel?optional=runtime&stage=1';
 
 var defaultConfig = {
   resolve: {
@@ -81,8 +81,8 @@ var frontendConfig = config({
   ],
   output: {
     path: path.join(__dirname, 'static/build'),
-    //publicPath: PROD ? '/build/' : 'http://localhost:3000/build/',
-    publicPath: '/build/',
+    publicPath: PROD ? '/build/' : 'http://localhost:3000/build/',
+    // publicPath: '/build/',
     filename: 'frontend.js'
   },
   module: {
@@ -109,15 +109,15 @@ var frontendConfig = config({
 });
 
 if(!PROD) {
-  // frontendConfig.entry = [
-  //   'webpack-dev-server/client?http://localhost:3000',
-  //   'webpack/hot/only-dev-server'
-  // ].concat(frontendConfig.entry);
+  frontendConfig.entry = [
+    'webpack-dev-server/client?http://localhost:3000',
+    'webpack/hot/only-dev-server'
+  ].concat(frontendConfig.entry);
 
-  // frontendConfig.plugins = frontendConfig.plugins.concat([
-  //   new webpack.HotModuleReplacementPlugin({ quiet: true }),
-  //   new webpack.NoErrorsPlugin()
-  // ]);
+  frontendConfig.plugins = frontendConfig.plugins.concat([
+    new webpack.HotModuleReplacementPlugin({ quiet: true }),
+    new webpack.NoErrorsPlugin()
+  ]);
 }
 else {
   frontendConfig.plugins = frontendConfig.plugins.concat([
@@ -184,7 +184,7 @@ var backendConfig = config({
 });
 
 if(!PROD) {
-  backendConfig.entry.unshift('webpack/hot/signal.js');
+  // backendConfig.entry.unshift('webpack/hot/signal.js');
 
   // Disable server rendering in development because it makes build
   // times longer (and makes debugging more predictable).
@@ -192,9 +192,9 @@ if(!PROD) {
   backendConfig.plugins = backendConfig.plugins.concat([
     new webpack.DefinePlugin({
       'process.env.NO_SERVER_RENDERING': true
-    }),
-    new webpack.HotModuleReplacementPlugin({ quiet: true }),
-    new webpack.NoErrorsPlugin()
+    })
+    // new webpack.HotModuleReplacementPlugin({ quiet: true }),
+    // new webpack.NoErrorsPlugin()
   ]);
 }
 
@@ -255,29 +255,29 @@ gulp.task('backend-watch', function(done) {
 gulp.task('frontend-watch', function(done) {
   gutil.log('Frontend warming up...');
 
-  // if(PROD) {
+  if(PROD) {
     var firedDone = false;
     webpack(frontendConfig).watch(100, function(err, stats) {
       if(!firedDone) { done(); firedDone = true; }
       onBuild(err, stats);
     });
-  // }
-  // else {
-  //   done();
+  }
+  else {
+    done();
 
-  //   new WebpackDevServer(webpack(frontendConfig), {
-  //     publicPath: frontendConfig.output.publicPath,
-  //     hot: true,
-  //     stats: outputOptions
-  //   }).listen(3000, 'localhost', function (err, result) {
-  //     if(err) {
-  //       console.log(err);
-  //     }
-  //     else {
-  //       console.log('webpack dev server listening at localhost:3000');
-  //     }
-  //   });
-  // }
+    new WebpackDevServer(webpack(frontendConfig), {
+      publicPath: frontendConfig.output.publicPath,
+      hot: true,
+      stats: outputOptions
+    }).listen(3000, 'localhost', function (err, result) {
+      if(err) {
+        console.log(err);
+      }
+      else {
+        console.log('webpack dev server listening at localhost:3000');
+      }
+    });
+  }
 });
 
 gulp.task('bin-watch', function(done) {
