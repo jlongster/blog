@@ -79,19 +79,23 @@ document.addEventListener('keydown', function(e) {
     const reducer = store.getReducer();
     store.replaceReducer((state, action) => {
       const response = prompt('App State', str);
-      if(response) {
+      try {
         return transitImmutable.fromJSON(response);
       }
-      return transitImmutable.fromJSON(str);
+      catch(e) {
+        return transitImmutable.fromJSON(str);
+      }
     });
     store.replaceReducer(reducer);
 
     const state = store.getState();
-    // Rerender the page with the new path. My site does not use
-    // pushState history, so just don't worry about updating the URL.
-    // We could manually use `pushState` here but the router wouldn't
-    // detect the back button (because it's set up for refreshes).
+    // Rerender the page with the new path.
     router.dispatch(state.route.path);
+    // Update the URL without refreshing. My router is not configured
+    // to use pushState (uses full refresh), so yes this breaks the
+    // back button because it isn't listening for history changes. But
+    // it's not a big deal for resuming the state (only used for dev).
+    history.pushState(null, state.route.title, state.route.path);
   }
 });
 

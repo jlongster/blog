@@ -9,10 +9,11 @@ const React = require('react');
 const nconf = require('nconf');
 const oauth = require('oauth');
 const handlebars = require('handlebars');
-
+const transitImmutable = require('transit-immutable-js');
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
 const { go, chan, take, put, timeout, operations: ops } = require('js-csp');
+
 const { encodeTextContent, Element, Elements } = require('../src/lib/util');
 const api = require('./impl/api');
 const feed = require('./feed');
@@ -201,14 +202,12 @@ if(!process.env.NO_SERVER_RENDERING) {
 }
 
 app.get('*', function (req, res, next) {
-  let disableServerRendering = (
-    process.env.NO_SERVER_RENDERING || req.cookies.renderOnServer === 'n'
-  );
-
   go(function*() {
     let payload = {
-      user: { name: req.session.username,
-              admin: isAdmin(req.session.username) },
+      user: {
+        name: req.session.username,
+        admin: isAdmin(req.session.username)
+      },
       config: {
         url: nconf.get('url')
       }
@@ -217,7 +216,7 @@ app.get('*', function (req, res, next) {
     let bodyClass = '';
     let content = 'Loading...';
 
-    if(!disableServerRendering) {
+    if(!process.env.NO_SERVER_RENDERING) {
       let { router, routeChan, store } = bootstrap.run(routes, {
         location: req.path,
         user: payload.user,

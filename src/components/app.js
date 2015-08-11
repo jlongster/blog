@@ -1,5 +1,5 @@
-const React = require('react');
-const cookie = require('cookie');
+const React = require('react/addons');
+const PureRenderMixin = React.addons.PureRenderMixin;
 const { connect } = require("../lib/redux");
 const Router = require('react-router');
 

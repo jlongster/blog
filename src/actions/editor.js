@@ -32,7 +32,7 @@ function deletePost(id) {
 }
 
 function savePost(previousPost, post) {
-  return dispatch => ({
+  return dispatch => dispatch({
     type: constants.SAVE_POST,
     post: post,
     [fields.CHANNEL]: go(function*() {

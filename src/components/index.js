@@ -74,11 +74,12 @@ let Index = React.createClass({
 module.exports = connect(Index, {
   pageClass: 'index',
 
-  runQueries: function (dispatch, state) {
+  queryParams: { limit: 5 },
+  runQueries: function (dispatch, state, params) {
     dispatch(actions.queryPosts({
       name: 'index',
       select: ['title', 'date', 'shorturl', 'abstract'],
-      limit: 5
+      limit: params.limit
     }));
   },
 

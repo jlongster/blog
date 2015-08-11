@@ -173,11 +173,6 @@ function _finalizeEdit(key, date) {
 
 // public API
 
-function getPosts(limit) {
-  return queryPosts({ limit: limit,
-                      filter: { published: true }})
-}
-
 function queryDrafts(query) {
   query.filter = t.merge(query.filter || {}, { published: false });
   return _runQuery(query);
@@ -290,7 +285,6 @@ module.exports = {
   connect: connect,
   quit: quit,
   getPost: getPost,
-  getPosts: getPosts,
   queryPosts: queryPosts,
   queryDrafts: queryDrafts,
   createPost: createPost,

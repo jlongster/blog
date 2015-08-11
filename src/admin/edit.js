@@ -1,6 +1,6 @@
-const React = require('react');
-const ReactUpdates = require('react/lib/ReactUpdates');
-const { slugify, mergeObj, invariant } = require('../lib/util');
+const React = require('react/addons');
+const PureRenderMixin = React.addons.PureRenderMixin;
+const { slugify, mergeObj } = require('../lib/util');
 const { connect } = require('../lib/redux');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
@@ -120,7 +120,6 @@ const Edit = React.createClass({
 
     return dom.div(
       { className: 'edit-container' },
-      //Feedback(),
       Toolbar({ title: post.title,
                 date: post.date,
                 shorturl: post.shorturl,
@@ -138,10 +137,6 @@ const Edit = React.createClass({
                 className: 'settings',
                 onClick: actions.toggleSettings },
               "Settings \u2192"),
-        // dom.a({ href: '#',
-        //         className: 'preview',
-        //         onClick: actions.togglePreview },
-        //       "\u2190 Preview"),
         Pane(
           { width: 500,
             side: "left",
@@ -165,6 +160,12 @@ const Edit = React.createClass({
   }
 });
 
+const blankPost = {
+  title: '',
+  content: '',
+  published: false
+};
+
 module.exports = connect(withLocalState(Edit), {
   pageClass: 'edit',
   actions: actions,
@@ -178,11 +179,7 @@ module.exports = connect(withLocalState(Edit), {
     const id = decodeURI(params.post);
     const post = state.posts.getIn(['postsById', id]);
     return {
-      post: post || {
-        title: '',
-        content: '',
-        published: false
-      },
+      post: post || blankPost,
       ui: state.editor
     }
   }

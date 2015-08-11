@@ -6,6 +6,7 @@ const csp = require("js-csp");
 const { go, chan, take, put, ops } = csp;
 const { invariant, mergeObj } = require('../lib/util');
 const { PropTypes } = React;
+const shallowEqual = require('../lib/shallowEqual');
 
 const fields = {
   CHANNEL: '@@dispatch/channel',
@@ -71,7 +72,7 @@ const storeShape = React.PropTypes.shape({
 });
 
 function connect(component, statics) {
-  const { select, runQueries, actions, namedActions } = statics;
+  const { select, queryParams, runQueries, actions, namedActions } = statics;
 
   return React.createClass({
     contextTypes: {
@@ -91,35 +92,41 @@ function connect(component, statics) {
           bindActionCreators(namedActions, store.dispatch) :
           null,
         slice: this.selectState(this.props.queryParams),
-        queryParams: this.props.queryParams
+        queryParams: mergeObj(queryParams || {},
+                              this.props.queryParams || {})
       };
     },
 
     componentDidMount: function() {
       this.unsubscribe = this.context.store.subscribe(this.handleChange);
-
-      if(runQueries) {
-        runQueries(
-          this.context.store.dispatch,
-          this.context.store.getState(),
-          this.state.queryParams
-        );
-      }
+      this.runQueries();
     },
 
     componentWillUnmount: function() {
       this.unsubscribe();
     },
 
+    shouldComponentUpdate: function(nextProps, nextState) {
+      const v = !shallowEqual(this.props, nextProps) ||
+        !shallowEqual(this.state.slice, nextState.slice) ||
+        !shallowEqual(this.state.queryParams, nextState.queryParams);
+      return v;
+    },
+
+    runQueries: function(params) {
+      if(runQueries) {
+        runQueries(
+          this.context.store.dispatch,
+          this.context.store.getState(),
+          params || this.state.queryParams
+        );
+      }
+    },
+
     handleChange: function() {
       const results = this.selectState(this.state.queryParams);
-      const changed = Object.keys(this.state.slice).some(k => {
-        // TODO(jwl) need to check for immutable.js objects here and
-        // use `equals`
-        return results[k] !== this.state.slice[k];
-      });
 
-      if(changed) {
+      if(!shallowEqual(results, this.state.slice)) {
         this.setState({ slice: results });
       }
     },
@@ -134,11 +141,14 @@ function connect(component, statics) {
 
     setQueryParams: function(params) {
       this.setState({ queryParams: params });
+      this.runQueries(params);
     },
 
     render: function() {
       return React.createElement(component, mergeObj(
         this.props,
+        { queryParams: this.state.queryParams,
+          setQueryParams: this.setQueryParams },
         this.state.actions || {},
         this.state.namedActions || {},
         this.state.slice || {}

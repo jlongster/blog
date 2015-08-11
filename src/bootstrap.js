@@ -26,8 +26,10 @@ function fetchAllData(store, state, isAdmin) {
 
   for(let route of state.routes) {
     let handler = route.handler;
+
     if(handler.runQueries && (!handler.requireAdmin || isAdmin)) {
-      handler.runQueries(store.dispatch, store.getState(), state.params);
+      const params = mergeObj(handler.queryParams || {}, state.params);
+      handler.runQueries(store.dispatch, store.getState(), params);
     }
   }
 
