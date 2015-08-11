@@ -188,7 +188,7 @@ app.get('/api/*', function(req, res) {
 
 app.get('/atom.xml', function(req, res) {
   go(function*() {
-    let posts = yield api.getPosts(5);
+    let posts = yield api.queryPosts({ limit: 5 });
     res.set('Content-Type', 'application/atom+xml');
     res.send(feed.render(posts));
   });
