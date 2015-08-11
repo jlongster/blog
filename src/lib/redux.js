@@ -7,21 +7,6 @@ const { go, chan, take, put, ops } = csp;
 const { invariant, mergeObj } = require('../lib/util');
 const { PropTypes } = React;
 
-function combineImmutReducers(reducers) {
-  if(!(reducers instanceof Immutable.Map)) {
-    reducers = Immutable.fromJS(reducers);
-  }
-
-  return function composition(state = Immutable.Map(), action) {
-    return reducers.map((reducer, key) => {
-      const newState = reducer(state.get(key), action);
-      invariant(typeof newState !== 'undefined',
-                'reducer did not return any state');
-      return newState;
-    });
-  }
-}
-
 const fields = {
   CHANNEL: '@@dispatch/channel',
   SEQ_ID: '@@dispatch/seqId'
@@ -57,7 +42,7 @@ function channelMiddleware({ dispatch }) {
           val = yield ch;
         }
         catch(e) {
-          dispatch(mergeObj(action, { status: 'error', value: e }));
+          dispatch(mergeObj(action, { status: 'error', value: e.toString() }));
           csp.putAsync(outCh, new csp.Throw(e));
           return e;
         }
@@ -168,7 +153,9 @@ function channelStore(createStore) {
     const stateChan = chan();
     const mult = csp.operations.mult(stateChan);
 
-    store.subscribe(() => csp.putAsync(stateChan, store.getState()));
+    store.subscribe(() => {
+      csp.putAsync(stateChan, store.getState())
+    });
 
     return mergeObj(store, {
       getChannel: () => {
@@ -185,7 +172,7 @@ function channelStore(createStore) {
 }
 
 module.exports = {
-  combineImmutReducers,
+  storeShape,
   connect,
   channelMiddleware,
   channelStore,

@@ -9,15 +9,15 @@ const initialState = {
 
 function route(state = initialState, action) {
   switch(action.type) {
-  case constants.UPDATE_ROUTE:
-    return mergeObj(state, {
-      path: action.path,
-      user: action.user
-    });
+  // This is a separate action for clarity
+  case constants.UPDATE_PATH:
+    return mergeObj(state, { path: action.path });
+
   case constants.UPDATE_PAGE:
     return mergeObj(state, {
       title: action.title || state.title,
-      className: action.className || state.className
+      className: action.className || state.className,
+      user: action.user || state.user
     });
   }
 

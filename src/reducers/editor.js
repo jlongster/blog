@@ -1,5 +1,5 @@
 const constants = require('../constants');
-const Immutable = require('immutable');
+const { mergeObj } = require('../lib/util');
 
 const initialState = {
   showSettings: false,
@@ -9,11 +9,17 @@ const initialState = {
 function editor(state = initialState, action) {
   switch(action.type) {
   case constants.TOGGLE_SETTINGS:
-    return state.showSettings =
-      (action.isOpen !== undefined) ? action.isOpen : !state.showSettings;
+    return mergeObj(state, {
+      showSettings: (action.isOpen !== undefined) ?
+        action.isOpen :
+        !state.showSettings
+    });
   case constants.TOGGLE_PREVIEW:
-    return state.showPreview =
-      (action.isOpen !== undefined) ? action.isOpen : !state.showPreview;
+    return mergeObj(state, {
+      showPreview: (action.isOpen !== undefined) ?
+        action.isOpen :
+        !state.showPreview
+    });
   default:
     return state;
   }

@@ -1,6 +1,13 @@
 const posts = require('./posts');
-const pendingRequests = require('./pending-requests');
+const asyncRequests = require('./async-requests');
 const route = require('./route');
 const editor = require('./editor');
+const localState = require('./local-state');
 
-module.exports = { posts, pendingRequests, route, editor };
+module.exports = {
+  posts,
+  asyncRequests,
+  route,
+  editor,
+  __localState: localState
+};

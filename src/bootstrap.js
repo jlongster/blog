@@ -1,7 +1,7 @@
 const Router = require('react-router');
 const redux = require('redux');
 const reduxThunk = require('redux-thunk');
-const { combineImmutReducers, channelMiddleware, channelStore } = require('./lib/redux');
+const { channelMiddleware, channelStore } = require('./lib/redux');
 const createStore = redux.applyMiddleware(
   reduxThunk,
   channelMiddleware
@@ -13,12 +13,12 @@ const { go, chan, take, put, Throw, operations: ops } = csp;
 const api = require('impl/api');
 const stateReducers = require('./reducers');
 const constants = require('./constants');
-const { updateRoute, updatePage } = require('./actions/blog');
+const { updatePath, updatePage } = require('./actions/blog');
 
 function fetchAllData(store, state, isAdmin) {
   var ch = chan();
   store.subscribe(() => {
-    const pendingRequests = store.getState().get('pendingRequests');
+    const pendingRequests = store.getState().pendingRequests;
     if(!pendingRequests.count()) {
       csp.putAsync(ch, true);
     }
@@ -35,7 +35,7 @@ function fetchAllData(store, state, isAdmin) {
 }
 
 function run(routes, { location, user, initialData, prefetchData }) {
-  const store = createStore(combineImmutReducers(stateReducers),
+  const store = createStore(redux.combineReducers(stateReducers),
                             initialData);
   const ch = chan();
 
@@ -56,12 +56,13 @@ function run(routes, { location, user, initialData, prefetchData }) {
       routeState.params = state.params;
       routeState.handler = Handler;
 
+      store.dispatch(updatePath(state.path));
       store.dispatch(updatePage({
         title: route.handler.title,
-        className: route.handler.pageClass
+        className: route.handler.pageClass,
+        user: user
       }));
 
-      store.dispatch(updateRoute(state.path, user));
       yield put(ch, routeState);
     });
   });

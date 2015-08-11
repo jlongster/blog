@@ -1,36 +1,26 @@
 const React = require('react');
 const dom = React.DOM;
-const { merge, toObj } = require('transducers.js');
 const classNames = require('classnames');
-const mdl = require('../../../lib/mdl');
 
 const Checkbox = React.createClass({
-  componentDidMount: function() {
-    require(['../../../lib/mdl/material-pink.css']);
-    mdl.upgradeElement(React.findDOMNode(this), 'MaterialCheckbox');
-  },
-
-  componentDidUnmount: function() {
-    mdl.downgradeElement(React.findDOMNode(this));
-  },
 
   render: function() {
-    var id = 'id' + (Math.random().toString());
-    return dom.label(
-      { className: classNames('mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect',
-                              this.props.classNames),
-        htmlFor: id },
+    // TODO(jwl): yeah yeah, this is a hack
+    var id = 'form-input-' + this.props.name;
+
+    return dom.div(
+      { className: classNames('form-field form-field-checkbox',
+                              this.props.className) },
       dom.input({
         type: 'checkbox',
         id: id,
-        className: 'mdl-checkbox__input',
         name: this.props.name,
         value: this.props.value,
-        checked: !!this.props.defaultSwitched,
-        onChange: this.props.onCheck
+        checked: this.props.checked,
+        onChange: this.props.onChange
       }),
-      dom.span({
-        className: 'mdl-checkbox__label'
+      dom.label({
+        htmlFor: id
       }, this.props.label)
     );
   }

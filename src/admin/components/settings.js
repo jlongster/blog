@@ -1,6 +1,10 @@
 const React = require('react/addons');
 const classNames = require('classnames');
 const dom = React.DOM;
+const Checkbox = React.createFactory(require('./ui/Checkbox'));
+const TextField = React.createFactory(require('./ui/TextField'));
+
+// TextField, Checkbox
 
 const Settings = React.createClass({
   updateField: function(name, e) {
@@ -14,7 +18,7 @@ const Settings = React.createClass({
       }
     }
 
-    this.props.updatePostMeta(name, value);
+    this.props.onChange(name, value);
   },
 
   render: function() {
@@ -30,9 +34,14 @@ const Settings = React.createClass({
         method: 'post',
         style: this.props.style,
         onSubmit: e => e.preventDefault() },
-      dom.button({ onClick: this.props.onClose }, "Close"),
+
+      this.props.validationError && dom.div(
+        { className: 'form-field-errors' },
+        this.props.validationError.msg
+      ),
+
       dom.div(
-        { className: 'abstract' },
+        { className: 'form-field abstract' },
         dom.label(null, 'Abstract'),
         dom.textarea({
           type: 'textarea',
@@ -41,35 +50,29 @@ const Settings = React.createClass({
           onChange: this.updateField.bind(this, 'abstract')
         })
       ),
-      TextField({ label: 'URL',
+      TextField({ key: 'url',
                   name: 'shorturl',
                   value: post.shorturl,
                   errorText: getError(error, 'shorturl'),
                   onChange: this.updateField.bind(this, 'shorturl') }),
-      dom.div(
-        { className: 'form-inline' },
-        TextField({ label: 'Tags (comma-separated)',
-                    name: 'tags',
-                    value: post.tags ? post.tags.join(',') : '',
-                    onChange: this.updateField.bind(this, 'tags') }),
-
-        TextField({ label: 'Read Next',
-                    name: 'readnext',
-                    value: post.readnext,
-                    onChange: this.updateField.bind(this, 'readnext') })
-      ),
-      dom.div(
-        { className: 'form-inline' },
-        TextField({ label: 'Header Image URL',
-                    name: 'headerimg',
-                    value: post.headerimg,
-                    onChange: this.updateField.bind(this, 'headerimg') }),
-        Checkbox({ label: 'Cover Image',
-                   name: 'headerimgfull',
-                   value: 'y',
-                   defaultSwitched: post.headerimgfull,
-                   onCheck: this.updateField.bind(this, 'headerimgfull') })
-      ),
+      TextField({ label: 'Tags (comma-separated)',
+                  name: 'tags',
+                  value: post.tags ? post.tags.join(',') : '',
+                  onChange: this.updateField.bind(this, 'tags') }),
+      TextField({ label: 'Read Next',
+                  name: 'readnext',
+                  value: post.readnext,
+                  onChange: this.updateField.bind(this, 'readnext') }),
+      TextField({ label: 'Header Image URL',
+                  name: 'headerimg',
+                  value: post.headerimg,
+                  onChange: this.updateField.bind(this, 'headerimg') }),
+      Checkbox({ label: 'Cover Image',
+                 name: 'headerimgfull',
+                 value: 'y',
+                 checked: post.headerimgfull,
+                 className: 'form-field-collapse',
+                 onChange: this.updateField.bind(this, 'headerimgfull') }),
       TextField({ label: 'External Assets',
                   name: 'resource',
                   value: post.assets,
@@ -78,8 +81,8 @@ const Settings = React.createClass({
                  className: 'published',
                  name: 'published',
                  value: 'y',
-                 defaultSwitched: post.published,
-                 onCheck: this.updateField.bind(this, 'published') })
+                 checked: post.published,
+                 onChange: this.updateField.bind(this, 'published') })
     );
   }
 });

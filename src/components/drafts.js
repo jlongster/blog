@@ -50,7 +50,7 @@ module.exports = connect(Drafts, {
 
   select: function(state) {
     return {
-      posts: state.getIn(['posts', 'postsByQueryName', 'drafts'])
+      posts: state.posts.getIn(['postsByQueryName', 'drafts'])
     };
   }
 });

@@ -11,18 +11,17 @@ function updatePage(opts) {
   });
 }
 
-function updateRoute(path, user) {
+function updatePath(path) {
   return {
-    type: constants.UPDATE_ROUTE,
-    path: path,
-    user: user
+    type: constants.UPDATE_PATH,
+    path: path
   };
 }
 
 function getPost(id) {
   return (dispatch, getState) => {
     const state = getState();
-    const posts = state.getIn(['posts', 'postsById']);
+    const posts = state.posts.get('postsById');
 
     if(!posts.find(post => post.shorturl === id)) {
       return dispatch({
@@ -40,7 +39,7 @@ function _query(query, runQuery) {
 
     // If the query already exists in the cache, don't bother
     // re-querying it
-    if(!state.getIn(['posts', 'postsByQuery', Immutable.fromJS(query)])) {
+    if(!state.posts.getIn(['postsByQuery', Immutable.fromJS(query)])) {
       return dispatch({
         type: constants.QUERY_POSTS,
         query: query,
@@ -60,7 +59,7 @@ function queryDrafts(query) {
 
 module.exports = {
   updatePage,
-  updateRoute,
+  updatePath,
   getPost,
   queryPosts,
   queryDrafts

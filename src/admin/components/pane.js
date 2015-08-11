@@ -3,10 +3,6 @@ const classNames = require('classnames');
 const dom = React.DOM;
 
 const Pane = React.createClass({
-  getInitialState: function() {
-    return { open: false };
-  },
-
   render: function() {
     const side = this.props.side;
     const open = 0;

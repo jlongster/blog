@@ -16,26 +16,21 @@ const Toolbar = React.createClass({
   render: function() {
     return dom.div(
       { className: 'toolbar' },
-      !this.props.showSettings &&
-        dom.button({ className: "btn-action left",
-                     onClick: () => this.props.onShowSettings() },
-                   "Settings \u2192"),
       dom.strong(null, this.props.title),
       dom.span(null,
                ' \u2014 ',
                (this.props.date ? displayDate(this.props.date) : 'Today')),
-      dom.a({ href: '#', onClick: this.handleSave },
-            'Save'),
-      dom.a({ href: '#',
-              onClick: e => {
-                e.preventDefault();
-                this.props.onDelete();
-              }},
-            'Delete'),
-      !this.props.showPreview &&
-        dom.button({ className: "btn-action right",
-                     onClick: () => this.props.onShowPreview() },
-                   "\u2190 Preview")
+      dom.div(
+        { className: 'actions' },
+        dom.a({ href: '#', onClick: this.handleSave },
+              'Save'),
+        dom.a({ href: '#',
+                onClick: e => {
+                  e.preventDefault();
+                  this.props.onDelete();
+                }},
+              'Delete')
+      )
     );
   }
 });

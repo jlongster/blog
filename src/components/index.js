@@ -85,7 +85,7 @@ module.exports = connect(Index, {
 
   select: function(state) {
     return {
-      posts: state.getIn(['posts', 'postsByQueryName', 'index'])
+      posts: state.posts.getIn(['postsByQueryName', 'index'])
     };
   }
 });

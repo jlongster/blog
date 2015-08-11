@@ -1,31 +1,71 @@
 const constants = require('../constants');
 const { fields } = require('../lib/redux');
-const api = require("impl/api");
+const csp = require('js-csp');
+const { go, chan, take, put, Throw, operations: ops } = csp;
+const api = require('impl/api');
+const blogActions = require('./blog');
 
-function toggleSettings(isOpen) {
-  return {
-    type: constants.TOGGLE_SETTINGS,
-    isOpen: isOpen
-  };
+function toggleSettings() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: constants.TOGGLE_SETTINGS,
+      isOpen: !getState().editor.showSettings
+    });
+  }
 }
 
-function togglePreview(isOpen) {
-  return {
-    type: constants.TOGGLE_PREVIEW,
-    isOpen: isOpen
-  };
+function togglePreview() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: constants.TOGGLE_PREVIEW,
+      isOpen: !getState().editor.showPreview
+    });
+  }
 }
 
-function savePost(post) {
+function deletePost(id) {
   return {
+    type: constants.DELETE_POST,
+    id: id,
+    [fields.CHANNEL]: api.deletePost(id)
+  }
+}
+
+function savePost(previousPost, post) {
+  return dispatch => ({
     type: constants.SAVE_POST,
     post: post,
-    [fields.CHANNEL]: api.savePost(post)
+    [fields.CHANNEL]: go(function*() {
+      if(!previousPost.shorturl) {
+        yield api.createPost(post.shorturl);
+      }
+      else if(previousPost.shorturl !== post.shorturl) {
+        yield api.renamePost(previousPost.shorturl, post.shorturl);
+      }
+
+      yield api.updatePost(post.shorturl, post);
+
+      if(previousPost.shorturl !== post.shorturl) {
+        dispatch(blogActions.updatePath('/edit/' + post.shorturl));
+      }
+      else {
+        dispatch(blogActions.updatePath('/' + post.shorturl));
+      }
+    }, { propagate: true })
+  });
+}
+
+function removeErrors(errors) {
+  return {
+    type: constants.REMOVE_ERRORS,
+    errors: errors
   }
 }
 
 module.exports = {
   toggleSettings,
   togglePreview,
-  savePost
+  savePost,
+  deletePost,
+  removeErrors
 };

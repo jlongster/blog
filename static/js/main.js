@@ -10,6 +10,7 @@ const { decodeTextContent } = require('../../src/lib/util');
 const config = require('../../src/lib/config');
 const bootstrap = require('../../src/bootstrap');
 const { Provider } = require('react-redux');
+const transitImmutable = require('transit-immutable-js');
 
 const routes = require('../../src/routes');
 const api = require('./impl/api');
@@ -41,16 +42,56 @@ go(function*() {
   let prevState = store.getState();
 
   while(true) {
-    const state = yield storeChan;
-    document.title = state.get('route').title;
+    const state = yield take(storeChan);
+    document.title = state.route.title;
 
-    if(prevState.get('route').className) {
-      document.body.classList.remove(prevState.get('route').className);
+    if(prevState.route.className) {
+      document.body.classList.remove(prevState.route.className);
     }
-    if(state.get('route').className) {
-      document.body.classList.add(state.get('route').className);
+    if(state.route.className) {
+      document.body.classList.add(state.route.className);
     }
+
+    // If the path has changed but the page hasn't actually updated to
+    // reflect that, update the router
+    const currentPath = location.pathname + location.search + location.hash;
+    if(state.route.path && state.route.path !== currentPath) {
+      router.replaceWith(state.route.path);
+    }
+
     prevState = state;
+  }
+});
+
+document.addEventListener('keydown', function(e) {
+  // cmd+shift+k
+  const cmdShiftK = e.metaKey && e.shiftKey && e.keyCode === 75;
+  const cmdShiftI = e.metaKey && e.shiftKey && e.keyCode === 73;
+
+  if(cmdShiftI) {
+    const str = transitImmutable.toJSON(store.getState());
+    console.log(str);
+  }
+  else if(cmdShiftK) {
+    e.preventDefault();
+    const str = transitImmutable.toJSON(store.getState());
+
+    const reducer = store.getReducer();
+    store.replaceReducer((state, action) => {
+      const response = prompt('App State', str);
+      if(response) {
+        return transitImmutable.fromJSON(response);
+      }
+      return transitImmutable.fromJSON(str);
+    });
+    store.replaceReducer(reducer);
+
+    const state = store.getState();
+    // Rerender the page with the new path. My site does not use
+    // pushState history, so just don't worry about updating the URL.
+    // We could manually use `pushState` here but the router wouldn't
+    // detect the back button (because it's set up for refreshes).
+    router.dispatch(state.route.path);
   }
 });
 
@@ -59,7 +100,6 @@ go(function*() {
   while(true) {
     const routeState = yield routeChan;
 
-    // TODO(jwl): need to pass in the title somehow?
     React.render(
       React.createElement(
         Provider,

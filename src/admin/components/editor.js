@@ -10,14 +10,14 @@ const Editor = React.createClass({
 
   componentDidMount: function() {
     require(
-      ['static/js/editor/editor.js', 'static/css/codemirror-zenburn.css'],
+      ['static/js/editor/editor.js', 'static/css/codemirror-happy-joy.css'],
       editor => {
         let CodeMirror = editor.CodeMirror;
         let node = React.findDOMNode(this);
         let mirror = CodeMirror(node, {
           value: this.props.content,
           lineWrapping: true,
-          theme: 'zenburn',
+          theme: 'happy-happy-joy-joy-2',
           autofocus: true,
           mode: {
             name: 'markdown',
@@ -33,7 +33,6 @@ const Editor = React.createClass({
 
         mirror.on('change', (m, changes) => {
           if(changes.origin !== 'setValue') {
-            this.changeFired = true;
             this.props.onChange(m.getValue());
           }
         });
@@ -70,17 +69,22 @@ const Editor = React.createClass({
     );
   },
 
+  shouldComponentUpdate: function(nextProps) {
+    // We only need to update if the actual document we're editing is
+    // switched out. All the actual text changes happens immediately
+    // within the editor itself (mutates the doc internally).
+    return this.props.shorturl !== nextProps.shorturl;
+  },
+
   componentDidUpdate: function() {
     let mirror = this.mirror;
-    if(mirror && !this.changeFired) {
+    if(mirror) {
       mirror.setValue(this.props.content);
 
       // Set the cursor at the end of the post title
       mirror.focus();
       mirror.setCursor(1, 1000);
     }
-
-    this.changeFired = false;
   },
 
   handleDragOver: function() {

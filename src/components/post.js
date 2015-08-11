@@ -173,9 +173,9 @@ module.exports = connect(Post, {
 
   select: function(state, params) {
     const id = decodeURI(params.post);
-    const readnextQuery = state.getIn(['posts', 'postsByQueryName', 'readnext']);
+    const readnextQuery = state.posts.get(['postsByQueryName', 'readnext']);
     return {
-      post: state.getIn(['posts', 'postsById', id]),
+      post: state.posts.getIn(['postsById', id]),
       readnext: readnextQuery ? readnextQuery[0] : null
     };
   }

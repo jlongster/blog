@@ -1,4 +1,5 @@
 const React = require('react/addons');
+const ReactUpdates = require('react/lib/ReactUpdates');
 const { slugify, mergeObj, invariant, Element, Elements } = require('../lib/util');
 const { connect } = require('../lib/redux');
 const csp = require('js-csp');
@@ -7,40 +8,48 @@ const { currentDate } = require("../lib/date");
 const dom = React.DOM;
 const api = require('impl/api');
 const classNames = require('classnames');
+const withLocalState = require('../lib/local-state');
 
 const actions = require('../actions');
 const constants = require('../constants');
-
-const Button = Element(require('./components/ui/Button'));
-const Checkbox = Element(require('./components/ui/Checkbox'));
-const TextField = Element(require('./components/ui/TextField'));
-const Card = Element(require('./components/ui/Card'));
 
 const Editor = Element(require('./components/editor'));
 const Toolbar = Element(require('./components/toolbar'));
 const Settings = Element(require('./components/settings'));
 const Pane = Element(require('./components/pane'));
 
+
 const Edit = React.createClass({
   displayName: 'Edit',
 
-  componentDidMount: function() {
-    require(['static/css/editor.less'], () => { console.log('got i!') });
-  },
-
   getInitialState: function() {
-    return this.makeInitialState(this.props);
+    return {
+      post: this.props.post,
+      validationError: null
+    };
   },
 
-  makeInitialState: function(props) {
-    return { originalUrl: '',
-             validationError: {} };
+  // componentWillMount: function() {
+  //   console.log(this.state);
+  // },
+
+  componentWillReceiveProps: function(nextProps) {
+    // relocate('/');
+
+    if(this.props.post.shorturl !== nextProps.post.shorturl) {
+      this.setState({ post: nextProps.post });
+    }
+  },
+
+  componentDidMount: function() {
+    require(['static/css/editor.less']);
   },
 
   validate: function(post) {
     if(post.published &&
-       post.originalUrl !== post.shorturl) {
+       this.props.post.shorturl !== post.shorturl) {
       this.setState({
+        post: mergeObj(post, { shorturl: this.props.post.shorturl }),
         validationError: {
           field: 'shorturl',
           msg: 'Cannot change the URL of a published post'
@@ -50,12 +59,41 @@ const Edit = React.createClass({
       return false;
     }
 
-    this.setState({ validationError: {} });
+    this.setState({ validationError: null });
     return true;
   },
 
+  handleSettingsChange: function(name, value) {
+    let updates = {}
+    if(name === 'tags') {
+      updates[name] = value.split(',');
+    }
+    else {
+      updates[name] = value;
+    }
+    this.setState({ post: mergeObj(this.state.post, updates) });
+  },
+
+  handleChange: function(text) {
+    let match = text.match(/^\s*# ([^\n]*)\n\n/m);
+    if(!match) {
+      console.log('badly-formed document');
+      return;
+    }
+
+    let post = this.state.post;
+    let updates = {};
+    updates.title = match[1];
+    updates.content = text.slice(match[0].length);
+    if(!this.props.post.shorturl) {
+      updates.shorturl = post.title ? slugify(post.title) : '';
+    }
+
+    this.setState({ post: mergeObj(post, updates)});
+  },
+
   handleSave: function() {
-    let post = this.props.post.toJS();
+    let post = this.state.post;
     if(!post.published || !post.date) {
       post = mergeObj(post, { date: currentDate() });
     }
@@ -64,44 +102,20 @@ const Edit = React.createClass({
       return;
     }
 
-    go(function*() {
-      if(!post.originalUrl) {
-        yield api.createPost(post.shorturl);
-      }
-      else if(post.originalUrl !== post.shorturl) {
-        yield api.renamePost(post.originalUrl, post.shorturl);
-      }
-
-      yield api.updatePost(post.shorturl, post);
-
-      if(post.originalUrl !== post.shorturl) {
-        relocate('/edit/' + post.shorturl);
-      }
-      else {
-        relocate('/' + post.shorturl);
-      }
-    }.bind(this));
+    this.props.actions.savePost(this.props.post, post);
   },
 
   handleDelete: function() {
     if(confirm('Are you sure?')) {
-      go(function*() {
-        yield api.deletePost(this.state.post.get('shorturl'));
-        relocate('/');
-      }.bind(this));
+      this.props.actions.deletePost(this.state.post.shorturl);
     }
   },
 
   render: function () {
     let ui = this.props.ui;
-    let post = this.props.post;
+    let post = this.state.post;
     let actions = this.props.actions;
 
-    if(!post) {
-      return null;
-    }
-
-    console.log('post', post);
     if(!post.shorturl && this.props.queryParams.post !== 'new') {
       return dom.div(
         { className: 'edit-container' },
@@ -121,35 +135,44 @@ const Edit = React.createClass({
                 onDelete: this.handleDelete,
                 onShowSettings: actions.toggleSettings,
                 onShowPreview: actions.togglePreview }),
-      dom.div({ className: 'edit-main' },
-              Editor({ content: doc,
-                       onChange: actions.updatePost,
-                       className: ui.showPreview ? 'uncentered' : '' }),
-              Pane(
-                { width: 650,
-                  side: "left",
-                  open: ui.showSettings,
-                  onClose: actions.toggleSettings },
-                "hello"
-                // Settings({
-                //   post: post,
-                //   validationError: null,
-                //   // onSave: this.handleSave,
-                //   // onClose: () => this.setState({ settingsOpen: false })
-                // })
-              ),
-              dom.div(
-                { className: 'preview',
-                  style: { width: ui.showPreview ? 200 : 0 } },
-                dom.div({ onClick: actions.togglePreview },
-                        "SHOW ME DAT PREVIEW")
-              )
-             )
+      dom.div(
+        { className: 'edit-main' },
+        Editor({ url: post.shorturl,
+                 content: doc,
+                 onChange: this.handleChange,
+                 className: ui.showPreview ? 'uncentered' : '' }),
+        dom.a({ href: '#',
+                className: 'settings',
+                onClick: actions.toggleSettings },
+              "Settings \u2192"),
+        // dom.a({ href: '#',
+        //         className: 'preview',
+        //         onClick: actions.togglePreview },
+        //       "\u2190 Preview"),
+        Pane(
+          { width: 500,
+            side: "left",
+            open: ui.showSettings,
+            onClose: actions.toggleSettings },
+          Settings({
+            post: post,
+            validationError: this.state.validationError,
+            onClose: actions.toggleSettings,
+            onChange: this.handleSettingsChange
+          })
+        ),
+        dom.div(
+          { className: 'preview',
+            style: { width: ui.showPreview ? 200 : 0 } },
+          dom.div({ onClick: actions.togglePreview },
+                  "SHOW ME DAT PREVIEW")
+        )
+      )
     );
   }
 });
 
-module.exports = connect(Edit, {
+module.exports = connect(withLocalState(Edit), {
   pageClass: 'edit',
   actions: actions,
 
@@ -160,10 +183,14 @@ module.exports = connect(Edit, {
 
   select: function(state, params) {
     const id = decodeURI(params.post);
-    const post = state.getIn(['posts', 'postsById', id]);
+    const post = state.posts.getIn(['postsById', id]);
     return {
-      post: post ? mergeObj(post, { originalUrl: post.shorturl }) : null,
-      ui: state.get('editor')
+      post: post || {
+        title: '',
+        content: '',
+        published: false
+      },
+      ui: state.editor
     }
   }
 });

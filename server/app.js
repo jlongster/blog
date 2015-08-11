@@ -47,7 +47,7 @@ function requireAdmin(req, res, next) {
     next();
   }
   else {
-    res.status(401).render('bad auth, man');
+    res.status(401).send('must be authorized user for this action');
   }
 }
 

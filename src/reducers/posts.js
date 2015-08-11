@@ -11,7 +11,6 @@ const initialState = Immutable.fromJS({
 function posts(state = initialState, action) {
   switch(action.type) {
   case constants.FETCH_POST:
-    // TODO: errors
     if(action.status === 'pump') {
       return state.updateIn(
         ['postsById'],
