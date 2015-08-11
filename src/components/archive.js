@@ -1,15 +1,15 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/util');
 const csp = require('js-csp');
 const { displayDate } = require("../lib/date");
 const { go, chan, take, put, ops } = csp;
-const { Link } = Elements(require("react-router"));
-const Main = Element(require('./main'));
-const Header = Element(require("./header"));
-const Page = Element(require('./page'));
 const Immutable = require('immutable');
 const actions = require("../actions/blog");
 const { connect } = require("../lib/redux");
+
+const Link = React.createFactory(require("react-router").Link);
+const Main = React.createFactory(require('./main'));
+const Header = React.createFactory(require("./header"));
+const Page = React.createFactory(require('./page'));
 
 var dom = React.DOM;
 

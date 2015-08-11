@@ -1,9 +1,9 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/util');
+
 const dom = React.DOM;
-const Main = Element(require('./main'));
-const Header = Element(require("./header"));
-const Page = Element(require('./page'));
+const Main = React.createFactory(require('./main'));
+const Header = React.createFactory(require("./header"));
+const Page = React.createFactory(require('./page'));
 
 const ServerError = React.createClass({
   displayName: 'ServerError',

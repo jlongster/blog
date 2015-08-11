@@ -9,7 +9,6 @@ const initialState = Immutable.fromJS({
 });
 
 function asyncRequests(state = initialState, action) {
-  console.log(action);
   if(action.type === constants.REMOVE_ERRORS) {
     return state.updateIn(
       ['errors'],

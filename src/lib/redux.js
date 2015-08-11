@@ -1,4 +1,4 @@
-const React = require('react/addons');
+const React = require('react');
 const t = require('transducers.js');
 const { bindActionCreators } = require('redux');
 const Immutable = require('immutable');

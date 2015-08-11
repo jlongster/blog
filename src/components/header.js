@@ -1,9 +1,8 @@
 const React = require("react");
-const { Element, Elements } = require('../lib/util');
-const { Link } = Elements(require("react-router"));
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
+const Link = React.createFactory(require("react-router").Link);
 
 module.exports = React.createClass({
   displayName: "Header",

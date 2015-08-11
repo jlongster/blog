@@ -1,15 +1,13 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/util');
-const { RouteHandler, Link } = Elements(require('react-router'));
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
-const Header = Element(require('./header'));
-const Main = Element(require("./main"));
-const Footer = Element(require('./footer'));
-const Block = Element(require('./block'));
 const { blockFor } = require('../lib/util');
 
 const dom = React.DOM;
+const Header = React.createFactory(require('./header'));
+const Main = React.createFactory(require("./main"));
+const Footer = React.createFactory(require('./footer'));
+const Block = React.createFactory(require('./block'));
 
 const Page = React.createClass({
   displayName: 'Page',

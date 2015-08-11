@@ -1,14 +1,13 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/util');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
-const { Link } = Elements(require("react-router"));
 const { displayDate } = require("../lib/date");
-const Page = Element(require('./page'));
 const actions = require("../actions/blog");
 const { connect } = require("../lib/redux");
 
 var dom = React.DOM;
+const Link = React.createFactory(require("react-router").Link);
+const Page = React.createFactory(require('./page'));
 
 var Tag = React.createClass({
   displayName: 'Tag',

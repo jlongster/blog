@@ -1,11 +1,6 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/util');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
-const { Link } = Elements(require('react-router'));
-const Page = Element(require('./page'));
-const Block = Element(require('./block'));
-const NotFound = Element(require('./not-found'));
 const { displayDate } = require('../lib/date');
 const ghm = require('../lib/showdown-ghm.js');
 const statics = require('impl/statics');
@@ -14,8 +9,12 @@ const { connect } = require("../lib/redux");
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
+const Link = React.createFactory(require("react-router").Link);
+const Page = React.createFactory(require('./page'));
+const Block = React.createFactory(require('./block'));
+const NotFound = React.createFactory(require('./not-found'));
 
-const RandomMessage = Element(React.createClass({
+const RandomMessage = React.createClass({
   getInitialState: function() {
     // We have to keep this in state because we randomly choose one of
     // these, but we can't run that on the server so do it in
@@ -43,7 +42,7 @@ const RandomMessage = Element(React.createClass({
       ' ' + this.state.messageSuffix
     );
   }
-}));
+});
 
 const Post = React.createClass({
   displayName: 'Post',
@@ -108,7 +107,7 @@ const Post = React.createClass({
               { className: 'meta' },
               div(
                 { className: 'comments' },
-                RandomMessage()
+                React.createElement(RandomMessage)
               ),
               div({ className: 'social',
                     dangerouslySetInnerHTML: { __html: statics.socialHTML }})

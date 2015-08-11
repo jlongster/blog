@@ -1,7 +1,5 @@
 const t = require("transducers.js");
 const React = require("react");
-const { Element, Elements } = require("../lib/util");
-const { Link } = Elements(require("react-router"));
 const { takeAll } = require("../lib/util");
 const { connect } = require("../lib/redux");
 const { displayDate } = require("../lib/date");
@@ -10,8 +8,9 @@ const { go, chan, take, put, ops } = csp;
 const statics = require("impl/statics");
 const actions = require("../actions/blog");
 
-const Header = Element(require('./header'));
-const Footer = Element(require('./footer'));
+const Link = React.createFactory(require("react-router").Link);
+const Header = React.createFactory(require('./header'));
+const Footer = React.createFactory(require('./footer'));
 
 const dom = React.DOM;
 const { div, a } = dom;

@@ -1,10 +1,9 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/util');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
-const Page = Element(require('./page'));
 
 const dom = React.DOM;
+const Page = React.createFactory(require('./page'));
 
 const NotFound = React.createClass({
   displayName: 'NotFound',

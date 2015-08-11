@@ -1,14 +1,13 @@
 const t = require("transducers.js");
 const React = require("react");
-const dom = React.DOM;
 const csp = require("js-csp");
 const { go, chan, take, put, ops } = csp;
-const { Element, Elements } = require("../lib/util");
-const { Link } = Elements(require("react-router"));
 const api = require('impl/api');
 const nprogress = require('nprogress');
 const { connect } = require("../lib/redux");
 const actions = require('../actions/editor');
+
+const dom = React.DOM;
 
 let Feedback = React.createClass({
   displayName: "Feedback",

@@ -1,13 +1,14 @@
 const React = require('react');
 const cookie = require('cookie');
-const { Element, Elements } = require('../lib/util');
-const { RouteHandler, Link } = Elements(require('react-router'));
-const AuthError = Element(require('./auth-error'));
-const ServerError = Element(require('./server-error'));
-const Feedback = Element(require('./feedback'));
 const { connect } = require("../lib/redux");
+const Router = require('react-router');
 
 const dom = React.DOM;
+const AuthError = React.createFactory(require('./auth-error'));
+const ServerError = React.createFactory(require('./server-error'));
+const Feedback = React.createFactory(require('./feedback'));
+const RouteHandler = React.createFactory(Router.RouteHandler);
+const Link = React.createFactory(Router.Link);
 
 const App = React.createClass({
   displayName: 'App',

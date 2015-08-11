@@ -1,16 +1,15 @@
 const React = require('react');
-const { Element, Elements } = require('../lib/util');
-const { Link } = Elements(require("react-router"));
 const csp = require('js-csp');
 const { displayDate } = require("../lib/date");
 const { go, chan, take, put, ops } = csp;
-const Main = Element(require('./main'));
-const Header = Element(require("./header"));
-const Page = Element(require('./page'));
-const actions = require("../actions/blog");
 const { connect } = require("../lib/redux");
+const actions = require("../actions/blog");
 
 const dom = React.DOM;
+const Link = React.createFactory(require("react-router").Link);
+const Main = React.createFactory(require('./main'));
+const Header = React.createFactory(require("./header"));
+const Page = React.createFactory(require('./page'));
 
 const Drafts = React.createClass({
   displayName: 'Drafts',

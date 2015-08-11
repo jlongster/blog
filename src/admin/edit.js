@@ -1,6 +1,6 @@
-const React = require('react/addons');
+const React = require('react');
 const ReactUpdates = require('react/lib/ReactUpdates');
-const { slugify, mergeObj, invariant, Element, Elements } = require('../lib/util');
+const { slugify, mergeObj, invariant } = require('../lib/util');
 const { connect } = require('../lib/redux');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
@@ -13,11 +13,10 @@ const withLocalState = require('../lib/local-state');
 const actions = require('../actions');
 const constants = require('../constants');
 
-const Editor = Element(require('./components/editor'));
-const Toolbar = Element(require('./components/toolbar'));
-const Settings = Element(require('./components/settings'));
-const Pane = Element(require('./components/pane'));
-
+const Editor = React.createFactory(require('./components/editor'));
+const Toolbar = React.createFactory(require('./components/toolbar'));
+const Settings = React.createFactory(require('./components/settings'));
+const Pane = React.createFactory(require('./components/pane'));
 
 const Edit = React.createClass({
   displayName: 'Edit',
@@ -29,13 +28,7 @@ const Edit = React.createClass({
     };
   },
 
-  // componentWillMount: function() {
-  //   console.log(this.state);
-  // },
-
   componentWillReceiveProps: function(nextProps) {
-    // relocate('/');
-
     if(this.props.post.shorturl !== nextProps.post.shorturl) {
       this.setState({ post: nextProps.post });
     }

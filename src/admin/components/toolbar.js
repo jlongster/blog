@@ -1,4 +1,4 @@
-const React = require('react/addons');
+const React = require('react');
 const classNames = require('classnames');
 const { displayDate } = require("../../lib/date");
 const dom = React.DOM;
