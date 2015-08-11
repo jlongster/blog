@@ -11,6 +11,7 @@ const { range, seq, compose, map, filter } = t;
 const csp = require('js-csp');
 const { go, chan, take, put, Throw, operations: ops } = csp;
 const api = require('impl/api');
+const { mergeObj } = require('./lib/util');
 const stateReducers = require('./reducers');
 const constants = require('./constants');
 const { updatePath, updatePage } = require('./actions/blog');
@@ -18,8 +19,8 @@ const { updatePath, updatePage } = require('./actions/blog');
 function fetchAllData(store, state, isAdmin) {
   var ch = chan();
   store.subscribe(() => {
-    const pendingRequests = store.getState().pendingRequests;
-    if(!pendingRequests.count()) {
+    const asyncRequests = store.getState().asyncRequests;
+    if(!asyncRequests.get('openRequests').count()) {
       csp.putAsync(ch, true);
     }
   });
@@ -36,9 +37,9 @@ function fetchAllData(store, state, isAdmin) {
   return ch;
 }
 
-function run(routes, { location, user, initialData, prefetchData }) {
+function run(routes, { location, user, initialState, prefetchData }) {
   const store = createStore(redux.combineReducers(stateReducers),
-                            initialData);
+                            initialState);
   const ch = chan();
 
   const router = Router.run(routes, location, (Handler, state) => {

@@ -36,5 +36,4 @@ function posts(state = initialState, action) {
   return state;
 }
 
-window.Immutable = Immutable;
 module.exports = posts;

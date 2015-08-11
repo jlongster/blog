@@ -83,7 +83,6 @@ function connect(component, statics) {
 
     getInitialState: function() {
       const store = this.context.store;
-
       return {
         actions: actions ?
           { actions: bindActionCreators(actions, store.dispatch) } :

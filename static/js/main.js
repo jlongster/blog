@@ -7,7 +7,6 @@ const cookie = require('cookie');
 const csp = require('js-csp');
 const { go, chan, take, put, timeout, operations: ops } = csp;
 const { decodeTextContent } = require('../../src/lib/util');
-const config = require('../../src/lib/config');
 const bootstrap = require('../../src/bootstrap');
 const { Provider } = require('react-redux');
 const transitImmutable = require('transit-immutable-js');
@@ -22,18 +21,14 @@ require('../css/main.less');
 
 // App init
 
-// TODO(jwl): use transit to parse this instead
-let payload = JSON.parse(
+const payload = transitImmutable.fromJSON(
   decodeTextContent(document.getElementById('payload').textContent)
 );
-// TODO(jwl): I think I only use this for URL, which we should just
-// get from the browser
-config.load(payload.config);
 
-let { router, routeChan, store } = bootstrap.run(routes, {
+const { router, routeChan, store } = bootstrap.run(routes, {
   location: Router.RefreshLocation,
   user: payload.user,
-  initialData: payload.data
+  initialState: payload.state ? payload.state : undefined
 });
 
 // Update the page properties whenever they change
@@ -80,11 +75,13 @@ document.addEventListener('keydown', function(e) {
     store.replaceReducer((state, action) => {
       const response = prompt('App State', str);
       try {
-        return transitImmutable.fromJSON(response);
+        if(response) {
+          return transitImmutable.fromJSON(response);
+        }
       }
-      catch(e) {
-        return transitImmutable.fromJSON(str);
-      }
+      catch(e) {}
+
+      return transitImmutable.fromJSON(str);
     });
     store.replaceReducer(reducer);
 

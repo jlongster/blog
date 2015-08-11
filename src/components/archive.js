@@ -52,7 +52,7 @@ module.exports = connect(Archive, {
 
   select: function(state, params) {
     return {
-      posts: state.getIn(['posts', 'postsByQueryName', 'all'])
+      posts: state.posts.getIn(['postsByQueryName', 'all'])
     };
   }
 });

@@ -150,6 +150,8 @@ fs.readdirSync('node_modules')
     node_modules[mod] = 'commonjs ' + mod;
   });
 
+node_modules['react/addons'] = 'commonjs react/addons';
+
 var backendConfig = config({
   entry: ['./server/main.js'],
   target: 'node',

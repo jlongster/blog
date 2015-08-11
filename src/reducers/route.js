@@ -4,7 +4,7 @@ const { mergeObj } = require('../lib/util');
 
 const initialState = {
   title: 'James Long',
-  bodyClass: ''
+  className: ''
 };
 
 function route(state = initialState, action) {
