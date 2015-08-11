@@ -1,6 +1,6 @@
 const React = require('react/addons');
 const PureRenderMixin = React.addons.PureRenderMixin;
-const { slugify, mergeObj } = require('../lib/util');
+const { slugify, mergeObj, prevented } = require('../lib/util');
 const { connect } = require('../lib/redux');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
@@ -135,7 +135,7 @@ const Edit = React.createClass({
                  className: ui.showPreview ? 'uncentered' : '' }),
         dom.a({ href: '#',
                 className: 'settings',
-                onClick: actions.toggleSettings },
+                onClick: prevented(actions.toggleSettings) },
               "Settings \u2192"),
         Pane(
           { width: 500,

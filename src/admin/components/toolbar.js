@@ -1,6 +1,7 @@
 const React = require('react');
 const classNames = require('classnames');
 const { displayDate } = require("../../lib/date");
+const { prevented } = require("../../lib/util");
 
 const dom = React.DOM;
 const Link = React.createFactory(require("react-router").Link);
@@ -29,13 +30,10 @@ const Toolbar = React.createClass({
                (this.props.date ? displayDate(this.props.date) : 'Today')),
       dom.div(
         { className: 'actions right' },
-        dom.a({ href: '#', onClick: this.handleSave },
+        dom.a({ href: '#', onClick: prevented(this.handleSave) },
               'Save'),
         dom.a({ href: '#',
-                onClick: e => {
-                  e.preventDefault();
-                  this.props.onDelete();
-                }},
+                onClick: prevented(this.props.onDelete) },
               'Delete')
       )
     );

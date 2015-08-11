@@ -76,7 +76,9 @@ document.addEventListener('keydown', function(e) {
       const response = prompt('App State', str);
       try {
         if(response) {
-          return transitImmutable.fromJSON(response);
+          const s = transitImmutable.fromJSON(response);
+          console.log(s.__localState);
+          return s;
         }
       }
       catch(e) {}

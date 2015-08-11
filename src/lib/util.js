@@ -23,6 +23,13 @@ function decodeTextContent(str) {
   })
 }
 
+function prevented(cb) {
+  return function(e) {
+    e.preventDefault();
+    return cb.apply(null, arguments);
+  }
+}
+
 function slugify(name) {
   return name.replace(/[ \n!@#$%^&*():"'|?=]/g, '-');
 }
@@ -113,6 +120,7 @@ function assert(msg, val) {
 module.exports = {
   encodeTextContent,
   decodeTextContent,
+  prevented,
   slugify,
   mergeObj,
   invokeCallback,

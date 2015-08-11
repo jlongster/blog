@@ -1,5 +1,7 @@
 const React = require('react');
 const classNames = require('classnames');
+const { prevented } = require("../../lib/util");
+
 const dom = React.DOM;
 
 const Pane = React.createClass({
@@ -22,7 +24,7 @@ const Pane = React.createClass({
         this.props.children,
         dom.a({ className: 'closer',
                 href: '#',
-                onClick: () => this.props.onClose() },
+                onClick: prevented(this.props.onClose) },
               'x')
       )
     );

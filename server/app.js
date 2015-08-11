@@ -203,6 +203,8 @@ if(!process.env.NO_SERVER_RENDERING) {
 }
 
 app.get('*', function (req, res, next) {
+  const disableServerRendering = process.env.NO_SERVER_RENDERING;
+
   go(function*() {
     const user = {
       name: req.session.username,
@@ -228,7 +230,7 @@ app.get('*', function (req, res, next) {
       res.send(output);
     }
 
-    if(!process.env.NO_SERVER_RENDERING) {
+    if(!disableServerRendering) {
       const { router, routeChan, store } = bootstrap.run(routes, {
         location: req.path,
         user: user,

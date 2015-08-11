@@ -1,9 +1,17 @@
 const redux = require('./redux');
-const ReactInstanceMap = require('react/lib/ReactInstanceMap');
+const ReactInstanceHandles = require('react/lib/ReactInstanceHandles');
 
-function getIdFromInstance(instance) {
-  const internalInstance = ReactInstanceMap.get(instance);
-  return internalInstance ? internalInstance._rootNodeID : null;
+function brokenGetIdFromInstance(instance) {
+  if(instance._reactInternalInstance) {
+    // WARNING: This is a totally broken way to identify nodes. This
+    // only works if a *single* react tree is mounted into the DOM,
+    // which is fine for my app but totally inappropriate generally.
+    // Do NOT copy or use this blindly.
+    const id = instance._reactInternalInstance._rootNodeID;
+    const rootId = ReactInstanceHandles.getReactRootIDFromNodeID(id);
+    return id.substr(rootId.length);
+  }
+  return null;
 }
 
 function allocate(store, id, initialState) {
@@ -40,7 +48,7 @@ function withLocalState(componentClass) {
 
   const prevWillMount = componentClass.prototype.componentWillMount;
   componentClass.prototype.componentWillMount = function() {
-    let id = getIdFromInstance(this);
+    let id = brokenGetIdFromInstance(this);
     let state = allocate(this.context.store, id, this._initialState);
 
     if(state !== this.state) {
@@ -56,7 +64,7 @@ function withLocalState(componentClass) {
 
   const prevWillUnmount = componentClass.prototype.componentWillUnmount;
   componentClass.prototype.componentWillUnmount = function() {
-    let id = getIdFromInstance(this);
+    let id = brokenGetIdFromInstance(this);
     deallocate(this.context.store, id);
 
     if(prevWillUnmount) {
@@ -66,7 +74,7 @@ function withLocalState(componentClass) {
 
   Object.defineProperty(componentClass.prototype, "state", {
     get: function() {
-      let id = getIdFromInstance(this);
+      let id = brokenGetIdFromInstance(this);
       if(id) {
         return get(this.context.store, id);
       }
@@ -74,7 +82,7 @@ function withLocalState(componentClass) {
     },
 
     set: function(state) {
-      let id = getIdFromInstance(this);
+      let id = brokenGetIdFromInstance(this);
       if(id) {
         set(this.context.store, id, state);
       }
