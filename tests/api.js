@@ -84,7 +84,7 @@ describe('api', function() {
 
   it('should update a post', function(done) {
     go(function*() {
-      yield assertThrow(api.updatePost('non-existant', {}));
+      yield assertThrow(api.updatePost('non-existent', {}));
       yield api.updatePost('testing', {
         content: 'foo'
       });
