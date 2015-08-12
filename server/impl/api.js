@@ -3,7 +3,7 @@ const nconf = require('nconf');
 const csp = require('js-csp');
 const { go, chan, take, put, operations: ops } = csp;
 const {
-  invokeCallback, invokeCallbackM, takeAll
+  invokeCallback, invokeCallbackM, takeAll, mergeObj
 } = require("../../src/lib/util");
 const t = require("transducers.js");
 const { map, filter } = t;
@@ -174,12 +174,16 @@ function _finalizeEdit(key, date) {
 // public API
 
 function queryDrafts(query) {
-  query.filter = t.merge(query.filter || {}, { published: false });
+  query = mergeObj({
+    filter: mergeObj(query.filter || {}, { published: false })
+  });
   return _runQuery(query);
 }
 
 function queryPosts(query) {
-  query.filter = t.merge(query.filter || {}, { published: true });
+  query = mergeObj({
+    filter: mergeObj(query.filter || {}, { published: true })
+  });
   return _runQuery(query);
 }
 
@@ -188,7 +192,7 @@ function getPost(shorturl) {
 }
 
 function createPost(shorturl, props = {}) {
-  props = _denormalizePost(t.merge({
+  props = _denormalizePost(mergeObj({
     date: currentDate(),
     tags: '',
     published: false
@@ -271,16 +275,6 @@ function deletePost(shorturl) {
   });
 }
 
-function __eval() {
-  // Playing with my blog API
-  // go(function*() {
-  //   console.log(yield queryPosts({
-  //     select: ['title', 'date'],
-  //     limit: 2
-  //   }));
-  // });
-}
-
 module.exports = {
   connect: connect,
   quit: quit,
@@ -297,13 +291,3 @@ module.exports = {
     return client;
   }
 };
-
-if(module.hot) {
-  if(module.hot.data) {
-    client = module.hot.data.client;
-  }
-
-  module.hot.dispose(function(data) {
-    data.client = client;
-  });
-}

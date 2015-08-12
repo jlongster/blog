@@ -52,7 +52,7 @@ module.exports = connect(Tag, {
 
   select: function(state) {
     return {
-      posts: state.getIn(['posts', 'postsByQueryName', 'tag'])
+      posts: state.posts.getIn(['postsByQueryName', 'tag'])
     };
   }
 });

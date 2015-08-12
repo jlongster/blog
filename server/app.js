@@ -222,9 +222,11 @@ app.get('*', function (req, res, next) {
       const output = appTemplate({
         content: markup,
         payload: payload,
-        bodyClass: initialState ? initialState.route.bodyClass : '',
+        className: initialState ? initialState.route.className : '',
         title: initialState ? initialState.route.title : '',
-        webpackURL: nconf.get('webpackURL')
+        webpackURL: (process.env.NODE_ENV === "production" ?
+                     nconf.get('webpackURL') :
+                     nconf.get('webpackDevURL'))
       });
 
       res.send(output);
@@ -240,11 +242,7 @@ app.get('*', function (req, res, next) {
       // Wait for all data to be loaded for the page
       const routeState = yield take(routeChan);
 
-      // TODO(jwl): show this error
-      // if(process.env.NODE_ENV !== 'production' && props.error) {
-      //   res.send(props.error.stack);
-      //   throw props.error;
-      // }
+      // TODO(jwl): are errors that happen on the server showed gracefully?
 
       const initialState = store.getState();
       const prerenderedMarkup = React.renderToString(

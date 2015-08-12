@@ -156,17 +156,22 @@ module.exports = connect(Post, {
     go(function*() {
       const post = yield dispatch(actions.getPost(id));
 
-      if(post && post.readnext) {
-        dispatch(actions.queryPosts({
-          name: 'readnext',
-          select: ['title', 'abstract', 'shorturl'],
-          filter: { shorturl: post.readnext }
+      if(post) {
+        dispatch(actions.updatePage({
+          title: post.title
         }));
-      }
 
-      dispatch(actions.updatePage({
-        title: post.title
-      }));
+        if(post.readnext) {
+          dispatch(actions.queryPosts({
+            name: 'readnext',
+            select: ['title', 'abstract', 'shorturl'],
+            filter: { shorturl: post.readnext }
+          }));
+        }
+      }
+      else {
+        console.log('WARNING: post not found: ' + id);
+      }
     });
   },
 
