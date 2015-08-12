@@ -1,6 +1,17 @@
 #!/bin/sh
 
+terminal-notifier -message "building latest code"
+
 NODE_ENV=production gulp backend
 NODE_ENV=production gulp frontend
 docker build -t jlongster/jlongster4 .
 docker push jlongster/jlongster4
+
+terminal-notifier -message "deploying latest code (waiting on password)"
+
+ssh -t jlongster.com "
+  sudo docker pull jlongster/jlongster4
+  cd /service/jlongster && sudo sv restart .
+"
+
+terminal-notifier -message "jlongster.com deployed"

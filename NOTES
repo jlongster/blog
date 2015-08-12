@@ -1,17 +1,8 @@
 
+* I broke the 404 page again, it's not serving a 404 code
 * Autosave
 * Make runsvdir run on boot
 * Back up database
-
-# Deployment
-
-./bin/deploy
-
-## On the server
-
-sudo docker pull jlongster/jlongster4
-cd /service/jlongster
-sudo sv restart .
 
 # Tests
 
