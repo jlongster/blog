@@ -35,6 +35,7 @@ function channelMiddleware({ dispatch }) {
                       { [fields.SEQ_ID]: id });
 
     go(function*() {
+      // TODO(jwl): I think I need to call next instead
       dispatch(mergeObj(action, { status: 'open' }));
 
       while(true) {

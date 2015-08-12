@@ -2,10 +2,6 @@ const Router = require('react-router');
 const redux = require('redux');
 const reduxThunk = require('redux-thunk');
 const { channelMiddleware, channelStore } = require('./lib/redux');
-const createStore = redux.applyMiddleware(
-  reduxThunk,
-  channelMiddleware
-)(channelStore(redux.createStore));
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
 const csp = require('js-csp');
@@ -15,6 +11,15 @@ const { mergeObj } = require('./lib/util');
 const stateReducers = require('./reducers');
 const constants = require('./constants');
 const { updatePath, updatePage } = require('./actions/blog');
+
+const createStore = redux.compose(
+  redux.applyMiddleware(
+    reduxThunk,
+    channelMiddleware
+  ),
+  channelStore,
+  redux.createStore
+);
 
 function fetchAllData(store, state, isAdmin) {
   var ch = chan();
