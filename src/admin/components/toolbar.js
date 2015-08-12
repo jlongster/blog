@@ -21,8 +21,9 @@ const Toolbar = React.createClass({
       { className: 'toolbar' },
       dom.div(
         { className: 'actions left' },
-        Link({ to: 'post', params: { post: this.props.shorturl }},
-             'Back')
+        !this.props.isNew &&
+          Link({ to: 'post', params: { post: this.props.shorturl }},
+               'Back')
       ),
       dom.strong(null, this.props.title),
       dom.span(null,

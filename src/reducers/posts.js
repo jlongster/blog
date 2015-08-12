@@ -14,7 +14,7 @@ function posts(state = initialState, action) {
     if(action.status === 'pump') {
       return state.updateIn(
         ['postsById'],
-        p => p.set(action.value.shorturl, action.value)
+        p => p.set(action.id, action.value)
       );
     }
     break;

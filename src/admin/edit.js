@@ -123,6 +123,7 @@ const Edit = React.createClass({
       Toolbar({ title: post.title,
                 date: post.date,
                 shorturl: post.shorturl,
+                isNew: !this.props.post.shorturl,
                 onSave: this.handleSave,
                 onDelete: this.handleDelete,
                 onShowSettings: actions.toggleSettings,
@@ -172,7 +173,9 @@ module.exports = connect(withLocalState(Edit), {
 
   runQueries: function(dispatch, state, params) {
     const id = decodeURI(params.post);
-    dispatch(actions.getPost(id));
+    if(id !== 'new') {
+      dispatch(actions.getPost(id));
+   }
   },
 
   select: function(state, params) {

@@ -82,7 +82,10 @@ const Post = React.createClass({
     let post = this.props.post;
     let next = this.props.readnext;
 
-    if(!post) {
+    if(post === false) {
+      return NotFound();
+    }
+    else if(!post) {
       return null;
     }
 
