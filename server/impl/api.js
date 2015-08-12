@@ -174,14 +174,14 @@ function _finalizeEdit(key, date) {
 // public API
 
 function queryDrafts(query) {
-  query = mergeObj({
+  query = mergeObj(query, {
     filter: mergeObj(query.filter || {}, { published: false })
   });
   return _runQuery(query);
 }
 
 function queryPosts(query) {
-  query = mergeObj({
+  query = mergeObj(query, {
     filter: mergeObj(query.filter || {}, { published: true })
   });
   return _runQuery(query);

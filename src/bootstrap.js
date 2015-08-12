@@ -34,6 +34,12 @@ function fetchAllData(store, state, isAdmin) {
     }
   }
 
+  // No async requests happened, go ahead and send a signal
+  const asyncRequests = store.getState().asyncRequests;
+  if(asyncRequests.get('openRequests').count() === 0) {
+    csp.putAsync(ch, true);
+  }
+
   return ch;
 }
 
