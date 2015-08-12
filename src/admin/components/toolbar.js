@@ -21,7 +21,8 @@ const Toolbar = React.createClass({
       { className: 'toolbar' },
       dom.div(
         { className: 'actions left' },
-        !this.props.isNew &&
+        this.props.isNew ?
+          Link({ to: '/' }, 'Home') :
           Link({ to: 'post', params: { post: this.props.shorturl }},
                'Back')
       ),
@@ -33,9 +34,10 @@ const Toolbar = React.createClass({
         { className: 'actions right' },
         dom.a({ href: '#', onClick: prevented(this.handleSave) },
               'Save'),
-        dom.a({ href: '#',
-                onClick: prevented(this.props.onDelete) },
-              'Delete')
+        !this.props.isNew &&
+          dom.a({ href: '#',
+                  onClick: prevented(this.props.onDelete) },
+                'Delete')
       )
     );
   }

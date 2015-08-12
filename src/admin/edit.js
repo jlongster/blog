@@ -100,7 +100,7 @@ const Edit = React.createClass({
 
   handleDelete: function() {
     if(confirm('Are you sure?')) {
-      this.props.actions.deletePost(this.state.post.shorturl);
+      this.props.actions.deletePost(this.props.post.shorturl);
     }
   },
 

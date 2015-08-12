@@ -5,11 +5,9 @@
 
 # Deployment
 
-NODE_ENV=production gulp backend
-NODE_ENV=production gulp frontend
-boot2docker
-docker build -t jlongster/jlongster4 .
-docker push jlongster/jlongster4
+./bin/deploy
+
+## On the server
 
 sudo docker pull jlongster/jlongster4
 cd /service/jlongster

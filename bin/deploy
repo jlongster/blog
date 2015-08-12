@@ -1,0 +1,6 @@
+#!/bin/sh
+
+NODE_ENV=production gulp backend
+NODE_ENV=production gulp frontend
+docker build -t jlongster/jlongster4 .
+docker push jlongster/jlongster4

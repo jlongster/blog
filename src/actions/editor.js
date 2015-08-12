@@ -24,11 +24,14 @@ function togglePreview() {
 }
 
 function deletePost(id) {
-  return {
+  return dispatch => dispatch({
     type: constants.DELETE_POST,
     id: id,
-    [fields.CHANNEL]: api.deletePost(id)
-  }
+    [fields.CHANNEL]: go(function*() {
+      yield api.deletePost(id);
+      dispatch(blogActions.updatePath('/'));
+    })
+  }, { propagate: true });
 }
 
 function savePost(previousPost, post) {
