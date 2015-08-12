@@ -18,6 +18,7 @@ const Editor = React.createClass({
           value: this.props.content,
           lineWrapping: true,
           theme: 'happy-happy-joy-joy-2',
+          cursorHeight: .9,
           autofocus: true,
           mode: {
             name: 'markdown',
