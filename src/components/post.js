@@ -4,8 +4,10 @@ const { go, chan, take, put, ops } = csp;
 const { displayDate } = require('../lib/date');
 const ghm = require('../lib/showdown-ghm.js');
 const statics = require('impl/statics');
-const actions = require("../actions/blog");
-const { connect } = require("../lib/redux");
+const actions = require('../actions/blog');
+const { connect } = require('../lib/redux');
+const classNames = require('classnames');
+const withLocalState = require('../lib/local-state');
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
@@ -44,19 +46,69 @@ const RandomMessage = React.createClass({
   }
 });
 
+const HeaderImage = React.createClass({
+  getInitialState: function() {
+    // Yeah yeah hardcoded values. 1200 is the width of full-size
+    // header images. I probably should abstract that out, but I got
+    // cheezits to eat.
+    return { undersized: window.innerWidth < 1200 };
+  },
+
+  componentWillMount: function() {
+    window.addEventListener('resize', this.handleWindowResize);
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('resize', this.handleWindowResize);
+  },
+
+  handleWindowResize: function() {
+    if(this.props.fullWidth) {
+      if(window.innerWidth < 1200) {
+        this.setState({ undersized: true });
+      }
+      else {
+        this.setState({ undersized: false });
+      }
+    }
+  },
+
+  render: function() {
+    return div({
+      className: classNames({
+        'full-img': this.props.fullWidth,
+        'intro-img': !this.props.fullWidth,
+        'undersized': this.state.undersized,
+        'oversized': !this.state.undersized
+      })
+    }, dom.img({ src: this.props.url }));
+  }
+});
+
 const Post = React.createClass({
   displayName: 'Post',
 
   componentDidMount: function() {
-    if(!this.getDOMNode()) {
+    this.updateDOM();
+  },
+
+  componentDidUpdate: function(prevProps) {
+    if(this.props.post !== prevProps.post) {
+      this.updateDOM();
+    }
+  },
+
+  updateDOM: function() {
+    const node = React.findDOMNode(this);
+    if(!node) {
       return;
     }
 
     // TODO: turn markdown into React nodes
-    let article = this.getDOMNode().querySelector('article');
-    let articleRect = article.getBoundingClientRect();
+    const article = node.querySelector('article');
+    const articleRect = article.getBoundingClientRect();
 
-    let anchorables = this.getDOMNode().querySelectorAll(
+    const anchorables = node.querySelectorAll(
       'article h2, article h3, article h4'
     );
     for(var i=0; i<anchorables.length; i++) {
@@ -68,8 +120,8 @@ const Post = React.createClass({
       anchorable.appendChild(anchor);
     }
 
-    let post = this.props.post;
-    if(post.assets) {
+    const post = this.props.post;
+    if(post && post.assets) {
       // TODO: this is a big hack right now and I'm not even going to
       // explain why... let's just say I need to fix this
       let script = document.createElement('script');
@@ -90,15 +142,9 @@ const Post = React.createClass({
     }
 
     return Page(
-      // TODO: Hack to replace commas because those aren't valid ids.
+      // TODO(jwl): Hack to replace commas because those aren't valid ids.
       // Need to disallows commas in URLs.
       { id: post.shorturl.replace(',', '-') },
-
-      Block(
-        { name: 'after-header' },
-        post.headerimg && post.headerimgfull &&
-          div(null, dom.img({ src: post.headerimg }))
-      ),
 
       Block(
         { name: 'before-footer' },
@@ -128,14 +174,22 @@ const Post = React.createClass({
         )
       ),
 
+      post.headerimg &&
+        React.createElement(
+          HeaderImage,
+          { url: post.headerimg,
+            fullWidth: post.headerimgfull }
+        ),
+
       dom.article(
         { className: 'post' },
-        post.headerimg && !post.headerimgfull &&
-          div({ className: 'intro-img' },
-              dom.img({ src: post.headerimg })),
 
-        dom.h1(null, post.title),
-        div({ className: 'date' }, displayDate(post.date)),
+        dom.div(
+          { className: classNames('header-text',
+                                  { 'has-bg-image': post.headerimgfull }) },
+          dom.h1(null, post.title),
+          div({ className: 'date' }, displayDate(post.date))
+        ),
         div({ dangerouslySetInnerHTML: {
           __html: ghm.parse(post.content)
         }}),

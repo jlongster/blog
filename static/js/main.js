@@ -49,7 +49,7 @@ go(function*() {
 
     // If the path has changed but the page hasn't actually updated to
     // reflect that, update the router
-    const currentPath = location.pathname + location.search + location.hash;
+    const currentPath = location.pathname + location.search;
     if(state.route.path && state.route.path !== currentPath) {
       router.replaceWith(state.route.path);
     }
