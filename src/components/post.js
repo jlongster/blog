@@ -75,14 +75,15 @@ const HeaderImage = React.createClass({
   },
 
   render: function() {
-    return div({
-      className: classNames({
-        'full-img': this.props.fullWidth,
-        'intro-img': !this.props.fullWidth,
-        'undersized': this.state.undersized,
-        'oversized': !this.state.undersized
-      })
-    }, dom.img({ src: this.props.url }));
+    return div(
+      { className:
+        classNames({ 'full-img': this.props.fullWidth,
+                     'intro-img': !this.props.fullWidth,
+                     'undersized': this.state.undersized,
+                     'oversized': !this.state.undersized }) },
+      div({ className: 'overlay' }),
+      dom.img({ src: this.props.url })
+    );
   }
 });
 
@@ -145,7 +146,11 @@ const Post = React.createClass({
     return Page(
       // TODO(jwl): Hack to replace commas because those aren't valid ids.
       // Need to disallows commas in URLs.
-      { id: post.shorturl.replace(',', '-') },
+      { id: post.shorturl.replace(',', '-'),
+        className: classNames({
+          'has-bg-image': (post.headerimg &&
+                           post.headerimgfull)
+        })},
 
       Block(
         { name: 'before-footer' },
