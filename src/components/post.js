@@ -48,13 +48,14 @@ const RandomMessage = React.createClass({
 
 const HeaderImage = React.createClass({
   getInitialState: function() {
+    return { undersized: false };
+  },
+
+  componentDidMount: function() {
     // Yeah yeah hardcoded values. 1200 is the width of full-size
     // header images. I probably should abstract that out, but I got
     // cheezits to eat.
-    return { undersized: window.innerWidth < 1200 };
-  },
-
-  componentWillMount: function() {
+    this.setState({ undersized: window.innerWidth < 1200 });
     window.addEventListener('resize', this.handleWindowResize);
   },
 
