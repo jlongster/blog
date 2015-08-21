@@ -5,7 +5,7 @@ const { go, chan, take, put, ops } = csp;
 const api = require('impl/api');
 const nprogress = require('nprogress');
 const { connect } = require("../lib/redux");
-const actions = require('../actions/editor');
+const { removeErrors } = require('../reducers/async-requests').actions;
 
 const dom = React.DOM;
 
@@ -50,7 +50,7 @@ let Feedback = React.createClass({
 });
 
 module.exports = connect(Feedback, {
-  actions: actions,
+  actions: { removeErrors },
 
   select: function(state) {
     return {

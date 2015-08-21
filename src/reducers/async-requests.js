@@ -49,4 +49,14 @@ function asyncRequests(state = initialState, action) {
   return state;
 }
 
-module.exports = asyncRequests;
+function removeErrors(errors) {
+  return {
+    type: constants.REMOVE_ERRORS,
+    errors: errors
+  }
+}
+
+module.exports = {
+  update: asyncRequests,
+  actions: { removeErrors }
+}

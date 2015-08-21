@@ -2,8 +2,11 @@ const React = require('react');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
 const { displayDate } = require("../lib/date");
-const actions = require("../actions/blog");
 const { connect } = require("../lib/redux");
+
+const postActions = require('../reducers/posts').actions
+const globalActions = require('../globalActions');
+const actions = Object.assign({}, postActions, globalActions);
 
 var dom = React.DOM;
 const Link = React.createFactory(require("react-router").Link);

@@ -6,7 +6,7 @@ const { displayDate } = require("../lib/date");
 const csp = require("js-csp");
 const { go, chan, take, put, ops } = csp;
 const statics = require("impl/statics");
-const actions = require("../actions/blog");
+const actions = require("../reducers/posts").actions;
 
 const Link = React.createFactory(require("react-router").Link);
 const Header = React.createFactory(require('./header'));

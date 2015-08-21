@@ -6,7 +6,7 @@ const initialState = {
   showPreview: false
 };
 
-function editor(state = initialState, action) {
+function update(state = initialState, action) {
   switch(action.type) {
   case constants.TOGGLE_SETTINGS:
     return mergeObj(state, {
@@ -25,4 +25,25 @@ function editor(state = initialState, action) {
   }
 }
 
-module.exports = editor;
+function toggleSettings() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: constants.TOGGLE_SETTINGS,
+      isOpen: !getState().editor.showSettings
+    });
+  }
+}
+
+function togglePreview() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: constants.TOGGLE_PREVIEW,
+      isOpen: !getState().editor.showPreview
+    });
+  }
+}
+
+module.exports = {
+  update: update,
+  actions: { toggleSettings, togglePreview }
+};

@@ -46,6 +46,7 @@
     "react-redux": "0.8.2",
     "react-router": "0.13.3",
     "redis": "0.12.1",
+    "redux": "1.0.1",
     "redux-thunk": "0.1.0",
     "regenerator": "0.8.2",
     "source-map-support": "0.2.8",
@@ -57,11 +58,5 @@
     "webpack": "1.10.1",
     "webpack-dev-server": "1.7.0",
     "xhr": "2.0.0"
-  },
-  "scripts": {
-    "run": "node frontend watch & node backend run",
-    "build": "node frontend & node backend",
-    "bin": "node backend bin",
-    "bin-watch": "node backend bin-watch"
   }
 }

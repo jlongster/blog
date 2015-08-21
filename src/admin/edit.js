@@ -9,9 +9,14 @@ const dom = React.DOM;
 const api = require('impl/api');
 const classNames = require('classnames');
 const withLocalState = require('../lib/local-state');
-
-const actions = require('../actions');
 const constants = require('../constants');
+
+const postActions = require('../reducers/posts').actions;
+const editorActions = require('../reducers/editor').actions;
+const globalActions = require('../globalActions');
+const actions = Object.assign(
+  {}, postActions, editorActions, globalActions
+);
 
 const Editor = React.createFactory(require('./components/editor'));
 const Toolbar = React.createFactory(require('./components/toolbar'));

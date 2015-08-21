@@ -3,7 +3,7 @@ const csp = require('js-csp');
 const { displayDate } = require("../lib/date");
 const { go, chan, take, put, ops } = csp;
 const { connect } = require("../lib/redux");
-const actions = require("../actions/blog");
+const actions = require("../reducers/posts").actions;
 
 const dom = React.DOM;
 const Link = React.createFactory(require("react-router").Link);

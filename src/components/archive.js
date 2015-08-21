@@ -3,8 +3,8 @@ const csp = require('js-csp');
 const { displayDate } = require("../lib/date");
 const { go, chan, take, put, ops } = csp;
 const Immutable = require('immutable');
-const actions = require("../actions/blog");
 const { connect } = require("../lib/redux");
+const actions = require("../reducers/posts").actions;
 
 const Link = React.createFactory(require("react-router").Link);
 const Main = React.createFactory(require('./main'));

@@ -4,10 +4,13 @@ const { go, chan, take, put, ops } = csp;
 const { displayDate } = require('../lib/date');
 const ghm = require('../lib/showdown-ghm.js');
 const statics = require('impl/statics');
-const actions = require('../actions/blog');
 const { connect } = require('../lib/redux');
 const classNames = require('classnames');
 const withLocalState = require('../lib/local-state');
+
+const postActions = require('../reducers/posts').actions
+const globalActions = require('../globalActions');
+const actions = Object.assign({}, postActions, globalActions);
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
