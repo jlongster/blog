@@ -2,50 +2,81 @@ const React = require('react/addons');
 const PureRenderMixin = React.addons.PureRenderMixin;
 const { connect } = require("../lib/redux");
 const Router = require('react-router');
+const { updatePath, updatePageTitle, updatePageClass } = require('../actions/route');
 
-const dom = React.DOM;
 const AuthError = React.createFactory(require('./auth-error'));
 const ServerError = React.createFactory(require('./server-error'));
+const NotFound = React.createFactory(require('./not-found'));
 const Feedback = React.createFactory(require('./feedback'));
 const RouteHandler = React.createFactory(Router.RouteHandler);
-const Link = React.createFactory(Router.Link);
+const dom = React.DOM;
+const { div, a } = dom;
 
 const App = React.createClass({
   displayName: 'App',
 
+  updatePage: function(prevProps, nextProps) {
+    document.title = nextProps.title;
+
+    if(prevProps) {
+      const prevComponent = prevProps.routes[prevProps.routes.length - 1].component;
+      if(prevComponent.pageClass) {
+        document.body.classList.remove(prevComponent.pageClass);
+      }
+    }
+
+    const component = nextProps.routes[nextProps.routes.length - 1].component;
+    if(component.pageClass) {
+      document.body.classList.add(component.pageClass);
+    }
+  },
+
+  componentDidMount: function() {
+    this.updatePage(null, this.props);
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    this.updatePage(this.props, nextProps);
+  },
+
   render: function () {
-    let routeState = this.props.route.routeState;
-    let route = routeState.routes[routeState.routes.length - 1];
-    let content;
-    let user = this.props.route.user;
+    let route = this.props.routes[this.props.routes.length - 1];
+    let user = this.props.user;
 
-    // TODO(jwl): this error is never set anywhere?
-    // if(this.props.route.error) {
-    //   content = ServerError({ error: this.props.error });
-    // }
-    if(route.handler.requireAdmin) {
-      content = user.admin ? RouteHandler(this.props) : AuthError()
+    if(this.props.errorStatus === 404) {
+      return NotFound();
     }
-    else {
-      content = RouteHandler(this.props);
+    else if(this.props.errorStatus === 500) {
+      return ServerError();
     }
 
-    return dom.div(
+    return div(
       null,
       Feedback(),
-      content,
+      (!route.requireAdmin || user.admin) ?
+        this.props.children :
+        AuthError(),
       user.admin &&
-        dom.div(
+        div(
           { className: 'admin-header' },
           dom.span(null, 'Welcome ', dom.strong(null, user.name)),
-          Link({ to: 'drafts' }, 'Drafts'),
-          route.name === 'post' &&
-            Link({ to: 'edit', params: { post: routeState.params.post }}, 'Edit'),
-          Link({ to: 'edit', params: { post: 'new' }}, 'New'),
-          dom.a({ href: '/logout' }, 'Logout')
+          a({ href: "/drafts" }, 'Drafts'),
+          route.path === ':post' &&
+            a({ href: '/edit/' + this.props.params.post }, 'Edit'),
+          a({ href: '/edit/new' }, 'New'),
+          a({ href: '/logout' }, 'Logout')
         )
     );
   }
 });
 
-module.exports = App;
+module.exports = connect(App, {
+  namedActions: { updatePath, updatePageTitle, updatePageClass },
+  select: function(state) {
+    return {
+      user: state.route.user,
+      title: state.route.title,
+      errorStatus: state.route.errorStatus
+    }
+  }
+});

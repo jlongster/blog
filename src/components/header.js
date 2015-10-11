@@ -1,8 +1,7 @@
 const React = require("react");
 
 const dom = React.DOM;
-const { div, ul, li, a } = dom;
-const Link = React.createFactory(require("react-router").Link);
+const { div, a, ul, li } = dom;
 
 module.exports = React.createClass({
   displayName: "Header",
@@ -11,7 +10,7 @@ module.exports = React.createClass({
       { className: this.props.className },
       div(
         { className: 'links' },
-        Link({ to: '/', className: 'home' }, 'J'),
+        a({ href: '/', className: 'home' }, 'J'),
         ul(
           null,
           li(null, a({ href: '/archive' }, 'posts')),

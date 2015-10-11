@@ -13,7 +13,12 @@ const Editor = React.createClass({
       ['static/js/editor/editor.js', 'static/css/codemirror-happy-joy.css'],
       editor => {
         let CodeMirror = editor.CodeMirror;
-        let node = React.findDOMNode(this);
+        //try {
+          let node = React.findDOMNode(this);
+        // }
+        // catch(e) {
+        //   return;
+        // }
         let mirror = CodeMirror(node, {
           value: this.props.content,
           lineWrapping: true,

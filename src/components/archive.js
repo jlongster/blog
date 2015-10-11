@@ -4,14 +4,13 @@ const { displayDate } = require("../lib/date");
 const { go, chan, take, put, ops } = csp;
 const Immutable = require('immutable');
 const { connect } = require("../lib/redux");
-const actions = require("../reducers/posts").actions;
+const actions = require("../actions/posts");
 
-const Link = React.createFactory(require("react-router").Link);
 const Main = React.createFactory(require('./main'));
 const Header = React.createFactory(require("./header"));
 const Page = React.createFactory(require('./page'));
-
-var dom = React.DOM;
+const dom = React.DOM;
+const { div, a } = dom;
 
 var Archive = React.createClass({
   displayName: 'Archive',
@@ -28,9 +27,7 @@ var Archive = React.createClass({
       dom.ul({ className: 'list post-list' }, posts.map(post => {
         return dom.li(
           { key: post.shorturl },
-          Link({ to: 'post',
-                 params: { post: post.shorturl }},
-               post.title),
+          a({ href: '/' + post.shorturl }, post.title),
           ' ',
           dom.span({ className: 'date' }, displayDate(post.date))
         );

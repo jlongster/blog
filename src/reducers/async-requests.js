@@ -8,7 +8,7 @@ const initialState = Immutable.fromJS({
   openRequests: []
 });
 
-function asyncRequests(state = initialState, action) {
+function update(state = initialState, action) {
   if(action.type === constants.REMOVE_ERRORS) {
     return state.updateIn(
       ['errors'],
@@ -49,14 +49,5 @@ function asyncRequests(state = initialState, action) {
   return state;
 }
 
-function removeErrors(errors) {
-  return {
-    type: constants.REMOVE_ERRORS,
-    errors: errors
-  }
-}
+module.exports = update;
 
-module.exports = {
-  update: asyncRequests,
-  actions: { removeErrors }
-}

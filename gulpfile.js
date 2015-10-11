@@ -81,8 +81,7 @@ var frontendConfig = config({
   ],
   output: {
     path: path.join(__dirname, 'static/build'),
-    publicPath: PROD ? '/build/' : 'http://localhost:3000/build/',
-    // publicPath: '/build/',
+    publicPath: PROD ? '/build/' : 'http://localhost:3000/static/build/',
     filename: 'frontend.js'
   },
   module: {

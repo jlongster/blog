@@ -4,7 +4,7 @@ const { displayDate } = require("../../lib/date");
 const { prevented } = require("../../lib/util");
 
 const dom = React.DOM;
-const Link = React.createFactory(require("react-router").Link);
+const { div, a } = dom;
 
 const Toolbar = React.createClass({
   statics: {
@@ -17,27 +17,25 @@ const Toolbar = React.createClass({
   },
 
   render: function() {
-    return dom.div(
+    return div(
       { className: 'toolbar' },
-      dom.div(
+      div(
         { className: 'actions left' },
         this.props.isNew ?
-          Link({ to: '/' }, 'Home') :
-          Link({ to: 'post', params: { post: this.props.shorturl }},
-               'Back')
+          a({ href: '/' }, 'Home') :
+          a({ href: '/' + this.props.shorturl }, 'Back')
       ),
       dom.strong(null, this.props.title),
       dom.span(null,
                ' \u2014 ',
                (this.props.date ? displayDate(this.props.date) : 'Today')),
-      dom.div(
+      div(
         { className: 'actions right' },
-        dom.a({ href: '#', onClick: prevented(this.handleSave) },
-              'Save'),
+        a({ href: '#', onClick: prevented(this.handleSave) }, 'Save'),
         !this.props.isNew &&
-          dom.a({ href: '#',
-                  onClick: prevented(this.props.onDelete) },
-                'Delete')
+          a({ href: '#',
+              onClick: prevented(this.props.onDelete) },
+            'Delete')
       )
     );
   }

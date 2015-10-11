@@ -11,11 +11,11 @@ const classNames = require('classnames');
 const withLocalState = require('../lib/local-state');
 const constants = require('../constants');
 
-const postActions = require('../reducers/posts').actions;
-const editorActions = require('../reducers/editor').actions;
-const globalActions = require('../globalActions');
+const postActions = require('../actions/posts');
+const editorActions = require('../actions/editor');
+const routeActions = require('../actions/route');
 const actions = Object.assign(
-  {}, postActions, editorActions, globalActions
+  {}, postActions, editorActions, routeActions
 );
 
 const Editor = React.createFactory(require('./components/editor'));
@@ -135,7 +135,8 @@ const Edit = React.createClass({
                 onShowPreview: actions.togglePreview }),
       dom.div(
         { className: 'edit-main' },
-        Editor({ url: post.shorturl,
+        Editor({ key: 'editor',
+                 url: post.shorturl,
                  content: doc,
                  onChange: this.handleChange,
                  className: ui.showPreview ? 'uncentered' : '' }),
@@ -174,6 +175,7 @@ const blankPost = {
 
 module.exports = connect(withLocalState(Edit), {
   pageClass: 'edit',
+  queryParamsProp: 'params',
   actions: actions,
 
   runQueries: function(dispatch, state, params) {

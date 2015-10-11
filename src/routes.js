@@ -13,25 +13,27 @@ const Archive = require('./components/archive');
 const Drafts = require('./components/drafts');
 const Edit = require('./admin/edit');
 const NotFound = require('./components/not-found');
-const Router = require('react-router');
+const ServerError = require('./components/server-error');
+const RR = require('react-router');
 
-const Route = React.createFactory(Router.Route);
-const DefaultRoute = React.createFactory(Router.DefaultRoute);
-const NotFoundRoute = React.createFactory(Router.NotFoundRoute);
+const Router = React.createFactory(RR.Router);
+const Route = React.createFactory(RR.Route);
+const IndexRoute = React.createFactory(RR.IndexRoute);
 
 var hljs = require('highlight.js/lib/highlight.js'); // (jwl)
 hljs.registerLanguage('scheme', require('./lib/scheme-highlight.js'));
 hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
 
-const routes = Route(
-  { handler: App },
-  Route({ name: 'index', path: '/', handler: Index }),
-  Route({ name: 'tag', path: '/tag/:tag', handler: Tag }),
-  Route({ name: 'archive', handler: Archive }),
-  Route({ name: 'drafts', handler: Drafts }),
-  Route({ name: 'post', path: '/:post', handler: Post }),
-  Route({ name: 'edit', path: '/edit/:post', handler: Edit }),
-  NotFoundRoute({ handler: NotFound })
+module.exports = history => Router(
+  history ? { history } : null,
+  Route(
+    { path: '/', component: App },
+    IndexRoute({ component: Index }),
+    Route({ path: '/tag/:tag', component: Tag }),
+    Route({ path: 'archive', component: Archive }),
+    Route({ path: 'drafts', component: Drafts }),
+    Route({ path: ':post', component: Post }),
+    Route({ path: '/edit/:post', component: Edit }),
+    Route({ path: '*', component: NotFound }),
+  )
 );
-
-module.exports = routes;

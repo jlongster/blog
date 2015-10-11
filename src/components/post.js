@@ -8,16 +8,14 @@ const { connect } = require('../lib/redux');
 const classNames = require('classnames');
 const withLocalState = require('../lib/local-state');
 
-const postActions = require('../reducers/posts').actions
-const globalActions = require('../globalActions');
-const actions = Object.assign({}, postActions, globalActions);
+const postActions = require('../actions/posts');
+const routeActions = require('../actions/route');
+const actions = Object.assign({}, postActions, routeActions);
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
-const Link = React.createFactory(require("react-router").Link);
 const Page = React.createFactory(require('./page'));
 const Block = React.createFactory(require('./block'));
-const NotFound = React.createFactory(require('./not-found'));
 
 const RandomMessage = React.createClass({
   getInitialState: function() {
@@ -139,10 +137,7 @@ const Post = React.createClass({
     let post = this.props.post;
     let next = this.props.readnext;
 
-    if(post === false) {
-      return NotFound();
-    }
-    else if(!post) {
+    if(!post) {
       return null;
     }
 
@@ -215,20 +210,19 @@ const Post = React.createClass({
 
 module.exports = connect(Post, {
   pageClass: 'post-page',
+  queryParamsProp: 'params',
 
   runQueries: function (dispatch, state, params) {
     const id = decodeURI(params.post);
 
-    go(function*() {
+    return go(function*() {
       const post = yield dispatch(actions.getPost(id));
 
       if(post) {
-        dispatch(actions.updatePage({
-          title: post.title
-        }));
+        dispatch(actions.updatePageTitle(post.title));
 
         if(post.readnext) {
-          dispatch(actions.queryPosts({
+          yield dispatch(actions.queryPosts({
             name: 'readnext',
             select: ['title', 'abstract', 'shorturl'],
             filter: { shorturl: post.readnext }
@@ -237,13 +231,14 @@ module.exports = connect(Post, {
       }
       else {
         console.log('WARNING: post not found: ' + id);
+        dispatch(actions.updateErrorStatus(404));
       }
     });
   },
 
   select: function(state, params) {
     const id = decodeURI(params.post);
-    const readnextQuery = state.posts.get(['postsByQueryName', 'readnext']);
+    const readnextQuery = state.posts.getIn(['postsByQueryName', 'readnext']);
     return {
       post: state.posts.getIn(['postsById', id]),
       readnext: readnextQuery ? readnextQuery[0] : null

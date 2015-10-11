@@ -10,12 +10,20 @@ const nconf = require('nconf');
 const oauth = require('oauth');
 const handlebars = require('handlebars');
 const transitImmutable = require('transit-immutable-js');
-const { Provider } = require('react-redux');
+const RR = require('react-router');
+const { match } = RR;
+const RoutingContext = React.createFactory(RR.RoutingContext);
+const Provider = React.createFactory(require('react-redux').Provider);
 const t = require('transducers.js');
 const { range, seq, compose, map, filter } = t;
-const { go, chan, take, put, timeout, operations: ops } = require('js-csp');
+const csp = require('js-csp');
+const { go, chan, take, put, timeout, operations: ops } = csp;
+const { encodeTextContent, mergeObj } = require('../src/lib/util');
+const actions = require('../src/actions/route');
 
-const { encodeTextContent } = require('../src/lib/util');
+const getRoutes = require('../src/routes');
+const createStore = require('../src/create-store');
+const App = React.createFactory(require('../src/components/app'));
 const api = require('./impl/api');
 const feed = require('./feed');
 const statics = require('./impl/statics');
@@ -194,73 +202,113 @@ app.get('/atom.xml', function(req, res) {
   });
 });
 
-let routes, bootstrap;
-if(!process.env.NO_SERVER_RENDERING) {
-  // Only pull this in if we are server-rendering so that development
-  // build times are fast
-  routes = require('../src/routes');
-  bootstrap = require('../src/bootstrap');
+function fetchAllData(store, routeProps, isAdmin) {
+  const chans = routeProps.components.map(component => {
+    if(component &&
+       component.runQueries &&
+       (!component.requireAdmin || isAdmin)) {
+      const params = mergeObj(component.queryParams || {}, routeProps.params);
+      return component.runQueries(store.dispatch, store.getState(), params);
+    }
+  }).filter(ch => ch);
+
+  return go(function*() {
+    const ch = ops.merge(chans)
+    while((yield ch) !== csp.CLOSED) {
+    }
+  });
+}
+
+function renderRouteToString(routes, store, user, url, cb) {
+  match({ routes, location: url }, (err, redirect, renderProps) => {
+    if(err) {
+      cb(null, 'An internal routing error ocurred.')
+    }
+    else if(redirect) {
+      cb(redirect);
+    }
+    else {
+      go(function*() {
+        const component = renderProps.routes[renderProps.routes.length - 1].component;
+        store.dispatch(actions.updateUser(user));
+        store.dispatch(actions.updatePageTitle(component.title || "James Long"));
+
+        // Wait for all data to be loaded for the page. This will
+        // dispatch actions and populate our central store.
+        yield fetchAllData(store, renderProps, user.admin);
+
+        let str, renderErr;
+        try {
+          str = React.renderToString(
+            Provider({ store }, () => RoutingContext(renderProps))
+          );
+        }
+        catch(err) {
+          if(process.env.NODE_ENV !== 'production') {
+            throw err;
+          }
+
+          // Change the state to a 500 error which should render a 500 page
+          store.dispatch(actions.updateErrorStatus(500));
+          str = React.renderToString(
+            Provider({ store }, () => RoutingContext(renderProps))
+          );
+          console.log('500 Error: ' + err.stack);
+        }
+
+        cb(null, str);
+      });
+    }
+  });
+}
+
+function sendHTML(res, status, user, initialState, markup) {
+  const payload = encodeTextContent(
+    transitImmutable.toJSON({
+      state: initialState,
+      user: user
+    })
+  );
+
+  const output = appTemplate({
+    content: markup,
+    payload: payload,
+    className: initialState ? initialState.route.pageClass : '',
+    title: initialState ? initialState.route.title : '',
+    webpackURL: (process.env.NODE_ENV === 'production' ?
+                 nconf.get('webpackURL') :
+                 nconf.get('webpackDevURL')),
+    dev: process.env.NODE_ENV !== 'production'
+  });
+
+  res.status(status).send(output);
 }
 
 app.get('*', function (req, res, next) {
   const disableServerRendering = process.env.NO_SERVER_RENDERING;
+  const user = {
+    name: req.session.username,
+    admin: isAdmin(req.session.username)
+  };
 
-  go(function*() {
-    const user = {
-      name: req.session.username,
-      admin: isAdmin(req.session.username)
-    };
+  if(!disableServerRendering) {
+    const routes = getRoutes();
+    const store = createStore();
 
-    function send(initialState, markup) {
-      const payload = encodeTextContent(
-        transitImmutable.toJSON({
-          state: initialState,
-          user: user
-        })
-      );
+    renderRouteToString(routes, store, user, req.url, (redirect, str) => {
+      const errorStatus = store.getState().route.errorStatus;
 
-      const output = appTemplate({
-        content: markup,
-        payload: payload,
-        className: initialState ? initialState.route.className : '',
-        title: initialState ? initialState.route.title : '',
-        webpackURL: (process.env.NODE_ENV === "production" ?
-                     nconf.get('webpackURL') :
-                     nconf.get('webpackDevURL'))
-      });
-
-      res.send(output);
-    }
-
-    if(!disableServerRendering) {
-      const { router, routeChan, store } = bootstrap.run(routes, {
-        location: req.path,
-        user: user,
-        prefetchData: true
-      });
-
-      // Wait for all data to be loaded for the page
-      const routeState = yield take(routeChan);
-
-      // TODO(jwl): are errors that happen on the server showed gracefully?
-
-      const initialState = store.getState();
-      const prerenderedMarkup = React.renderToString(
-        React.createElement(
-          Provider,
-          { store: store },
-          () => React.createElement(routeState.handler,
-                                    { route: routeState,
-                                      queryParams: routeState.params })
-        )
-      );
-
-      send(initialState, prerenderedMarkup);
-    }
-    else {
-      send(null, '');
-    }
-  });
+      if(redirect) {
+        res.send(res, 302, redirect.pathname + redirect.search);
+      }
+      else {
+        sendHTML(res, errorStatus || 200, user, store.getState(), str);
+      }
+    });
+  }
+  else {
+    sendHTML(res, 200, user, null,  '');
+  }
 });
 
 module.exports = app;

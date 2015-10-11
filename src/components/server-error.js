@@ -9,7 +9,11 @@ const ServerError = React.createClass({
   displayName: 'ServerError',
 
   render: function () {
-    return Page(null, 'An error occured on the server. Sorry!');
+    return Page(
+      null,
+      'Uh oh! I wrote some bad code and things went wrong. ' +
+      'I\'ll try to fix it soon. Have a great day.'
+    );
   }
 });
 

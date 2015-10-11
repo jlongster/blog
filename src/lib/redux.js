@@ -1,32 +1,13 @@
 const React = require('react');
 const t = require('transducers.js');
 const { map, filter, compose } = t;
-const { bindActionCreators } = require('redux');
+const { bindActionCreators, combineReducers } = require('redux');
 const Immutable = require('immutable');
 const csp = require("js-csp");
 const { go, chan, take, put, ops } = csp;
 const { invariant, mergeObj } = require('../lib/util');
 const { PropTypes } = React;
 const shallowEqual = require('../lib/shallowEqual');
-
-function combineReducers(obj) {
-  const reducers = t.toObj(obj, compose(
-    filter(([k, v]) => {
-      return v && (typeof v === 'function' ||
-                   typeof v.update === 'function');
-    }),
-    map(([k, v]) =>
-          [k, v.update ? v.update : v])
-  ));
-
-  const defaultState = map(obj, entry => [entry[0], undefined]);
-
-  return function combination(state = defaultState, action) {
-    return map(reducers, ([key, reducer]) => {
-      return [key, reducer(state[key], action)];
-    });
-  };
-}
 
 const fields = {
   CHANNEL: '@@dispatch/channel',
@@ -93,9 +74,11 @@ const storeShape = React.PropTypes.shape({
 });
 
 function connect(component, statics) {
-  const { select, queryParams, runQueries, actions, namedActions } = statics;
+  const { select, queryParams, queryParamsProp, runQueries, actions, namedActions } = statics;
 
   return React.createClass({
+    displayName: 'connectWrapper',
+
     contextTypes: {
       store: storeShape.isRequired
     },
@@ -103,7 +86,9 @@ function connect(component, statics) {
     statics: statics,
 
     getInitialState: function() {
+      const queryProp = queryParamsProp || 'queryParams';
       const store = this.context.store;
+
       return {
         actions: actions ?
           { actions: bindActionCreators(actions, store.dispatch) } :
@@ -111,9 +96,9 @@ function connect(component, statics) {
         namedActions: namedActions ?
           bindActionCreators(namedActions, store.dispatch) :
           null,
-        slice: this.selectState(this.props.queryParams),
+        slice: this.selectState(this.props[queryProp]),
         queryParams: mergeObj(queryParams || {},
-                              this.props.queryParams || {})
+                              this.props[queryProp] || {})
       };
     },
 
@@ -202,7 +187,6 @@ function channelStore(createStore) {
 }
 
 module.exports = {
-  combineReducers,
   storeShape,
   connect,
   channelMiddleware,

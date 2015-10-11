@@ -5,7 +5,7 @@ const { go, chan, take, put, ops } = csp;
 const api = require('impl/api');
 const nprogress = require('nprogress');
 const { connect } = require("../lib/redux");
-const { removeErrors } = require('../reducers/async-requests').actions;
+const { removeErrors } = require('../actions/async-requests');
 
 const dom = React.DOM;
 

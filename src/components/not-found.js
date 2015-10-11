@@ -1,9 +1,11 @@
 const React = require('react');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
+const { connect } = require('../lib/redux');
+const actions = require('../actions/route');
 
-const dom = React.DOM;
 const Page = React.createFactory(require('./page'));
+const dom = React.DOM;
 
 const NotFound = React.createClass({
   displayName: 'NotFound',
@@ -19,4 +21,8 @@ I don't know what happened.`
   }
 });
 
-module.exports = NotFound;
+module.exports = connect(NotFound, {
+  runQueries: function(dispatch) {
+    dispatch(actions.updateErrorStatus(404));
+  }
+});
