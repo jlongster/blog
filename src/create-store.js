@@ -22,7 +22,7 @@ module.exports = (state, version) => {
   );
 
   return create(
-    replaceable(combineReducers(reducers), version),
+    replaceable(combineReducers(reducers)),
     state
   );
 };
