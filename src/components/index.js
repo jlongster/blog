@@ -71,7 +71,7 @@ module.exports = connect(Index, {
 
   queryParams: { limit: 5 },
   runQueries: function (dispatch, state, params) {
-    dispatch(actions.queryPosts({
+    return dispatch(actions.queryPosts({
       name: 'index',
       select: ['title', 'date', 'shorturl', 'abstract'],
       limit: params.limit

@@ -41,7 +41,7 @@ module.exports = connect(Archive, {
   title: 'All Posts - James Long',
 
   runQueries: function (dispatch) {
-    dispatch(actions.queryPosts({
+    return dispatch(actions.queryPosts({
       name: 'all',
       select: ['title', 'date', 'shorturl']
     }));

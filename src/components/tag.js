@@ -41,13 +41,12 @@ module.exports = connect(Tag, {
   queryParamsProp: 'params',
 
   runQueries: function (dispatch, state, params) {
-    dispatch(actions.queryPosts({
+    dispatch(actions.updatePageTitle('Posts tagged ' + params.tag + ' - James Long'));
+    return dispatch(actions.queryPosts({
       name: 'tag',
       filter: { tags: params.tag },
       select: ['title', 'tags', 'shorturl', 'date']
     }));
-
-    dispatch(actions.updatePageTitle('Posts tagged ' + params.tag + ' - James Long'));
   },
 
   select: function(state) {
