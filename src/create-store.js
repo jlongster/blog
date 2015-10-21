@@ -13,7 +13,7 @@ module.exports = (state, version) => {
       () => next => action => {
         // Our own logger because none of the fancy loggers supports
         // server-side rendering.
-        // console.log(action);
+        console.log(action);
         return next(action);
       }
     ),

@@ -3,6 +3,7 @@ const classNames = require('classnames');
 const { displayDate } = require("../../lib/date");
 const { prevented } = require("../../lib/util");
 
+const Link = React.createFactory(require('react-router').Link);
 const dom = React.DOM;
 const { div, a } = dom;
 
@@ -22,8 +23,8 @@ const Toolbar = React.createClass({
       div(
         { className: 'actions left' },
         this.props.isNew ?
-          a({ href: '/' }, 'Home') :
-          a({ href: '/' + this.props.shorturl }, 'Back')
+          Link({ to: '/' }, 'Home') :
+        Link({ to: '/' + this.props.shorturl }, 'Back')
       ),
       dom.strong(null, this.props.title),
       dom.span(null,

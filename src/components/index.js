@@ -10,6 +10,7 @@ const actions = require("../actions/posts");
 
 const Header = React.createFactory(require('./header'));
 const Footer = React.createFactory(require('./footer'));
+const Link = React.createFactory(require('react-router').Link);
 const dom = React.DOM;
 const { div, a } = dom;
 
@@ -44,13 +45,13 @@ let Index = React.createClass({
             return div(
               { className: 'post',
                 key: post.shorturl },
-              dom.h1(null, a({ href: '/' + post.shorturl }, post.title)),
+              dom.h1(null, Link({ to: '/' + post.shorturl }, post.title)),
               div({ className: 'date' }, displayDate(post.date)),
               dom.p({ dangerouslySetInnerHTML: { __html: post.abstract }})
             );
           }),
           div({ className: 'right-link' },
-              a({ href: '/archive'}, 'View All Posts'))
+              Link({ to: '/archive'}, 'View All Posts'))
         ),
         div(
           { className: 'static-content',

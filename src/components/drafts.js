@@ -5,6 +5,7 @@ const { go, chan, take, put, ops } = csp;
 const { connect } = require("../lib/redux");
 const actions = require("../actions/posts");
 
+const Link = React.createFactory(require('react-router').Link);
 const Main = React.createFactory(require('./main'));
 const Header = React.createFactory(require("./header"));
 const Page = React.createFactory(require('./page'));
@@ -26,7 +27,7 @@ const Drafts = React.createClass({
       dom.ul({ className: 'list post-list' }, posts.map(post => {
         return dom.li(
           { key: post.shorturl },
-          a({ href: '/' + post.shorturl }, post.title),
+          Link({ to: '/' + post.shorturl }, post.title),
           ' ',
           dom.span({ className: 'date' }, displayDate(post.date))
         );

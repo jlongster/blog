@@ -14,6 +14,7 @@ const actions = Object.assign({}, postActions, routeActions);
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
+const Link = React.createFactory(require('react-router').Link);
 const Page = React.createFactory(require('./page'));
 const Block = React.createFactory(require('./block'));
 
@@ -170,7 +171,7 @@ const Post = React.createClass({
               dom.h3(
                 null,
                 'Read Next: ',
-                a({ href: '/' + next.shorturl }, next.title)
+                Link({ to: '/' + next.shorturl }, next.title)
               ),
               dom.p({ dangerouslySetInnerHTML: { __html: next.abstract }})
             )

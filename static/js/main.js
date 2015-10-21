@@ -23,7 +23,7 @@ const payload = transitImmutable.fromJSON(
 );
 
 const store = createStore(payload.state ? payload.state : undefined);
-const history = createHistory();
+const history = createHistory({ forceRefresh: true });
 store.dispatch(updateUser(payload.user));
 
 // Sync the history location and the store location together
@@ -39,9 +39,6 @@ history.listen(location => {
   if(store.getState().route.path !== locationToString(location)) {
     store.dispatch(updatePath(locationToString(location)));
   }
-
-  // Reset the title (components may have dynamically changed it)
-  store.dispatch(updatePageTitle("James Long"));
 });
 
 store.subscribe(() => {
@@ -52,9 +49,7 @@ store.subscribe(() => {
   // edge cases.
   if(routeState.path !== locationToString(window.location) &&
      !routeState.avoidRouterUpdate) {
-    // When `history` allows full refreshes, use its API instead
-    // history.pushState(null, routeState.path);
-    window.location.href = routeState.path;
+    history.pushState(null, routeState.path);
   }
 });
 
@@ -71,11 +66,18 @@ document.addEventListener('keydown', function(e) {
   else if(cmdShiftK) {
     e.preventDefault();
     const str = transitImmutable.toJSON(store.getState());
-    const response = prompt('App State', str);
+    const response = prompt(
+      'App State (note: router will be broken after this. I don\'t ' +
+      'know how to fix it yet)',
+      str
+    );
     let state = store.getState();
     try {
       if(response) {
         state = transitImmutable.fromJSON(response);
+      }
+      else {
+        return;
       }
     }
     catch(e) {

@@ -4,6 +4,7 @@ const { connect } = require("../lib/redux");
 const Router = require('react-router');
 const { updatePath, updatePageTitle, updatePageClass } = require('../actions/route');
 
+const Link = React.createFactory(require('react-router').Link);
 const AuthError = React.createFactory(require('./auth-error'));
 const ServerError = React.createFactory(require('./server-error'));
 const NotFound = React.createFactory(require('./not-found'));
@@ -60,10 +61,10 @@ const App = React.createClass({
         div(
           { className: 'admin-header' },
           dom.span(null, 'Welcome ', dom.strong(null, user.name)),
-          a({ href: "/drafts" }, 'Drafts'),
+          Link({ to: "/drafts" }, 'Drafts'),
           route.path === ':post' &&
-            a({ href: '/edit/' + this.props.params.post }, 'Edit'),
-          a({ href: '/edit/new' }, 'New'),
+            Link({ to: '/edit/' + this.props.params.post }, 'Edit'),
+          Link({ to: '/edit/new' }, 'New'),
           a({ href: '/logout' }, 'Logout')
         )
     );
@@ -71,7 +72,7 @@ const App = React.createClass({
 });
 
 module.exports = connect(App, {
-  namedActions: { updatePath, updatePageTitle, updatePageClass },
+  namedActions: { updatePageTitle },
   select: function(state) {
     return {
       user: state.route.user,

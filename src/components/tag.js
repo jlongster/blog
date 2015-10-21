@@ -8,6 +8,7 @@ const postActions = require('../actions/posts');
 const routeActions = require('../actions/route');
 const actions = Object.assign({}, postActions, routeActions);
 
+const Link = React.createFactory(require('react-router').Link);
 const Page = React.createFactory(require('./page'));
 const dom = React.DOM;
 const { div, a } = dom;
@@ -27,7 +28,7 @@ var Tag = React.createClass({
       dom.ul({ className: 'list post-list' }, posts.map(post => {
         return dom.li(
           { key: post.shorturl },
-          a({ href: '/' + post.shorturl }, post.title),
+          Link({ to: '/' + post.shorturl }, post.title),
           ' ',
           dom.span({ className: 'date' }, displayDate(post.date))
         );
