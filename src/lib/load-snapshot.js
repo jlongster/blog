@@ -16,8 +16,8 @@ module.exports = (state, store, routes) => {
   // First, install the new state and add a flag to tell the router
   // not to do anything yet
   state = mergeObj(state, {
-    route: mergeObj(state.route, {
-      avoidRouterUpdate: true
+    routing: mergeObj(state.routing, {
+      noRouterUpdate: true
     })
   });
   store.dispatch({ type: REPLACE_STATE, state: state });
@@ -27,7 +27,7 @@ module.exports = (state, store, routes) => {
   // problematic in certain cases like if the router uses full
   // refreshes. We shouldn't depend on the router behavior, and this
   // is a special case anyway and it's OK that the URL doesn't update.
-  match({ routes, location: state.route.path },
+  match({ routes, location: state.routing.path },
         (err, redirect, renderProps) => {
           React.render(
             React.createElement(

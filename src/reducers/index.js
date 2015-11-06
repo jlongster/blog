@@ -1,6 +1,6 @@
 const posts = require('./posts');
 const asyncRequests = require('./async-requests');
-const route = require('./route');
+const page = require('./page');
 const editor = require('./editor');
 const localState = require('./local-state');
 const version = require('./version');
@@ -8,7 +8,7 @@ const version = require('./version');
 module.exports = {
   posts,
   asyncRequests,
-  route,
+  page,
   editor,
   version,
   __localState: localState

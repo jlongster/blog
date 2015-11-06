@@ -1,6 +1,5 @@
 
 * Set the data-url property of the HN button
-* I broke the 404 page again, it's not serving a 404 code
 * Autosave
 * Make runsvdir run on boot
 * Back up database

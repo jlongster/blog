@@ -6,8 +6,9 @@ const { useRoutes } = require('react-router');
 const { decodeTextContent } = require('../../src/lib/util');
 const loadSnapshot = require('../../src/lib/load-snapshot');
 const createStore = require('../../src/create-store');
-const { updateUser, updatePath, updatePageTitle } = require('../../src/actions/route');
+const { updateUser, updatePageTitle } = require('../../src/actions/page');
 const getRoutes = require('../../src/routes');
+const { syncReduxAndRouter } = require('redux-simple-routing');
 const api = require('./impl/api');
 const { go, take } = require('js-csp');
 
@@ -23,35 +24,7 @@ const payload = transitImmutable.fromJSON(
 );
 
 const store = createStore(payload.state ? payload.state : undefined);
-const history = createHistory({ forceRefresh: true });
 store.dispatch(updateUser(payload.user));
-
-// Sync the history location and the store location together
-function locationToString(location) {
-  return location.pathname +
-    (location.search ? ('?' + location.search) : '') +
-    (location.hash ? ('#' + location.hash) : '');
-}
-
-history.listen(location => {
-  // Avoid dispatching an action if the store is already up-to-date,
-  // even if `history` wouldn't do anthing if the location is the same
-  if(store.getState().route.path !== locationToString(location)) {
-    store.dispatch(updatePath(locationToString(location)));
-  }
-});
-
-store.subscribe(() => {
-  const routeState = store.getState().route;
-  // Don't update the router is nothing has changed. The
-  // `avoidRouterUpdate` flag can be set to avoid updating altogether,
-  // which is useful for things like loading snapshots or very special
-  // edge cases.
-  if(routeState.path !== locationToString(window.location) &&
-     !routeState.avoidRouterUpdate) {
-    history.pushState(null, routeState.path);
-  }
-});
 
 // Allow copying and pasting app state
 document.addEventListener('keydown', function(e) {
@@ -87,6 +60,10 @@ document.addEventListener('keydown', function(e) {
     loadSnapshot(state, store, getRoutes(history));
   }
 });
+
+// Sync the history location and the store location together
+const history = createHistory({ forceRefresh: true });
+syncReduxAndRouter(history, store);
 
 React.render(
   React.createElement(

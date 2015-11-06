@@ -299,6 +299,6 @@ gulp.task('run', ['backend-watch', 'frontend-watch'], function() {
     watch: ['foo/'],
     ext: 'noop'
   }).on('restart', function() {
-    console.log('Patched!');
+    console.log('Restarted!');
   });
 });

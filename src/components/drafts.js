@@ -39,7 +39,7 @@ const Drafts = React.createClass({
 module.exports = connect(Drafts, {
   requireAdmin: true,
 
-  runQueries: function (dispatch) {
+  populateStore: function (dispatch) {
     dispatch(actions.queryDrafts({
       name: 'drafts',
       select: ['title', 'date', 'shorturl'],

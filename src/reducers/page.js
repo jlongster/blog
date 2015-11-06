@@ -1,4 +1,5 @@
 const constants = require('../constants');
+const router = require('redux-simple-routing');
 const Immutable = require('immutable');
 const { mergeObj } = require('../lib/util');
 
@@ -8,10 +9,9 @@ const initialState = {
 
 function update(state = initialState, action) {
   switch(action.type) {
-  // This is a separate action for clarity
-  case constants.UPDATE_PATH:
+  // Note that this is using the constant from the router
+  case router.UPDATE_PATH:
     return mergeObj(state, {
-      path: action.path,
       // Reset the title on every route change. Components may have
       // dynamically changed it.
       title: "James Long"

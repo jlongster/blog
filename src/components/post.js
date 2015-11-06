@@ -9,8 +9,8 @@ const classNames = require('classnames');
 const withLocalState = require('../lib/local-state');
 
 const postActions = require('../actions/posts');
-const routeActions = require('../actions/route');
-const actions = Object.assign({}, postActions, routeActions);
+const pageActions = require('../actions/page');
+const actions = Object.assign({}, postActions, pageActions);
 
 const dom = React.DOM;
 const { div, ul, li, a } = dom;
@@ -213,7 +213,7 @@ module.exports = connect(Post, {
   pageClass: 'post-page',
   queryParamsProp: 'params',
 
-  runQueries: function (dispatch, state, params) {
+  populateStore: function (dispatch, state, params) {
     const id = decodeURI(params.post);
 
     return go(function*() {

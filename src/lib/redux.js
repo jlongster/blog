@@ -74,7 +74,10 @@ const storeShape = React.PropTypes.shape({
 });
 
 function connect(component, statics) {
-  const { select, queryParams, queryParamsProp, runQueries, actions, namedActions } = statics;
+  const {
+    select, defaultQueryParams, queryParamsProp,
+    populateStore, actions, namedActions
+  } = statics;
 
   return React.createClass({
     displayName: 'connectWrapper',
@@ -97,14 +100,14 @@ function connect(component, statics) {
           bindActionCreators(namedActions, store.dispatch) :
           null,
         slice: this.selectState(this.props[queryProp]),
-        queryParams: mergeObj(queryParams || {},
+        queryParams: mergeObj(defaultQueryParams || {},
                               this.props[queryProp] || {})
       };
     },
 
     componentDidMount: function() {
       this.unsubscribe = this.context.store.subscribe(this.handleChange);
-      this.runQueries();
+      this.populateStore();
     },
 
     componentWillUnmount: function() {
@@ -118,9 +121,9 @@ function connect(component, statics) {
       return v;
     },
 
-    runQueries: function(params) {
-      if(runQueries) {
-        runQueries(
+    populateStore: function(params) {
+      if(populateStore) {
+        populateStore(
           this.context.store.dispatch,
           this.context.store.getState(),
           params || this.state.queryParams
@@ -144,16 +147,10 @@ function connect(component, statics) {
       return null;
     },
 
-    setQueryParams: function(params) {
-      this.setState({ queryParams: params });
-      this.runQueries(params);
-    },
-
     render: function() {
       return React.createElement(component, mergeObj(
         this.props,
-        { queryParams: this.state.queryParams,
-          setQueryParams: this.setQueryParams },
+        { queryParams: this.state.queryParams },
         this.state.actions || {},
         this.state.namedActions || {},
         this.state.slice || {}
@@ -162,34 +159,9 @@ function connect(component, statics) {
   });
 }
 
-function channelStore(createStore) {
-  return (reducer, initialState) => {
-    const store = createStore(reducer, initialState);
-    const stateChan = chan();
-    const mult = csp.operations.mult(stateChan);
-
-    store.subscribe(() => {
-      csp.putAsync(stateChan, store.getState())
-    });
-
-    return mergeObj(store, {
-      getChannel: () => {
-        const ch = chan();
-        mult.tap(ch);
-
-        // Put the current state as the first value on the channel
-        csp.putAsync(ch, store.getState());
-
-        return ch;
-      }
-    });
-  }
-}
-
 module.exports = {
   storeShape,
   connect,
   channelMiddleware,
-  channelStore,
   fields
 };

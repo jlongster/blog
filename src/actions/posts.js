@@ -1,6 +1,6 @@
 const Immutable = require('immutable');
 const api = require('impl/api');
-const actions = require('../actions/route');
+const { updatePath } = require('redux-simple-routing');
 const constants = require('../constants');
 const { fields }  = require('../lib/redux');
 const { go } = require('js-csp');
@@ -63,10 +63,10 @@ function savePost(previousPost, post) {
       yield api.updatePost(post.shorturl, post);
 
       if(previousPost.shorturl !== post.shorturl) {
-        dispatch(actions.updatePath('/edit/' + post.shorturl));
+        dispatch(updatePath('/edit/' + post.shorturl));
       }
       else {
-        dispatch(actions.updatePath('/' + post.shorturl));
+        dispatch(updatePath('/' + post.shorturl));
       }
     }, { propagate: true })
   });
@@ -78,7 +78,7 @@ function deletePost(id) {
     id: id,
     [fields.CHANNEL]: go(function*() {
       yield api.deletePost(id);
-      dispatch(actions.updatePath('/'));
+      dispatch(updatePath('/'));
     }, { propagate: true })
   });
 }

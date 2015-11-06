@@ -19,7 +19,7 @@ const { range, seq, compose, map, filter } = t;
 const csp = require('js-csp');
 const { go, chan, take, put, timeout, operations: ops } = csp;
 const { encodeTextContent, mergeObj } = require('../src/lib/util');
-const actions = require('../src/actions/route');
+const actions = require('../src/actions/page');
 
 const getRoutes = require('../src/routes');
 const createStore = require('../src/create-store');
@@ -192,7 +192,7 @@ app.get('/api/*', function(req, res) {
   res.send('bad API request');
 });
 
-// page handler
+// atom feed
 
 app.get('/atom.xml', function(req, res) {
   go(function*() {
@@ -202,13 +202,15 @@ app.get('/atom.xml', function(req, res) {
   });
 });
 
+// page handler
+
 function fetchAllData(store, routeProps, isAdmin) {
   const chans = routeProps.components.map(component => {
     if(component &&
-       component.runQueries &&
+       component.populateStore &&
        (!component.requireAdmin || isAdmin)) {
       const params = mergeObj(component.queryParams || {}, routeProps.params);
-      return component.runQueries(store.dispatch, store.getState(), params);
+      return component.populateStore(store.dispatch, store.getState(), params);
     }
   }).filter(ch => ch);
 
@@ -273,8 +275,8 @@ function sendHTML(res, status, user, initialState, markup) {
   const output = appTemplate({
     content: markup,
     payload: payload,
-    className: initialState ? initialState.route.pageClass : '',
-    title: initialState ? initialState.route.title : '',
+    className: initialState ? initialState.page.pageClass : '',
+    title: initialState ? initialState.page.title : '',
     webpackURL: (process.env.NODE_ENV === 'production' ?
                  nconf.get('webpackURL') :
                  nconf.get('webpackDevURL')),
@@ -296,7 +298,7 @@ app.get('*', function (req, res, next) {
     const store = createStore();
 
     renderRouteToString(routes, store, user, req.url, (redirect, str) => {
-      const errorStatus = store.getState().route.errorStatus;
+      const errorStatus = store.getState().page.errorStatus;
 
       if(redirect) {
         res.send(res, 302, redirect.pathname + redirect.search);

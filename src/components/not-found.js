@@ -2,7 +2,7 @@ const React = require('react');
 const csp = require('js-csp');
 const { go, chan, take, put, ops } = csp;
 const { connect } = require('../lib/redux');
-const actions = require('../actions/route');
+const actions = require('../actions/page');
 
 const Page = React.createFactory(require('./page'));
 const dom = React.DOM;
@@ -22,7 +22,7 @@ I don't know what happened.`
 });
 
 module.exports = connect(NotFound, {
-  runQueries: function(dispatch) {
-    dispatch(actions.updateErrorStatus(404));
+  populateStore: function(dispatch) {
+    return dispatch(actions.updateErrorStatus(404));
   }
 });

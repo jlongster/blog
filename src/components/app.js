@@ -2,7 +2,7 @@ const React = require('react/addons');
 const PureRenderMixin = React.addons.PureRenderMixin;
 const { connect } = require("../lib/redux");
 const Router = require('react-router');
-const { updatePath, updatePageTitle, updatePageClass } = require('../actions/route');
+const { updatePageTitle, updatePageClass } = require('../actions/page');
 
 const Link = React.createFactory(require('react-router').Link);
 const AuthError = React.createFactory(require('./auth-error'));
@@ -75,9 +75,9 @@ module.exports = connect(App, {
   namedActions: { updatePageTitle },
   select: function(state) {
     return {
-      user: state.route.user,
-      title: state.route.title,
-      errorStatus: state.route.errorStatus
+      user: state.page.user,
+      title: state.page.title,
+      errorStatus: state.page.errorStatus
     }
   }
 });

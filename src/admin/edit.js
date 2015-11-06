@@ -13,10 +13,7 @@ const constants = require('../constants');
 
 const postActions = require('../actions/posts');
 const editorActions = require('../actions/editor');
-const routeActions = require('../actions/route');
-const actions = Object.assign(
-  {}, postActions, editorActions, routeActions
-);
+const actions = Object.assign({}, postActions, editorActions);
 
 const Editor = React.createFactory(require('./components/editor'));
 const Toolbar = React.createFactory(require('./components/toolbar'));
@@ -178,7 +175,7 @@ module.exports = connect(withLocalState(Edit), {
   queryParamsProp: 'params',
   actions: actions,
 
-  runQueries: function(dispatch, state, params) {
+  populateStore: function(dispatch, state, params) {
     const id = decodeURI(params.post);
     if(id !== 'new') {
       dispatch(actions.getPost(id));

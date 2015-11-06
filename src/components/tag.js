@@ -5,8 +5,8 @@ const { displayDate } = require("../lib/date");
 const { connect } = require("../lib/redux");
 
 const postActions = require('../actions/posts');
-const routeActions = require('../actions/route');
-const actions = Object.assign({}, postActions, routeActions);
+const pageActions = require('../actions/page');
+const actions = Object.assign({}, postActions, pageActions);
 
 const Link = React.createFactory(require('react-router').Link);
 const Page = React.createFactory(require('./page'));
@@ -41,14 +41,13 @@ module.exports = connect(Tag, {
   pageClass: 'tag',
   queryParamsProp: 'params',
 
-  runQueries: function (dispatch, state, params) {
-    dispatch(actions.queryPosts({
+  populateStore: function (dispatch, state, params) {
+    dispatch(actions.updatePageTitle('Posts tagged ' + params.tag + ' - James Long'));
+    return dispatch(actions.queryPosts({
       name: 'tag',
       filter: { tags: params.tag },
       select: ['title', 'tags', 'shorturl', 'date']
     }));
-
-    dispatch(actions.updatePageTitle('Posts tagged ' + params.tag + ' - James Long'));
   },
 
   select: function(state) {

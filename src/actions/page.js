@@ -8,13 +8,6 @@ function updateUser(user) {
   };
 }
 
-function updatePath(path) {
-  return {
-    type: constants.UPDATE_PATH,
-    path: path
-  };
-}
-
 function updatePageTitle(title) {
   return {
     type: constants.UPDATE_PAGE_TITLE,
@@ -31,7 +24,6 @@ function updateErrorStatus(status) {
 
 module.exports = {
   updateUser,
-  updatePath,
   updatePageTitle,
   updateErrorStatus
 };

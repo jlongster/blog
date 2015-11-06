@@ -9,12 +9,3 @@ let server = http.createServer(app);
 server.listen(nconf.get('http:port'));
 
 console.log('Server listening on ' + nconf.get('http:port') + '...');
-
-if(module.hot) {
-  module.hot.accept();
-  //module.hot.accept('./app');
-
-  module.hot.dispose(function() {
-    server.close();
-  });
-}

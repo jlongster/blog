@@ -10,16 +10,17 @@
 
     {{#unless dev}}
     <link rel="stylesheet" type="text/css" href="{{ webpackURL }}/styles.css" />
-    {{/unless}}
-
     <script type="text/javascript" src="//use.typekit.net/eeq3shn.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    {{/unless}}
   </head>
   <body class="{{{ className }}}">
     <div id="mount">{{{ content }}}</div>
 
     <script id="payload" type="application/payload">{{{ payload }}}</script>
     <script src="{{ webpackURL }}/frontend.js"></script>
+    
+    {{#unless dev}}
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -29,5 +30,6 @@
       ga('create', 'UA-9014321-1', 'auto');
       ga('send', 'pageview');
     </script>
+    {{/unless}}
   </body>
 </html>

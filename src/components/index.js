@@ -69,13 +69,13 @@ let Index = React.createClass({
 
 module.exports = connect(Index, {
   pageClass: 'index',
+  defaultQueryParams: { limit: 5 },
 
-  queryParams: { limit: 5 },
-  runQueries: function (dispatch, state, params) {
-    dispatch(actions.queryPosts({
+  populateStore: function (dispatch, state, queryParams) {
+    return dispatch(actions.queryPosts({
       name: 'index',
       select: ['title', 'date', 'shorturl', 'abstract'],
-      limit: params.limit
+      limit: queryParams.limit
     }));
   },
 
