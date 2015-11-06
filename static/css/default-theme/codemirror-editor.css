@@ -1,0 +1,47 @@
+.cm-s-happy-happy-joy-joy-2 {
+	font-size: 1em;
+	line-height: 1.5em;
+	background: #E5E5E5;
+	color: #2A2A2A;
+}
+.cm-s-happy-happy-joy-joy-2 .CodeMirror-lines {
+	padding: 8px 0;
+}
+.cm-s-happy-happy-joy-joy-2 .CodeMirror-activeline-background {
+	background: #F2F8FE73;
+}
+.cm-s-happy-happy-joy-joy-2 .CodeMirror-selected {
+}
+.cm-s-happy-happy-joy-joy-2 .cm-comment {
+    font-size: 16px;
+    font-family: Monaco, 'Courier New';
+	color: #858B7C;
+}
+.cm-s-happy-happy-joy-joy-2 .cm-string {
+	font-style: italic;
+	color: #901A12;
+}
+.cm-s-happy-happy-joy-joy-2 .cm-atom {
+	color: null;
+}
+.cm-s-happy-happy-joy-joy-2 .cm-number {
+	color: null;
+}
+.cm-s-happy-happy-joy-joy-2 .cm-variable {
+	color: #5C3566;
+}
+.cm-s-happy-happy-joy-joy-2 .cm-variable-2 {
+	color: #519A58;
+}
+.cm-s-happy-happy-joy-joy-2 .cm-property {
+	color: null;
+}
+.cm-s-happy-happy-joy-joy-2 .cm-keyword {
+	color: null;
+}
+.cm-s-happy-happy-joy-joy-2 .cm-operator {
+	color: null;
+}
+.cm-s-happy-happy-joy-joy-2 .CodeMirror-linenumber {
+	color: italic;
+}

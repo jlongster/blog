@@ -1,0 +1,63 @@
+/* global styles */
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #fcfcfc;
+    line-height: 1.5em;
+}
+
+/* notification */
+
+.notifications {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    margin-top: 1em;
+}
+
+.notification.error {
+    background-color: #555555;
+    color: white;
+    margin: 1em;
+    margin-top: 0;
+    padding: 1em;
+}
+
+/* admin overlay and edit header */
+
+.admin-header {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.admin-header, .edit .toolbar {
+    line-height: 1em;
+    padding: .5em;
+}
+
+.admin-header, .edit .toolbar {
+    /* Force a fixed height, which is what is *should* be but in case it
+       gets out of sync. 1em + .5em +.5em = 16 + 8 + 8 = 32 */
+    /* height: 32px; */
+
+    a {
+        margin-right: 1em;
+        
+        &:nth-of-type(1) {
+            margin-left: 1em;
+        }
+    }
+}

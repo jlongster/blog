@@ -1,18 +1,16 @@
 
 # jlongster.com
 
-This is the raw source for my blog, [jlongster.com](http://jlongster.com/). I will fill out this section
-more later, but for now you can read [my post](http://jlongster.com/Presenting-The-Most-Over-Engineered-Blog-Ever) about it.
+This is the raw source for my blog, [jlongster.com](http://jlongster.com/). This is where I experiment with new JavaScript libraries. Read [my post](http://jlongster.com/Presenting-The-Most-Over-Engineered-Blog-Ever) for more information.
 
-Right now, it supports prerendering a page on the server with React but also letting the client pick up the initial page and render everything within the browser from there (so you could even do page transitions without a full page refresh). I turned it off though, and it now renders everything on the server with a full page refresh, and I will soon be ripping out the client-side rendering. I will tag this version for those interested.
+It's built with react, react-router, redux, and a few other things. It supports server-side rendering with proper HTTP status codes, an admin interface for editing posts, and an API which everything uses. It's a good example project for anything looking for a moderately complex React app.
 
-Visit the [demo site](http://test.jlongster.com/) to see client-side page transitions in action. You can also see the admin section and try the [markdown editor](http://test.jlongster.com/edit/ulla-nec-dui-vulputate,-ut-facilisis-nulla-pla).
+It does not do inline page updates, meaning it forces a browser refresh for each URL change, but only because my older demos mutate the DOM so I have to do that. A fresh blog could potentially turn on pushState-powered URL changes.
 
 **I have no intention into making this a platform**. This is my site. I will evolve it for my needs. I *will* make backwards incompatible changes, probably big ones especially in the near future. The database structure will generally stay the same though, since I have already have a lot of content in it.
-
-I open-sourced this mainly because I thought others could learn a few things from it. Eventually it may become more modular so it's easy to version and use with various modules.
 
 To get running:
 
 * `npm install`
-* `gulp run-watch`
+* `cd static/css && ln -s default-theme theme`
+* `gulp run`
