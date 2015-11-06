@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-.built
 build
 static/output
 config/config.json
@@ -8,3 +7,4 @@ config/config-prod.json
 s.jlongster.com
 sv
 files
+static/css/theme

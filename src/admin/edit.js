@@ -37,7 +37,7 @@ const Edit = React.createClass({
   },
 
   componentDidMount: function() {
-    require(['static/css/editor.less']);
+    require(['static/css/theme/editor.less']);
   },
 
   validate: function(post) {

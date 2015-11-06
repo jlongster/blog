@@ -10,7 +10,7 @@ const Editor = React.createClass({
 
   componentDidMount: function() {
     require(
-      ['static/js/editor/editor.js', 'static/css/codemirror-happy-joy.css'],
+      ['static/js/editor/editor.js', 'static/css/theme/codemirror-editor.css'],
       editor => {
         let CodeMirror = editor.CodeMirror;
         //try {

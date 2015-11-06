@@ -15,7 +15,7 @@ const { go, take } = require('js-csp');
 // CSS dependencies
 
 require('nprogress/nprogress.css');
-require('../css/main.less');
+require('../css/theme/main.less');
 
 // App init
 

@@ -35,7 +35,7 @@ var babelLoader = 'babel?optional=runtime&stage=1';
 var defaultConfig = {
   resolve: {
     alias: {
-      'js-csp': path.join(__dirname, 'build/csp'),
+      'js-csp': path.join(__dirname, 'src/lib/csp'),
       'static': path.join(__dirname, 'static')
     }
   },
@@ -103,8 +103,7 @@ var frontendConfig = config({
     alias: {
       'impl': path.join(__dirname, 'static/js/impl'),
     }
-  },
-  profile: true
+  }
 });
 
 if(!PROD) {
