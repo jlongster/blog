@@ -22,7 +22,6 @@ require('../css/theme/main.less');
 const payload = transitImmutable.fromJSON(
   decodeTextContent(document.getElementById('payload').textContent)
 );
-console.log(payload.state);
 
 const store = createStore(payload.state ? payload.state : undefined);
 store.dispatch(updateUser(payload.user));

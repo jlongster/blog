@@ -213,34 +213,30 @@ function fetchAllData(store, routeProps, isAdmin) {
 }
 
 function renderRouteToString(routes, store, user, url, cb) {
-  match({ routes, location: url }, (err, redirect, renderProps) => {
+  match({ routes, location: url }, async function(err, redirect, renderProps) {
     if(err || redirect) {
       cb(err, redirect);
     } else {
-      go(function*() {
-        const component = renderProps.routes[renderProps.routes.length - 1].component;
-        store.dispatch(actions.updatePath(url));
-        store.dispatch(actions.updateUser(user));
-        store.dispatch(actions.updatePageTitle(component.title || "James Long"));
+      const component = renderProps.routes[renderProps.routes.length - 1].component;
+      store.dispatch(actions.updatePath(url));
+      store.dispatch(actions.updateUser(user));
+      store.dispatch(actions.updatePageTitle(component.title || "James Long"));
 
-      let str;
+      let str, renderErr;
       try {
         // Wait for all data to be loaded for the page. This will
         // dispatch actions and populate our central store.
         await fetchAllData(store, renderProps, user.admin);
 
-        let str, renderErr;
-        try {
-          str = React.renderToString(
-            Provider({ store }, () => RoutingContext(renderProps))
-          );
-        }
-        catch(err) {
-          renderErr = err;
-        }
+        str = React.renderToString(
+          Provider({ store }, RoutingContext(renderProps))
+        );
+      }
+      catch(err) {
+        renderErr = err;
+      }
 
-        cb(renderErr, null, str);
-      });
+      cb(renderErr, null, str);
     }
   });
 }
@@ -298,7 +294,7 @@ app.get('*', function (req, res, next) {
       } else {
         // Send it with the right status code, which may be something
         // like 404 if a component has set that
-        const errorStatus = store.getState().route.errorStatus;
+        const errorStatus = store.getState().page.errorStatus;
         sendHTML(res, errorStatus || 200, user, store.getState(), str);
       }
     });

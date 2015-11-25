@@ -36,7 +36,6 @@ let Index = React.createClass({
   },
 
   render: function () {
-    console.log(this.props.posts);
     if(!this.props.posts) {
       return null;
     }
