@@ -40,7 +40,7 @@ module.exports = connect(Drafts, {
   requireAdmin: true,
 
   populateStore: function (dispatch) {
-    dispatch(actions.queryDrafts({
+    return dispatch(actions.queryDrafts({
       name: 'drafts',
       select: ['title', 'date', 'shorturl'],
     }));

@@ -213,18 +213,15 @@ function fetchAllData(store, routeProps, isAdmin) {
 }
 
 function renderRouteToString(routes, store, user, url, cb) {
-  match({ routes, location: url }, async function(err, redirect, renderProps) {
-    if(err) {
-      cb(null, 'An internal routing error ocurred.')
-    }
-    else if(redirect) {
-      cb(redirect);
-    }
-    else {
-      const component = renderProps.routes[renderProps.routes.length - 1].component;
-      store.dispatch(actions.updatePath(url));
-      store.dispatch(actions.updateUser(user));
-      store.dispatch(actions.updatePageTitle(component.title || "James Long"));
+  match({ routes, location: url }, (err, redirect, renderProps) => {
+    if(err || redirect) {
+      cb(err, redirect);
+    } else {
+      go(function*() {
+        const component = renderProps.routes[renderProps.routes.length - 1].component;
+        store.dispatch(actions.updatePath(url));
+        store.dispatch(actions.updateUser(user));
+        store.dispatch(actions.updatePageTitle(component.title || "James Long"));
 
       let str;
       try {
@@ -232,24 +229,18 @@ function renderRouteToString(routes, store, user, url, cb) {
         // dispatch actions and populate our central store.
         await fetchAllData(store, renderProps, user.admin);
 
-        str = React.renderToString(
-          Provider({ store }, RoutingContext(renderProps))
-        );
-      }
-      catch(err) {
-        if(process.env.NODE_ENV !== 'production') {
-          throw err;
+        let str, renderErr;
+        try {
+          str = React.renderToString(
+            Provider({ store }, () => RoutingContext(renderProps))
+          );
+        }
+        catch(err) {
+          renderErr = err;
         }
 
-        // Change the state to a 500 error which should render a 500 page
-        store.dispatch(actions.updateErrorStatus(500));
-        str = React.renderToString(
-          Provider({ store }, () => RoutingContext(renderProps))
-        );
-        console.log('500 Error: ' + err.stack);
-      }
-
-      cb(null, str);
+        cb(renderErr, null, str);
+      });
     }
   });
 }
@@ -287,13 +278,27 @@ app.get('*', function (req, res, next) {
     const routes = getRoutes();
     const store = createStore();
 
-    renderRouteToString(routes, store, user, req.url, (redirect, str) => {
-      const errorStatus = store.getState().page.errorStatus;
+    renderRouteToString(routes, store, user, req.url, (err, redirect, str) => {
+      if(err) {
+        // A 500 error. Just throw it in dev mode.
+        if(process.env.NODE_ENV !== 'production') {
+          throw err;
+        }
 
-      if(redirect) {
+        // Log it, change the state to a 500 error which will render a
+        // 500 page, and rerender the route
+        console.log('500 Error: ' + err.stack);
+        store.dispatch(actions.updateErrorStatus(500));
+        renderRouteToString(routes, store, user, req.url, (err, redirect, str) => {
+          sendHTML(res, 500, user, store.getState(),
+                   err ? 'An internal error occurred' : str);
+        });
+      } else if(redirect) {
         res.send(res, 302, redirect.pathname + redirect.search);
-      }
-      else {
+      } else {
+        // Send it with the right status code, which may be something
+        // like 404 if a component has set that
+        const errorStatus = store.getState().route.errorStatus;
         sendHTML(res, errorStatus || 200, user, store.getState(), str);
       }
     });
