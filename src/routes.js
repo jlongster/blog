@@ -20,29 +20,6 @@ const Router = React.createFactory(RR.Router);
 const Route = React.createFactory(RR.Route);
 const IndexRoute = React.createFactory(RR.IndexRoute);
 
-function makeFetchingComponent(store, RouteComponent) {
-  const fetchData = component => {
-    if(component.populateStore) {
-      component.populateStore(store, routeProps);
-    }
-  };
-
-  return React.createClass({
-    displayName: 'RouteFetching',
-    render: function() {
-      // const newProps = Object.assign({}, this.props, {
-      //   onEnter: function(routeState) {
-      //     if(props.onEnter) {
-      //       props.onEnter(routeState);
-      //     }
-      //     fetchData(this.component);
-      //   }
-      // });
-      return React.createElement(RouteComponent, this.props, this.props.children);
-    }
-  });
-}
-
 var hljs = require('highlight.js/lib/highlight.js'); // (jwl)
 hljs.registerLanguage('scheme', require('./lib/scheme-highlight.js'));
 hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
