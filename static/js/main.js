@@ -1,4 +1,5 @@
 const React = require('react');
+const ReactDOM = require('react-dom');
 const { Provider } = require('react-redux');
 const transitImmutable = require('transit-immutable-js');
 const createHistory = require('history/lib/createBrowserHistory');
@@ -8,9 +9,8 @@ const loadSnapshot = require('../../src/lib/load-snapshot');
 const createStore = require('../../src/create-store');
 const { updateUser, updatePageTitle } = require('../../src/actions/page');
 const getRoutes = require('../../src/routes');
-const { syncReduxAndRouter } = require('redux-simple-routing');
+const { syncReduxAndRouter } = require('redux-simple-router');
 const api = require('./impl/api');
-const { go, take } = require('js-csp');
 
 // CSS dependencies
 
@@ -22,6 +22,7 @@ require('../css/theme/main.less');
 const payload = transitImmutable.fromJSON(
   decodeTextContent(document.getElementById('payload').textContent)
 );
+console.log(payload.state);
 
 const store = createStore(payload.state ? payload.state : undefined);
 store.dispatch(updateUser(payload.user));
@@ -57,7 +58,7 @@ document.addEventListener('keydown', function(e) {
       console.log('error', e);
     }
 
-    loadSnapshot(state, store, getRoutes(history));
+    loadSnapshot(state, store, getRoutes(store, history));
   }
 });
 
@@ -65,11 +66,7 @@ document.addEventListener('keydown', function(e) {
 const history = createHistory({ forceRefresh: true });
 syncReduxAndRouter(history, store);
 
-React.render(
-  React.createElement(
-    Provider,
-    { store },
-    () => getRoutes(history)
-  ),
+ReactDOM.render(
+  React.createElement(Provider, { store }, getRoutes(store, history)),
   document.getElementById('mount')
 );

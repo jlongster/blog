@@ -1,6 +1,4 @@
 const React = require('react');
-const csp = require('js-csp');
-const { go, chan, take, put, ops } = csp;
 const { blockFor } = require('../lib/util');
 
 const dom = React.DOM;

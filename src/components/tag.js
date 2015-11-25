@@ -1,6 +1,4 @@
 const React = require('react');
-const csp = require('js-csp');
-const { go, chan, take, put, ops } = csp;
 const { displayDate } = require("../lib/date");
 const { connect } = require("../lib/redux");
 

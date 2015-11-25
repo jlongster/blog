@@ -10,7 +10,7 @@ const initialState = Immutable.fromJS({
 function update(state = initialState, action) {
   switch(action.type) {
   case constants.FETCH_POST:
-    if(action.status === 'pump') {
+    if(action.status === 'done') {
       return state.updateIn(
         ['postsById'],
         p => p.set(action.id, action.value)
@@ -18,7 +18,7 @@ function update(state = initialState, action) {
     }
     break;
   case constants.QUERY_POSTS:
-    if(action.status === 'pump') {
+    if(action.status === 'done') {
       return state.updateIn(
         ['postsByQueryName'],
         p => p.set(action.query.name, action.value)

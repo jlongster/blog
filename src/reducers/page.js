@@ -1,5 +1,5 @@
 const constants = require('../constants');
-const router = require('redux-simple-routing');
+const router = require('redux-simple-router');
 const Immutable = require('immutable');
 const { mergeObj } = require('../lib/util');
 

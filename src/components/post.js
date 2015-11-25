@@ -1,10 +1,9 @@
 const React = require('react');
-const csp = require('js-csp');
-const { go, chan, take, put, ops } = csp;
+const ReactDOM = require('react-dom');
 const { displayDate } = require('../lib/date');
 const ghm = require('../lib/showdown-ghm.js');
 const statics = require('impl/statics');
-const { connect } = require('../lib/redux');
+const { autoconnect } = require('../lib/redux');
 const classNames = require('classnames');
 const withLocalState = require('../lib/local-state');
 
@@ -92,6 +91,40 @@ const HeaderImage = React.createClass({
 const Post = React.createClass({
   displayName: 'Post',
 
+  statics: {
+    pageClass: 'post-page',
+
+    populateStore: async function ({ dispatch, state }, { params }) {
+      const id = decodeURI(params.post);
+      const post = await dispatch(actions.getPost(id));
+
+      if(post) {
+        dispatch(actions.updatePageTitle(post.title));
+
+        if(post.readnext) {
+          await dispatch(actions.queryPosts({
+            name: 'readnext',
+            select: ['title', 'abstract', 'shorturl'],
+            filter: { shorturl: post.readnext }
+          }));
+        }
+      }
+      else {
+        console.log('WARNING: post not found: ' + id);
+        dispatch(actions.updateErrorStatus(404));
+      }
+    },
+
+    select: (state, { params }) => {
+      const id = decodeURI(params.post);
+      const readnextQuery = state.posts.getIn(['postsByQueryName', 'readnext']);
+      return {
+        post: state.posts.getIn(['postsById', id]),
+        readnext: readnextQuery ? readnextQuery[0] : null
+      };
+    }
+  },
+
   componentDidMount: function() {
     this.updateDOM();
   },
@@ -103,7 +136,7 @@ const Post = React.createClass({
   },
 
   updateDOM: function() {
-    const node = React.findDOMNode(this);
+    const node = ReactDOM.findDOMNode(this);
     if(!node) {
       return;
     }
@@ -209,40 +242,4 @@ const Post = React.createClass({
   }
 });
 
-module.exports = connect(Post, {
-  pageClass: 'post-page',
-  queryParamsProp: 'params',
-
-  populateStore: function (dispatch, state, params) {
-    const id = decodeURI(params.post);
-
-    return go(function*() {
-      const post = yield dispatch(actions.getPost(id));
-
-      if(post) {
-        dispatch(actions.updatePageTitle(post.title));
-
-        if(post.readnext) {
-          yield dispatch(actions.queryPosts({
-            name: 'readnext',
-            select: ['title', 'abstract', 'shorturl'],
-            filter: { shorturl: post.readnext }
-          }));
-        }
-      }
-      else {
-        console.log('WARNING: post not found: ' + id);
-        dispatch(actions.updateErrorStatus(404));
-      }
-    });
-  },
-
-  select: function(state, params) {
-    const id = decodeURI(params.post);
-    const readnextQuery = state.posts.getIn(['postsByQueryName', 'readnext']);
-    return {
-      post: state.posts.getIn(['postsById', id]),
-      readnext: readnextQuery ? readnextQuery[0] : null
-    };
-  }
-});
+module.exports = autoconnect(Post);

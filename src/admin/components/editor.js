@@ -1,4 +1,5 @@
 const React = require('react');
+const ReactDOM = require('react-dom');
 const classNames = require('classnames');
 const dom = React.DOM;
 
@@ -13,12 +14,7 @@ const Editor = React.createClass({
       ['static/js/editor/editor.js', 'static/css/theme/codemirror-editor.css'],
       editor => {
         let CodeMirror = editor.CodeMirror;
-        //try {
-          let node = React.findDOMNode(this);
-        // }
-        // catch(e) {
-        //   return;
-        // }
+        let node = ReactDOM.findDOMNode(this);
         let mirror = CodeMirror(node, {
           value: this.props.content,
           lineWrapping: true,

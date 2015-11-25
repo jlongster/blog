@@ -1,12 +1,10 @@
-const t = require("transducers.js");
-const React = require("react");
-const { takeAll } = require("../lib/util");
-const { connect } = require("../lib/redux");
-const { displayDate } = require("../lib/date");
-const csp = require("js-csp");
-const { go, chan, take, put, ops } = csp;
-const statics = require("impl/statics");
-const actions = require("../actions/posts");
+const t = require('transducers.js');
+const React = require('react');
+const { takeAll } = require('../lib/util');
+const { connect, autoconnect } = require('../lib/redux');
+const { displayDate } = require('../lib/date');
+const statics = require('impl/statics');
+const actions = require('../actions/posts');
 
 const Header = React.createFactory(require('./header'));
 const Footer = React.createFactory(require('./footer'));
@@ -15,9 +13,30 @@ const dom = React.DOM;
 const { div, a } = dom;
 
 let Index = React.createClass({
-  displayName: "Index",
+  displayName: 'Index',
+
+  statics: {
+    pageClass: 'index',
+
+    populateStore: ({ dispatch, state }, { params }) => {
+      params = Object.assign({
+        limit: 5
+      }, params);
+
+      return dispatch(actions.queryPosts({
+        name: 'index',
+        select: ['title', 'date', 'shorturl', 'abstract'],
+        limit: params.limit
+      }));
+    },
+
+    select: state => ({
+      posts: state.posts.getIn(['postsByQueryName', 'index'])
+    })
+  },
 
   render: function () {
+    console.log(this.props.posts);
     if(!this.props.posts) {
       return null;
     }
@@ -28,12 +47,12 @@ let Index = React.createClass({
       Header(
         { className: 'collapse' },
         div(
-          { className: "intro light" },
+          { className: 'intro light' },
           div(
             null,
-            "My name is ",
-            dom.a({ href: "http://twitter.com/jlongster" }, "James"),
-            ", and I work on the Firefox Developer Tools. I like to create things and write about technology."
+            'My name is ',
+            dom.a({ href: 'http://twitter.com/jlongster' }, 'James'),
+            ', and I work on the Firefox Developer Tools. I like to create things and write about technology.'
           )
         )
       ),
@@ -67,21 +86,4 @@ let Index = React.createClass({
   }
 });
 
-module.exports = connect(Index, {
-  pageClass: 'index',
-  defaultQueryParams: { limit: 5 },
-
-  populateStore: function (dispatch, state, queryParams) {
-    return dispatch(actions.queryPosts({
-      name: 'index',
-      select: ['title', 'date', 'shorturl', 'abstract'],
-      limit: queryParams.limit
-    }));
-  },
-
-  select: function(state) {
-    return {
-      posts: state.posts.getIn(['postsByQueryName', 'index'])
-    };
-  }
-});
+module.exports = autoconnect(Index);

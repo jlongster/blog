@@ -19,7 +19,11 @@ const { range, seq, compose, map, filter } = t;
 const csp = require('js-csp');
 const { go, chan, take, put, timeout, operations: ops } = csp;
 const { encodeTextContent, mergeObj } = require('../src/lib/util');
-const actions = require('../src/actions/page');
+const actions = Object.assign(
+  {},
+  require('../src/actions/page'),
+  { updatePath: require('redux-simple-router').updatePath }
+);
 
 const getRoutes = require('../src/routes');
 const createStore = require('../src/create-store');
@@ -63,29 +67,25 @@ function requireAdmin(req, res, next) {
 
 // api routes
 
-function send(res, ch) {
-  go(function*() {
-    try {
-      let obj = yield take(ch);
-      res.set('Content-Type', 'application/json');
-      res.send(JSON.stringify(obj));
-    }
-    catch(e) {
-      res.status(500).send(e.message);
-    }
-  });
+async function send(res, result) {
+  try {
+    let obj = await result;
+    res.set('Content-Type', 'application/json');
+    res.send(JSON.stringify(obj));
+  }
+  catch(e) {
+    res.status(500).send(e.message);
+  }
 }
 
-function sendOk(res, ch) {
-  go(function*() {
-    try {
-      yield take(ch);
-      res.send('ok');
-    }
-    catch(e) {
-      res.status(500).send(e.message);
-    }
-  });
+async function sendOk(res, result) {
+  try {
+    await result;
+    res.send('ok');
+  }
+  catch(e) {
+    res.status(500).send(e.message);
+  }
 }
 
 app.get('/api/posts', function(req, res) {
@@ -194,35 +194,26 @@ app.get('/api/*', function(req, res) {
 
 // atom feed
 
-app.get('/atom.xml', function(req, res) {
-  go(function*() {
-    let posts = yield api.queryPosts({ limit: 5 });
-    res.set('Content-Type', 'application/atom+xml');
-    res.send(feed.render(posts));
-  });
+app.get('/atom.xml', async function(req, res) {
+  let posts = await api.queryPosts({ limit: 5 });
+  res.set('Content-Type', 'application/atom+xml');
+  res.send(feed.render(posts));
 });
 
 // page handler
 
 function fetchAllData(store, routeProps, isAdmin) {
-  const chans = routeProps.components.map(component => {
+  return Promise.all(routeProps.components.map(component => {
     if(component &&
        component.populateStore &&
        (!component.requireAdmin || isAdmin)) {
-      const params = mergeObj(component.queryParams || {}, routeProps.params);
-      return component.populateStore(store.dispatch, store.getState(), params);
+      return component.populateStore(store, routeProps);
     }
-  }).filter(ch => ch);
-
-  return go(function*() {
-    const ch = ops.merge(chans)
-    while((yield ch) !== csp.CLOSED) {
-    }
-  });
+  }).filter(res => res));
 }
 
 function renderRouteToString(routes, store, user, url, cb) {
-  match({ routes, location: url }, (err, redirect, renderProps) => {
+  match({ routes, location: url }, async function(err, redirect, renderProps) {
     if(err) {
       cb(null, 'An internal routing error ocurred.')
     }
@@ -230,36 +221,35 @@ function renderRouteToString(routes, store, user, url, cb) {
       cb(redirect);
     }
     else {
-      go(function*() {
-        const component = renderProps.routes[renderProps.routes.length - 1].component;
-        store.dispatch(actions.updateUser(user));
-        store.dispatch(actions.updatePageTitle(component.title || "James Long"));
+      const component = renderProps.routes[renderProps.routes.length - 1].component;
+      store.dispatch(actions.updatePath(url));
+      store.dispatch(actions.updateUser(user));
+      store.dispatch(actions.updatePageTitle(component.title || "James Long"));
 
+      let str;
+      try {
         // Wait for all data to be loaded for the page. This will
         // dispatch actions and populate our central store.
-        yield fetchAllData(store, renderProps, user.admin);
+        await fetchAllData(store, renderProps, user.admin);
 
-        let str, renderErr;
-        try {
-          str = React.renderToString(
-            Provider({ store }, () => RoutingContext(renderProps))
-          );
-        }
-        catch(err) {
-          if(process.env.NODE_ENV !== 'production') {
-            throw err;
-          }
-
-          // Change the state to a 500 error which should render a 500 page
-          store.dispatch(actions.updateErrorStatus(500));
-          str = React.renderToString(
-            Provider({ store }, () => RoutingContext(renderProps))
-          );
-          console.log('500 Error: ' + err.stack);
+        str = React.renderToString(
+          Provider({ store }, RoutingContext(renderProps))
+        );
+      }
+      catch(err) {
+        if(process.env.NODE_ENV !== 'production') {
+          throw err;
         }
 
-        cb(null, str);
-      });
+        // Change the state to a 500 error which should render a 500 page
+        store.dispatch(actions.updateErrorStatus(500));
+        str = React.renderToString(
+          Provider({ store }, () => RoutingContext(renderProps))
+        );
+        console.log('500 Error: ' + err.stack);
+      }
+
+      cb(null, str);
     }
   });
 }

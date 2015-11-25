@@ -1,5 +1,4 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
+const React = require('react');
 const { slugify, mergeObj, prevented } = require('../lib/util');
 const { connect } = require('../lib/redux');
 const csp = require('js-csp');

@@ -1,6 +1,6 @@
 const Immutable = require('immutable');
 const api = require('impl/api');
-const { updatePath } = require('redux-simple-routing');
+const { updatePath } = require('redux-simple-router');
 const constants = require('../constants');
 const { fields }  = require('../lib/redux');
 const { go } = require('js-csp');
@@ -15,7 +15,7 @@ function getPost(id) {
       return dispatch({
         type: constants.FETCH_POST,
         id: id,
-        [fields.CHANNEL]: api.getPost(id)
+        [fields.PROMISE]: api.getPost(id)
       });
     }
     else {
@@ -34,10 +34,10 @@ function _query(query, runQuery) {
       return dispatch({
         type: constants.QUERY_POSTS,
         query: query,
-        [fields.CHANNEL]: runQuery(query)
+        [fields.PROMISE]: runQuery(query)
       });
     }
-  }
+  };
 }
 
 function queryPosts(query) {
@@ -52,15 +52,15 @@ function savePost(previousPost, post) {
   return dispatch => dispatch({
     type: constants.SAVE_POST,
     post: post,
-    [fields.CHANNEL]: go(function*() {
+    [fields.PROMISE]: async function() {
       if(!previousPost.shorturl) {
-        yield api.createPost(post.shorturl);
+        await api.createPost(post.shorturl);
       }
       else if(previousPost.shorturl !== post.shorturl) {
-        yield api.renamePost(previousPost.shorturl, post.shorturl);
+        await api.renamePost(previousPost.shorturl, post.shorturl);
       }
 
-      yield api.updatePost(post.shorturl, post);
+      await api.updatePost(post.shorturl, post);
 
       if(previousPost.shorturl !== post.shorturl) {
         dispatch(updatePath('/edit/' + post.shorturl));
@@ -68,7 +68,7 @@ function savePost(previousPost, post) {
       else {
         dispatch(updatePath('/' + post.shorturl));
       }
-    }, { propagate: true })
+    }
   });
 }
 
@@ -76,10 +76,10 @@ function deletePost(id) {
   return dispatch => dispatch({
     type: constants.DELETE_POST,
     id: id,
-    [fields.CHANNEL]: go(function*() {
-      yield api.deletePost(id);
+    [fields.PROMISE]: async function() {
+      await api.deletePost(id);
       dispatch(updatePath('/'));
-    }, { propagate: true })
+    }
   });
 }
 

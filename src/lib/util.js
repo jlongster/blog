@@ -1,5 +1,5 @@
 const React = require("react");
-const invariant = require("react/lib/invariant");
+const invariant = require("invariant");
 var csp = require('js-csp');
 var { go, chan, take, put } = csp;
 
@@ -93,6 +93,18 @@ function takeArray(chans) {
   return ch;
 }
 
+function toPromise(ch) {
+  return new Promise(function(resolve, reject) {
+    go(function*() {
+      try {
+        resolve(yield ch);
+      }
+      catch(e) {
+        reject(e);
+      }
+    });
+  });
+}
 
 // React utils
 
@@ -127,6 +139,7 @@ module.exports = {
   invokeCallbackM,
   takeArray,
   takeAll,
+  toPromise,
   blockFor,
   invariant
 };

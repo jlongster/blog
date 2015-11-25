@@ -1,8 +1,5 @@
 const t = require("transducers.js");
 const React = require("react");
-const csp = require("js-csp");
-const { go, chan, take, put, ops } = csp;
-const api = require('impl/api');
 const nprogress = require('nprogress');
 const { connect } = require("../lib/redux");
 const { removeErrors } = require('../actions/async-requests');
@@ -38,9 +35,10 @@ let Feedback = React.createClass({
       return dom.div(
         { className: 'notifications' },
         this.props.errors.map((err, i) => {
+          console.log('rendering', err);
           return dom.div({ key: i,
                            className: 'notification error'},
-                         err.message.toString());
+                         err.message ? err.message.toString() : err);
         })
       );
     }

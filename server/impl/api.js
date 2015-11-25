@@ -3,7 +3,7 @@ const nconf = require('nconf');
 const csp = require('js-csp');
 const { go, chan, take, put, operations: ops } = csp;
 const {
-  invokeCallback, invokeCallbackM, takeAll, mergeObj
+  invokeCallback, invokeCallbackM, takeAll, mergeObj, toPromise
 } = require("../../src/lib/util");
 const t = require("transducers.js");
 const { map, filter } = t;
@@ -35,13 +35,13 @@ function db(method /*, args... */) {
 }
 
 function dbkey() {
-    var args = Array.prototype.slice.call(arguments);
-    args.unshift('jlongster2');
-    return args.join('::');
+  var args = Array.prototype.slice.call(arguments);
+  args.unshift('jlongster2');
+  return args.join('::');
 }
 
 function dbSplitKey(key) {
-    return key.split('::');
+  return key.split('::');
 }
 
 let postFields = [
@@ -177,18 +177,19 @@ function queryDrafts(query) {
   query = mergeObj(query, {
     filter: mergeObj(query.filter || {}, { published: false })
   });
-  return _runQuery(query);
+  return toPromise(_runQuery(query));
 }
 
 function queryPosts(query) {
   query = mergeObj(query, {
     filter: mergeObj(query.filter || {}, { published: true })
   });
-  return _runQuery(query);
+  console.log('running query:', query);
+  return toPromise(_runQuery(query));
 }
 
 function getPost(shorturl) {
-  return _getPost(dbkey('post', shorturl));
+  return toPromise(_getPost(dbkey('post', shorturl)));
 }
 
 function createPost(shorturl, props = {}) {
@@ -199,7 +200,7 @@ function createPost(shorturl, props = {}) {
   }, props));
   props.shorturl = shorturl;
 
-  return go(function*() {
+  return toPromise(go(function*() {
     if(shorturl === 'new') {
       return csp.Throw(new Error('the url `new` is reserved'));
     }
@@ -214,11 +215,11 @@ function createPost(shorturl, props = {}) {
     }
 
     yield _finalizeEdit(key, props.date);
-  }, { propagate: true });
+  }, { propagate: true }));
 }
 
 function renamePost(shorturl, newurl) {
-  return go(function*() {
+  return toPromise(go(function*() {
     if(newurl === 'new') {
       return csp.Throw(new Error('the url `new` is reserved'));
     }
@@ -245,11 +246,11 @@ function renamePost(shorturl, newurl) {
     else {
       return csp.Throw(new Error('cannot change the url of a published post'));
     }
-  }, { propagate: true });
+  }, { propagate: true }));
 }
 
 function updatePost(shorturl, props) {
-  return go(function*() {
+  return toPromise(go(function*() {
     props = _denormalizePost(props);
     delete props.shorturl;
     let key = dbkey('post', shorturl);
@@ -261,18 +262,18 @@ function updatePost(shorturl, props) {
     yield db('hmset', key, props);
 
     _finalizeEdit(key, props.date);
-  }, { propagate: true });
+  }, { propagate: true }));
 }
 
 function deletePost(shorturl) {
-  return go(function*() {
+  return toPromise(go(function*() {
     let key = dbkey('post', shorturl);
 
     // Note: we don't literally remove the post in case you want to
     // recover it. We have plenty of memory, but in the future we could
     // add an option to remove it completely.
     yield db('zrem', dbkey('posts'), dbkey('post', shorturl));
-  });
+  }, { propagate: true }));
 }
 
 module.exports = {

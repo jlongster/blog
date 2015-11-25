@@ -5,18 +5,21 @@ const { go, chan, take, put, operations: ops } = csp;
 const xhr = require('../../../src/lib/xhr');
 
 function queryDrafts(query) {
-  return xhr({ url: '/api/drafts?query=' + JSON.stringify(query || {}) },
-             chan(1, t.map(x => x.json)));
+  return xhr(
+    { url: '/api/drafts?query=' + JSON.stringify(query || {}) }
+  ).then(x => x.json);
 }
 
 function queryPosts(query) {
-  return xhr({ url: '/api/posts?query=' + JSON.stringify(query || {}) },
-             chan(1, t.map(x => x.json)));
+  return xhr(
+    { url: '/api/posts?query=' + JSON.stringify(query || {}) }
+  ).then(x => x.json);
 }
 
 function getPost(shorturl, actionType) {
-  return xhr({ url: '/api/post/' + shorturl },
-             chan(1, t.map(x => x.json)));
+  return xhr(
+    { url: '/api/post/' + shorturl },
+  ).then(x => x.json);
 }
 
 function createPost(shorturl, props) {

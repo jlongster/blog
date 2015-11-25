@@ -190,9 +190,9 @@ if(!PROD) {
   // times longer (and makes debugging more predictable).
   // And add Hot Module Replacement functionality
   backendConfig.plugins = backendConfig.plugins.concat([
-    new webpack.DefinePlugin({
-      'process.env.NO_SERVER_RENDERING': true
-    })
+    // new webpack.DefinePlugin({
+    //   'process.env.NO_SERVER_RENDERING': true
+    // })
     // new webpack.HotModuleReplacementPlugin({ quiet: true }),
     // new webpack.NoErrorsPlugin()
   ]);

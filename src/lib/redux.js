@@ -1,7 +1,8 @@
 const React = require('react');
+const { bindActionCreators, combineReducers } = require('redux');
+const { connect: reduxConnect } = require('react-redux');
 const t = require('transducers.js');
 const { map, filter, compose } = t;
-const { bindActionCreators, combineReducers } = require('redux');
 const Immutable = require('immutable');
 const csp = require("js-csp");
 const { go, chan, take, put, ops } = csp;
@@ -10,61 +11,61 @@ const { PropTypes } = React;
 const shallowEqual = require('../lib/shallowEqual');
 
 const fields = {
-  CHANNEL: '@@dispatch/channel',
+  PROMISE: '@@dispatch/promise',
   SEQ_ID: '@@dispatch/seqId'
 };
 
 // TODO(jwl): convert this to UUID
 let seqId = 1;
 
-function channelMiddleware({ dispatch }) {
+function promiseMiddleware({ dispatch }) {
   return next => action => {
-    if(!action[fields.CHANNEL]) {
+    if(!action[fields.PROMISE]) {
       return next(action);
     }
 
+    const promiseInst = action[fields.PROMISE];
     const id = seqId++;
-
-    // We proxy all the values from the channel to a new channel we
-    // return so, if needed, you could still block on this channel
-    // after dispatching it
-    const outCh = chan();
-    const ch = action[fields.CHANNEL];
-
     // Copy the action without the channel, and add a sequence id
-    action = mergeObj(t.filter(action, x => x[0] !== fields.CHANNEL),
+    action = mergeObj(t.filter(action, x => x[0] !== fields.PROMISE),
                       { [fields.SEQ_ID]: id });
 
-    go(function*() {
-      // TODO(jwl): I think I need to call next instead
-      dispatch(mergeObj(action, { status: 'open' }));
+    dispatch(mergeObj(action, { status: "start" }));
 
-      while(true) {
-        let val;
-        try {
-          val = yield ch;
-        }
-        catch(e) {
-          dispatch(mergeObj(action, { status: 'error', value: e.toString() }));
-          csp.putAsync(outCh, new csp.Throw(e));
-          return e;
-        }
-
-        if(val !== csp.CLOSED) {
-          dispatch(mergeObj(action, { status: 'pump', value: val }));
-          csp.putAsync(outCh, val);
-        }
-        else {
-          break;
-        }
-      }
-
-      dispatch(mergeObj(action, { status: 'close' }));
-      outCh.close();
+    // Return the promise so action creators can still compose if they
+    // want to.
+    return new Promise(function(resolve, reject) {
+      promiseInst.then(value => {
+        setTimeout(() => {
+          dispatch(mergeObj(action, {
+            status: "done",
+            value: value
+          }));
+          resolve(value);
+        }, 0);
+      }).catch(error => {
+        setTimeout(() => {
+          dispatch(mergeObj(action, {
+            status: "error",
+            value: error
+          }));
+          reject(error);
+        }, 0);
+      });
     });
+  };
+}
 
-    return outCh;
-  }
+function autoconnect(component) {
+  return reduxConnect(
+    component.select,
+    dispatch => Object.assign(
+      component.actions ?
+        { actions: bindActionCreators(component.actions) } : {},
+      component.namedActions ?
+        bindActionCreators(component.namedActions) : {}
+    )
+  )(component);
 }
 
 const storeShape = React.PropTypes.shape({
@@ -160,8 +161,9 @@ function connect(component, statics) {
 }
 
 module.exports = {
+  fields,
+  promiseMiddleware,
   storeShape,
   connect,
-  channelMiddleware,
-  fields
+  autoconnect
 };

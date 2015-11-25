@@ -8,28 +8,26 @@ function xhr(optsOrURL, ch) {
     opts = { url: optsOrURL };
   }
 
-  ch = ch || chan();
-  _xhr(opts, function(err, res, body) {
-    let result = { raw: res, body: body };
-    let value;
+  return new Promise(function(resolve, reject) {
+    _xhr(opts, function(err, res, body) {
+      let result = { raw: res, body: body };
+      let value;
 
-    if(err) {
-      value = csp.Throw(err);
-    }
-    else if(res.statusCode !== 200) {
-      value = csp.Throw(new Error(body));
-    }
-    else if(res.headers['content-type'].indexOf('application/json') !== -1) {
-      result.json = JSON.parse(body) || false;
-      value = result;
-    }
-    else {
-      value = result;
-    }
-
-    csp.putAsync(ch, value, () => ch.close());
+      if(err) {
+        reject(err);
+      }
+      else if(res.statusCode === 500) {
+        reject(new Error(body));
+      }
+      else if(res.headers['content-type'].indexOf('application/json') !== -1) {
+        result.json = JSON.parse(body) || false;
+        resolve(result);
+      }
+      else {
+        resolve(result);
+      }
+    });
   });
-  return ch;
 }
 
 module.exports = xhr;

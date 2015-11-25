@@ -1,5 +1,4 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
+const React = require('react');
 const { connect } = require("../lib/redux");
 const Router = require('react-router');
 const { updatePageTitle, updatePageClass } = require('../actions/page');
