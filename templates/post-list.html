@@ -1,0 +1,13 @@
+{% extends "page.html" %}
+
+{% block pageContent %}
+<h1>{{ title }}</h1>
+<ul class="list post-list">
+  {% for post in posts %}
+  <li>
+    <a href="/{{ post.shorturl }}">{{ post.title }}</a>
+    <span class="date">{{ post.date|displayDate }}</span>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

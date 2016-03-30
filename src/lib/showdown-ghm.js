@@ -11,6 +11,9 @@
 // - James Long
 
 var hljs = require('highlight.js/lib/highlight.js'); // (jwl)
+hljs.registerLanguage('scheme', require('./scheme-highlight.js'));
+hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
+
 
 //
 // showdown.js -- A javascript port of Markdown.
@@ -1029,9 +1032,9 @@ var _DoCodeFencing = function(text) {
 			var codeblock = '<pre><code class="'+m1+' hljs">';
 
             try {
-                codeblock += hljs.highlight(m1, m2).value;
+              codeblock += hljs.highlight(m1, m2).value;
             }
-            catch(e) {
+          catch(e) {
                 // The highlighter automatically escapes, but we need
                 // to manually here (jwl)
                 m2 = m2.replace(/&/g, '&amp;')

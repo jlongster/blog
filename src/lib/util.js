@@ -1,7 +1,7 @@
 const React = require("react");
 const invariant = require("invariant");
-var csp = require('js-csp');
-var { go, chan, take, put } = csp;
+const csp = require('js-csp');
+const { go, chan, take, put, operations: ops } = csp;
 
 function encodeTextContent(str) {
   return str.replace(/[<>&]/g, function(str) {
@@ -44,7 +44,30 @@ function mergeObj(...args) {
   return obj;
 }
 
-// channel utils
+// React utils
+
+function blockFor(name, children) {
+  var block;
+  React.Children.forEach(children, child => {
+    if(child &&
+       child.props &&
+       child.props.name === name)
+      block = child.props.children;
+  });
+  return block;
+}
+
+// now later a store can check `action instanceof AsyncStatus`?
+
+// Assertions
+
+function assert(msg, val) {
+  if(val === undefined || val === null || val === false) {
+    throw new Error('assertion failure: ' + msg);
+  }
+}
+
+// REMOVE
 
 function invokeCallback(func /*, args... */) {
   var args = Array.prototype.slice.call(arguments, 1);
@@ -106,40 +129,19 @@ function toPromise(ch) {
   });
 }
 
-// React utils
-
-function blockFor(name, children) {
-  var block;
-  React.Children.forEach(children, child => {
-    if(child &&
-       child.props &&
-       child.props.name === name)
-      block = child.props.children;
-  });
-  return block;
-}
-
-// now later a store can check `action instanceof AsyncStatus`?
-
-// Assertions
-
-function assert(msg, val) {
-  if(val === undefined || val === null || val === false) {
-    throw new Error('assertion failure: ' + msg);
-  }
-}
-
 module.exports = {
   encodeTextContent,
   decodeTextContent,
   prevented,
   slugify,
   mergeObj,
+  blockFor,
+  invariant,
+
+  // REMOVE
   invokeCallback,
   invokeCallbackM,
   takeArray,
   takeAll,
-  toPromise,
-  blockFor,
-  invariant
+  toPromise
 };

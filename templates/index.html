@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% set bodyclass = "index" %}
+{% set headerclass = "collapse" %}
+
+{% block afterHeader %}
+  <div class="intro light">
+    <div>
+      My name is <a href="http://twitter.com/jlongster">James</a>, and
+      I work on the Firefox Developer Tools. I like to create things
+      and write about technology.
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+<header class="collapse">
+
+</header>
+
+<main>
+  <section class="posts">
+    {% for post in posts %}
+    <div class="post">
+      <h1><a href="/{{ post.shorturl }}">{{ post.title }}</a></h1>
+      <div class="date">{{ post.date|displayDate }}</div>
+      <p>{{ post.abstract }}</p>
+    </div>
+    {% endfor %}
+
+    <div class="right-link"><a href="/archive">View All Posts</a></div>
+  </section>
+
+
+  <div class="static-content">
+    <section class="projects">
+      <h2>Projects</h2>
+
+      <ul class="list">
+        <li>
+          <a href="http://github.com/jlongster/LLJS">LLJS</a> fork of LLJS that compiles to asm.js
+        </li>
+
+        <li>
+          <a href="http://github.com/mozilla/nunjucks">nunjucks</a> powerful templating system for javascript
+        </li>
+
+        <li>
+          <a href="http://github.com/jlongster/outlet">outlet</a> simple Lisp languange that compiles to javascript
+        </li>
+
+        <li>
+          <a href="http://github.com/jlongster/dcpu-lisp">dcpu-lisp</a> static Lisp that compiles to DCPU-16 assembly code
+        </li>
+
+        <li>
+          <a href="https://github.com/jlongster/shade">shade</a> terrible WebGL graphics engine
+        </li>
+
+        <li>
+          <a href="https://github.com/jlongster/octoshot">octoshot</a> multiplayer WebGL 3d first person shooter
+        </li>
+
+        <li>
+          <a href="http://github.com/jlongster/css-animations.js">css-animations.js</a> easily use CSS3 keyframe animations from javascript
+        </li>
+
+        <li>
+          <a href="http://jlongster.com/s/dom3d/">dom3d</a> 3d objects with purely 2d CSS transforms
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Demos</h2>
+
+      <ul class="demos">
+        <li>
+          <a href="http://jlongster.com/s/lljs-cloth/">
+            <img src="/img/demos/cloth.png" />
+            <p>Cloth Simulation in asm.js</p>
+          </a>
+        </li>
+        <li>
+          <a href="http://jlongster.com/s/dom3d/">
+            <img src="/img/demos/teapot.png" />
+            <p>3d in 2d CSS</p>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+{% endblock %}

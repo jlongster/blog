@@ -1,12 +1,6 @@
-const handlebars = require('handlebars');
-const statics = require('./impl/statics');
-const t = require('transducers.js');
-const { range, seq, compose, map, filter } = t;
 const ghm = require('../src/lib/showdown-ghm.js');
 const moment = require('moment');
 const nconf = require('nconf');
-
-const atomTemplate = handlebars.compile(statics.atomXML);
 
 function expandUrls(base, str) {
   base = base || '/';
@@ -14,7 +8,7 @@ function expandUrls(base, str) {
                      "$1" + base + "$3");
 }
 
-function escapepCDATA(str) {
+function escapeCDATA(str) {
   return str.replace(/<!\[CDATA\[/, '&lt;![CDATA[')
     .replace(/\]\]>/, ']]&gt;');
 }
@@ -54,7 +48,7 @@ function dateToRFC3339(date) {
     return n < 10 ? '0' + n : n;
   }
 
-  let utc = moment(date, 'YYYYMMDD').utc();
+  let utc = moment.utc(date);
   return utc.year() + '-'
     + pad(utc.month() + 1) + '-'
     + pad(utc.date()) + 'T'
@@ -63,17 +57,18 @@ function dateToRFC3339(date) {
     + pad(utc.seconds()) + 'Z';
 }
 
-function render(posts) {
+function render(nunjucksEnv, posts) {
   let base = nconf.get('url');
 
-  posts = map(posts, post => {
-    post.summary = ghm.parse(getParagraphs(post.content, 4));
-    post.content = escapepCDATA(expandUrls(base, ghm.parse(post.content)));
-    post.date = dateToRFC3339(post.date);
-    return post;
+  posts = posts.map(post => {
+    return Object.assign({}, post, {
+      summary: ghm.parse(getParagraphs(post.content, 4)),
+      content: escapeCDATA(expandUrls(base, ghm.parse(post.content))),
+      date: dateToRFC3339(post.date)
+    });
   });
 
-  return atomTemplate({
+  return nunjucksEnv.render('atom.xml', {
     base: nconf.get('url'),
     updated: dateToRFC3339(posts[0].date),
     author: 'James Long',
