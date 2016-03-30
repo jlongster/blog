@@ -31,7 +31,7 @@ nunjucksEnv.addFilter('ghm', value => {
   return new nunjucks.runtime.SafeString(ghm.parse(value));
 });
 
-api.indexPosts(path.join(__dirname, '../posts'));
+api.indexPosts(nconf.get("postsDir"));
 
 // api routes
 

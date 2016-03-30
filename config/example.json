@@ -3,6 +3,7 @@
   "http": {
     "port": 4000
   },
+  "postsDir": "",
   "uploadDir": "",
   "uploadURL": ""
 }

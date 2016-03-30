@@ -6,6 +6,11 @@ const path = require('path');
 const t = require('transducers.js');
 const moment = require('moment');
 
+const nconf = require('nconf');
+nconf.argv().env('_').file({
+  file: path.join(__dirname, '../config/config.json')
+});
+
 require("babel-register");
 const api = require('../server/api');
 const args = minimist(process.argv.slice(2));
@@ -29,7 +34,7 @@ const opts = {
   )
 };
 
-api.indexPosts(path.join(__dirname, "../posts"));
+api.indexPosts(nconf.get('postsDir'));
 
 const posts = api.queryAllPosts(opts).map(post => {
   return Object.assign({}, post, {
