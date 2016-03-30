@@ -75,6 +75,10 @@ function getPost(key) {
 function indexPosts(dirpath) {
   const files = fs.readdirSync(dirpath);
   files.forEach(file => {
+    if(!file.match(/\.md$/)) {
+      return;
+    }
+
     const contents = fs.readFileSync(path.join(dirpath, file));
     const results = yamlFront.loadFront(contents);
     const post = Object.assign(results, { content: results.__content });

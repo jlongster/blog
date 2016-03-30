@@ -7,7 +7,6 @@ RUN mkdir -p /var/log/nginx
 COPY ./sv/nginx/ /service/nginx
 COPY ./server /service/site/server
 COPY ./static/ /service/site/static/
-COPY ./posts /service/site/posts
 COPY ./templates /service/site/templates
 COPY ./config/config-prod.json /service/site/config/config.json
 COPY ./run /service/site/run
