@@ -1,4 +1,4 @@
-const ghm = require('../src/lib/showdown-ghm.js');
+const ghm = require('./util/showdown-ghm.js');
 const moment = require('moment');
 const nconf = require('nconf');
 

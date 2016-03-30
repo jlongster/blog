@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const { mergeObj } = require("../../src/lib/util");
+const { mergeObj } = require("./util/util");
 const t = require("transducers.js");
 const yamlFront = require("yaml-front-matter");
 const moment = require("moment");

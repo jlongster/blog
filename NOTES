@@ -1,9 +1,3 @@
 
 * Set the data-url property of the HN button
-* Autosave
 * Make runsvdir run on boot
-* Back up database
-
-# Tests
-
-mocha --harmony -b -R tap .built/tests/api.js

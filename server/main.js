@@ -1,33 +1,21 @@
-const fs = require('fs');
 const path = require('path');
 const express = require('express');
-const session = require('cookie-session');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const busboy = require('connect-busboy');
 const nconf = require('nconf');
 const nunjucks = require('nunjucks');
 
-const ghm = require('../src/lib/showdown-ghm.js');
-const { encodeTextContent, mergeObj } = require('../src/lib/util');
-const { displayDate } = require('../src/lib/date');
-const api = require('./impl/api');
+const ghm = require('./util/showdown-ghm.js');
+const { displayDate } = require('./util/date');
+const api = require('./api');
 const feed = require('./feed');
-const statics = require('./impl/statics');
-const relativePath = require('./relative-path');
 
 nconf.argv().env('_').file({
-  file: relativePath('../config/config.json')
+  file: path.join(__dirname, '../config/config.json')
 }).defaults({
   'admins': []
 });
 
 const app = express();
-app.use(express.static(relativePath('../static')));
-app.use(session({ keys: ['foo'] }));
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(busboy());
+app.use(express.static(path.join(__dirname, '../static')));
 
 const nunjucksEnv = nunjucks.configure('templates', {
   autoescape: true,
@@ -43,7 +31,7 @@ nunjucksEnv.addFilter('ghm', value => {
   return new nunjucks.runtime.SafeString(ghm.parse(value));
 });
 
-api.indexPosts(relativePath('../posts'));
+api.indexPosts(path.join(__dirname, '../posts'));
 
 // api routes
 
