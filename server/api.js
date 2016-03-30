@@ -36,6 +36,7 @@ function _runQuery(opts) {
         if(x[name] && x[name].length) {
           return x[name].indexOf(opts.filter[name]) !== -1;
         }
+
         return x[name] === opts.filter[name];
       })
     }
@@ -56,10 +57,7 @@ function _runQuery(opts) {
 
 // public API
 
-function queryDrafts(query) {
-  query = mergeObj(query, {
-    filter: mergeObj(query.filter || {}, { published: false })
-  });
+function queryAllPosts(query) {
   return _runQuery(query);
 }
 
@@ -113,9 +111,8 @@ function indexPosts(dirpath) {
 }
 
 module.exports = {
-
   indexPosts,
   getPost,
   queryPosts,
-  queryDrafts
+  queryAllPosts
 };

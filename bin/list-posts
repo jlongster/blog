@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ "$1" = "drafts" ]; then
+    `dirname $0`/query-posts --select title,shorturl,date --filter published=false ${@#drafts}
+else
+    `dirname $0`/query-posts --select title,shorturl,date --filter published=true $@
+fi
