@@ -2,8 +2,7 @@
 
 terminal-notifier -message "building latest code"
 
-NODE_ENV=production gulp backend
-NODE_ENV=production gulp frontend
+NODE_ENV=production webpack
 docker build -t jlongster/jlongster4 .
 docker push jlongster/jlongster4
 
