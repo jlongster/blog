@@ -10,12 +10,14 @@
     <link rel="stylesheet" type="text/css" href="/build/styles.css" />
   </head>
   <body class="{{ bodyclass }}" id="{{ bodyid }}">
-
     <header class="{{ headerclass }}">
+      {% if dev %}<div id="dev-mode">DEVELOPMENT MODE</div>{% endif %}
+
       <div class="links">
         <a href="/" class="home">J</a>
         <ul>
           <li><a href="/archive">posts</a></li>
+          <li><a href="/drafts">drafts</a></li>
           <li><a href="http://feedpress.me/jlongster">rss</a></li>
           <li><a href="http://twitter.com/jlongster">twitter</a></li>
         </ul>
@@ -45,6 +47,21 @@
 
       ga('create', 'UA-9014321-1', 'auto');
       ga('send', 'pageview');
+    </script>
+    {% endif %}
+
+    {% if dev %}
+    <script>
+      setInterval(() => {
+        fetch('/modified')
+          .then(res => res.text())
+          .then(text => {
+            text = text.trim();
+            if(text === "true") {
+              location.reload()
+            }
+          })
+      }, 500)
     </script>
     {% endif %}
   </body>

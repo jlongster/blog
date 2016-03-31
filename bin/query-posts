@@ -38,7 +38,7 @@ api.indexPosts(nconf.get('postsDir'));
 
 const posts = api.queryAllPosts(opts).map(post => {
   return Object.assign({}, post, {
-    date: moment.utc(post.date).format('MMMM D, YYYY')
+    date: post.date && moment.utc(post.date).format('MMMM D, YYYY')
   });
 });
 

@@ -19,8 +19,8 @@ let postFields = [
   'assets'
 ];
 
-const _postIndex = {};
-const _allPosts = [];
+let _postIndex = {};
+let _allPosts = [];
 
 function _getPosts(keys) {
   return keys.map(k => _postIndex[k]);
@@ -37,8 +37,9 @@ function _runQuery(opts) {
           return x[name].indexOf(opts.filter[name]) !== -1;
         }
 
-        return x[name] === opts.filter[name];
-      })
+        const val = x[name] === undefined ? false : x[name];
+        return val === opts.filter[name];
+      });
     }
   }
 
@@ -73,6 +74,9 @@ function getPost(key) {
 }
 
 function indexPosts(dirpath) {
+  _postIndex = {};
+  _allPosts = [];
+
   const files = fs.readdirSync(dirpath);
   files.forEach(file => {
     if(!file.match(/\.md$/)) {
@@ -89,14 +93,19 @@ function indexPosts(dirpath) {
       post.content = post.content.slice(m[0].length);
     }
 
-    if(post.date instanceof Date) {
-      post.date = moment.utc(post.date).valueOf();
-    }
-    else if(post.date.toString().match(/\d{8}/)) {
-      post.date = moment.utc(post.date, "YYYYMMDD").valueOf();
-    }
-    else if(post.date.match(/\w+ \d{1,2}, \d{4}/)) {
-      post.date = moment.utc(post.date, "MMMM D, YYYY").valueOf();
+    // Infer the URL from the filename
+    post.shorturl = file.match(/(.*)\.md$/)[1];
+
+    if(post.date) {
+      if(post.date instanceof Date) {
+        post.date = moment.utc(post.date).valueOf();
+      }
+      else if(post.date.toString().match(/\d{8}/)) {
+        post.date = moment.utc(post.date, "YYYYMMDD").valueOf();
+      }
+      else if(post.date.match(/\w+ \d{1,2}, \d{4}/)) {
+        post.date = moment.utc(post.date, "MMMM D, YYYY").valueOf();
+      }
     }
 
     _postIndex[post.shorturl] = post;

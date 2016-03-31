@@ -1,7 +1,9 @@
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const nconf = require('nconf');
 const nunjucks = require('nunjucks');
+const sane = require('sane');
 
 const ghm = require('./util/showdown-ghm.js');
 const { displayDate } = require('./util/date');
@@ -10,8 +12,6 @@ const feed = require('./feed');
 
 nconf.argv().env('_').file({
   file: path.join(__dirname, '../config/config.json')
-}).defaults({
-  'admins': []
 });
 
 const app = express();
@@ -30,6 +30,8 @@ nunjucksEnv.addFilter('displayDate', value => {
 nunjucksEnv.addFilter('ghm', value => {
   return new nunjucks.runtime.SafeString(ghm.parse(value));
 });
+
+nunjucksEnv.addGlobal('dev', nconf.get('dev'));
 
 api.indexPosts(nconf.get("postsDir"));
 
@@ -81,6 +83,47 @@ app.get('/tag/:name', function(req, res) {
   });
 });
 
+if(nconf.get('dev')) {
+  // Drafts page
+  app.get('/drafts', function(req, res) {
+    res.render('post-list.html', {
+      title: 'Drafts',
+      posts: api.queryAllPosts({ filter: { published: false }})
+    });
+  });
+
+    // Hot reloading
+  let shouldRefresh = false;
+
+  function reload() {
+    console.log('Reloading...');
+
+    api.indexPosts(nconf.get('postsDir'));
+    shouldRefresh = true;
+  }
+
+  const watcher = sane(nconf.get('postsDir'));
+  watcher.on('change', reload);
+  watcher.on('add', reload);
+  watcher.on('delete', reload);
+
+  app.get('/modified', function(req, res) {
+    res.send(JSON.stringify(shouldRefresh));
+    shouldRefresh = false;
+  });
+}
+else {
+  // Live mode, just update the index
+  function refresh() {
+    api.indexPosts(nconf.get('postsDir'));
+  }
+
+  const watcher = sane(nconf.get('postsDir'));
+  watcher.on('change', refresh);
+  watcher.on('add', refresh);
+  watcher.on('delete', refresh);
+}
+
 app.get('/*', function(req, res) {
   const shorturl = req.url.slice(1);
   let post = api.getPost(shorturl);
@@ -93,6 +136,7 @@ app.get('/*', function(req, res) {
     res.render('post.html', post);
   }
   else {
+    res.status(404);
     res.render('404.html');
   }
 });
