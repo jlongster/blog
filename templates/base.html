@@ -17,7 +17,7 @@
         <a href="/" class="home">J</a>
         <ul>
           <li><a href="/archive">posts</a></li>
-          <li><a href="/drafts">drafts</a></li>
+          {% if dev %}<li><a href="/drafts">drafts</a></li>{% endif %}
           <li><a href="http://feedpress.me/jlongster">rss</a></li>
           <li><a href="http://twitter.com/jlongster">twitter</a></li>
         </ul>
