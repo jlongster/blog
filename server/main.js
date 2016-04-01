@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, '../static')));
 const nunjucksEnv = nunjucks.configure('templates', {
   autoescape: true,
   express: app,
-  watch: true
+  watch: nconf.get('dev')
 });
 
 nunjucksEnv.addFilter('displayDate', value => {
@@ -32,26 +32,6 @@ nunjucksEnv.addFilter('ghm', value => {
 });
 
 nunjucksEnv.addGlobal('dev', nconf.get('dev'));
-
-api.indexPosts(nconf.get("postsDir"));
-
-// api routes
-
-// app.post('/api/upload', requireAdmin, function(req, res) {
-//   req.busboy.on('file', function(fieldname, file, filename) {
-//     let dir = nconf.get('uploadDir');
-//     if(!dir) {
-//       throw new Error('uploadDir config not set');
-//     }
-
-//     let fstream = fs.createWriteStream(path.join(dir, filename));
-//     file.pipe(fstream);
-//     fstream.on('close', function () {
-//       res.send(nconf.get('url') + nconf.get('uploadURL') + '/' + filename);
-//     })
-//   });
-//   req.pipe(req.busboy);
-// });
 
 // atom feed
 
@@ -140,6 +120,9 @@ app.get('/*', function(req, res) {
     res.render('404.html');
   }
 });
+
+// Initial indexing of posts
+api.indexPosts(nconf.get("postsDir"));
 
 app.listen(nconf.get('http:port'));
 console.log('Server listening on ' + nconf.get('http:port') + '...');

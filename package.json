@@ -1,6 +1,10 @@
 {
   "name": "jlongster.com",
   "author": "James Long",
+  "scripts": {
+    "start": "node server/run",
+    "watch": "webpack --watch & nodemon -w server server/run"
+  },
   "dependencies": {
     "express": "=4.13.4",
     "highlight.js": "=9.2.0",
@@ -21,6 +25,7 @@
     "less": "=2.6.1",
     "less-loader": "=2.2.3",
     "minimist": "^1.2.0",
+    "nodemon": "^1.9.1",
     "sane": "^1.3.3",
     "style-loader": "=0.13.1",
     "webpack": "=1.12.14"
