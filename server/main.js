@@ -45,6 +45,7 @@ app.get('/atom.xml', function(req, res) {
 
 app.get('/', function (req, res) {
   res.render('index.html', {
+    title: 'James Long',
     posts: api.queryPosts({ limit: 5 })
   });
 });
