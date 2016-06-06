@@ -87,10 +87,6 @@ function indexPosts(dirpath) {
     const results = yamlFront.loadFront(contents);
     const post = Object.assign(results, { content: results.__content });
 
-    if(!post.published) {
-      return;
-    }
-
     const m = post.content.match(/^\s*# ([^\n]*)\n\n/m);
     if(m) {
       post.title = m[1];

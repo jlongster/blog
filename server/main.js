@@ -105,7 +105,7 @@ else {
 }
 
 app.get('/*', function(req, res) {
-  const shorturl = req.url.slice(1);
+  const shorturl = req.path.slice(1);
   let post = api.getPost(shorturl);
   if(post) {
     if(post.readnext) {
