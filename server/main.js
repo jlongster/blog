@@ -63,6 +63,10 @@ app.get('/tag/:name', function(req, res) {
   });
 });
 
+app.get('/contracting', function(req, res) {
+  res.render('contracting.html');
+});
+
 if(nconf.get('dev')) {
   // Drafts page
   app.get('/drafts', function(req, res) {
@@ -106,6 +110,7 @@ else {
 
 app.get('/*', function(req, res) {
   const shorturl = req.path.slice(1);
+  const bolded = !!req.query.bolded;
   let post = api.getPost(shorturl);
   if(post) {
     if(post.readnext) {
@@ -113,7 +118,9 @@ app.get('/*', function(req, res) {
         readnext: api.getPost(post.readnext)
       });
     }
-    res.render('post.html', post);
+    res.render('post.html', Object.assign({}, post, {
+      bolded
+    }));
   }
   else {
     res.status(404);

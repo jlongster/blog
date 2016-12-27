@@ -15,7 +15,9 @@
     <h1>{{ title }}</h1>
     <div class="date">{{ date|displayDate }}</div>
   </div>
+  {% if bolded %}<b>{% endif %}
   {{ content|ghm }}
+  {% if bolded %}</b>{% endif %}
 
   <div class="tags">
     {% for tag in tags %}
