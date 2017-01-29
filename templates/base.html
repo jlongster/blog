@@ -12,7 +12,8 @@
   <body class="{{ bodyclass }}" id="{{ bodyid }}">
     <header class="{{ headerclass }}">
       {% if dev %}<div id="dev-mode">DEVELOPMENT MODE</div>{% endif %}
-
+      {% block afterHeader %}{% endblock %}
+      <div class="header-wrapper">
       <div class="links">
         <a href="/" class="home">J</a>
         <ul>
@@ -23,9 +24,15 @@
         </ul>
       </div>
       {% if bodyclass != "index" %}
-      <div class="contracting">I am <a href="/contracting" class="red-link">available</a> for contract work.</div>
+      <!-- <div class="contracting">I am <a href="/contracting" class="red-link">available</a> for contract work.</div> -->
       {% endif %}
-      {% block afterHeader %}{% endblock %}
+
+      {% if bodyclass != "search" %}
+      <div class="search">
+        Search: <input type="text" />
+      </div>
+      {% endif %}
+      </div>
     </header>
 
     {% block content %}{% endblock %}

@@ -14,12 +14,8 @@
 {% endblock %}
 
 {% block content %}
-<header class="collapse">
-
-</header>
-
 <main>
-  <section class="posts">
+  <section class="posts post-list">
     {% for post in posts %}
     <div class="post">
       <h1><a href="/{{ post.shorturl }}">{{ post.title }}</a></h1>
