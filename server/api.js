@@ -80,12 +80,20 @@ function getPost(key) {
 function searchPosts(query) {
   return new Promise((resolve, reject) => {
     if (_sqliteDb) {
+      let quoted = query.charAt(0) === '"' &&
+        query.charAt(query.length - 1) === '"';
+      if (quoted) {
+        query = query.slice(1, query.length - 1);
+      }
+
       // We want to append `*` to each word.
-      const match = query.split(" ").join("* ") + "*";
+      query = query.split(" ").join("* ") + "*";
 
       _sqliteDb.all(
-        'SELECT id, title, snippet(posts, "<b>", "</b>", "...", -1, 64) as snippet FROM posts WHERE content MATCH ?',
-        match,
+        'SELECT id, title, date, snippet(posts, "<b>", "</b>", "...", -1, 64) as snippet ' +
+          "FROM posts WHERE content MATCH ? " +
+          "ORDER BY date DESC",
+        quoted ? '"' + query + '"' : query,
         function(err, rows) {
           if (err) {
             console.log(err);
@@ -107,7 +115,7 @@ function indexPosts(dirpath) {
   _sqliteDb = new sqlite.Database(":memory:");
   _sqliteDb.serialize(function() {
     _sqliteDb.run(
-      "CREATE VIRTUAL TABLE posts USING fts3(id TEXT, title TEXT, content TEXT)"
+      "CREATE VIRTUAL TABLE posts USING fts3(id TEXT, title TEXT, content TEXT, date INT)"
     );
 
     const files = fs.readdirSync(dirpath);
@@ -144,8 +152,13 @@ function indexPosts(dirpath) {
 
       if (post.published) {
         _sqliteDb.run(
-          "INSERT INTO posts (id, title, content) VALUES (?, ?, ?)",
-          [post.shorturl, post.title, striptags(ghm.parse(post.content))]
+          "INSERT INTO posts (id, title, date, content) VALUES (?, ?, ?, ?)",
+          [
+            post.shorturl,
+            post.title,
+            post.date,
+            striptags(ghm.parse(post.content))
+          ]
         );
       }
     });
