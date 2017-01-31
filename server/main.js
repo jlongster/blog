@@ -45,7 +45,10 @@ app.get("/atom.xml", function(req, res) {
 // page handler
 
 app.get("/", function(req, res) {
-  res.render("index.html", { posts: api.queryPosts({ limit: 5 }) });
+  res.render("index.html", {
+    title: "James Long",
+    posts: api.queryPosts({ limit: 5 })
+  });
 });
 
 app.get("/archive", function(req, res) {
