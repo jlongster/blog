@@ -88,12 +88,13 @@ function searchPosts(query) {
 
       // We want to append `*` to each word.
       query = query.split(" ").join("* ") + "*";
+      query = quoted ? '"' + query + '"' : query;
 
       _sqliteDb.all(
         'SELECT id, title, date, snippet(posts, "<b>", "</b>", "...", -1, 64) as snippet ' +
-          "FROM posts WHERE content MATCH ? " +
+          "FROM posts WHERE content MATCH ? OR title MATCH ?" +
           "ORDER BY date DESC",
-        quoted ? '"' + query + '"' : query,
+        [query, query],
         function(err, rows) {
           if (err) {
             console.log(err);
