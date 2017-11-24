@@ -1,6 +1,10 @@
 {
   "name": "jlongster.com",
   "author": "James Long",
+  "scripts": {
+    "start": "node server/run",
+    "watch": "webpack --watch & nodemon -w server server/run"
+  },
   "dependencies": {
     "babel": "^5.6.14",
     "babel-core": "^5.0.7",
@@ -63,6 +67,19 @@
     "xhr": "2.0.0"
   },
   "devDependencies": {
-    "react-dom": "^0.14.2"
+    "babel": "=6.5.2",
+    "babel-plugin-transform-es2015-block-scoping": "=6.7.1",
+    "babel-plugin-transform-es2015-destructuring": "=6.6.5",
+    "babel-plugin-transform-es2015-parameters": "=6.7.0",
+    "babel-register": "=6.7.2",
+    "css-loader": "=0.23.1",
+    "extract-text-webpack-plugin": "=1.0.1",
+    "less": "=2.6.1",
+    "less-loader": "=2.2.3",
+    "minimist": "^1.2.0",
+    "nodemon": "^1.9.1",
+    "sane": "^1.3.3",
+    "style-loader": "=0.13.1",
+    "webpack": "=1.12.14"
   }
 }

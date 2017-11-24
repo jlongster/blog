@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>James Long</title>
+  <link href="{{ base }}/atom.xml" rel="self" />
+  <link href="{{ base }}/" />
+  <updated>{{ updated }}</updated>
+  <id>{{ base }}/</id>
+  <author><name>{{ author }}</name></author>
+
+  {% for post in posts %}
+  <entry>
+    <title>{{ post.title }}</title>
+    <link href="{{ base }}/{{ post.shorturl }}" />
+    <published>{{ post.date }}</published>
+    <updated>{{ post.date }}</updated>
+    <id>{{ base }}/{{ post.shorturl }}</id>
+    <summary type="html"><![CDATA[{{ post.summary|safe }}]]></summary>
+    <content type="html"><![CDATA[{{ post.content|safe }}]]></content>
+  </entry>
+  {% endfor %}
+</feed>
