@@ -1,2 +1,0 @@
-#!/bin/sh -x
-/usr/bin/env node "`dirname $0`/../build/bin/populate.js"

@@ -61,3 +61,31 @@ body {
         }
     }
 }
+
+.link-underline-none {
+    background-image: none;
+}
+
+.link-underline {
+    background-image: linear-gradient(to bottom,rgba(0,0,0,0) 50%,rgba(0,0,0,.6) 50%);
+    background-repeat: repeat-x;
+    background-size: 2px 2px;
+    background-position: 0 95%;
+}
+
+.figure-label {
+  text-align: center;
+  font-size: .9em;
+  line-height: 1.5em;
+  font-style: italic;
+  width: 500px;
+  margin: 0 auto;
+}
+
+.bare-link {
+    .link-underline-none();
+
+    &:hover {
+        .link-underline();
+    }
+}

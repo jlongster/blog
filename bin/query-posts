@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+"use strict";
+
+const minimist = require('minimist');
+const path = require('path');
+const t = require('transducers.js');
+const moment = require('moment');
+
+const nconf = require('nconf');
+nconf.argv().env('_').file({
+  file: path.join(__dirname, '../config/config.json')
+});
+
+require("babel-register");
+const api = require('../server/api');
+const args = minimist(process.argv.slice(2));
+
+if(args.filter) {
+  args.filter = (args.filter instanceof Array) ? args.filter : [args.filter];
+}
+
+const opts = {
+  limit: args.limit,
+  select: args.select && args.select.split(","),
+  filter: args.filter && t.toObj(
+    args.filter,
+    t.map(x => {
+      const kv = x.split('=');
+      const val = (kv[1] === 'true' ? true :
+                   kv[1] === 'false' ? false :
+                   kv[1]);
+      return [kv[0], val];
+    })
+  )
+};
+
+api.indexPosts(nconf.get('postsDir'));
+
+const posts = api.queryAllPosts(opts).map(post => {
+  return Object.assign({}, post, {
+    date: post.date && moment.utc(post.date).format('MMMM D, YYYY')
+  });
+});
+
+console.log(JSON.stringify(posts, null, 2));
