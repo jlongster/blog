@@ -1,3 +1,2 @@
 #!/bin/sh
-exec 2>&1
-exec node server/run.js
+exec node server/main.js 2>&1

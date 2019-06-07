@@ -1,13 +1,14 @@
 {% extends "page.html" %}
 
 {% block pageContent %}
-<h1>{{ title }}</h1>
-<ul class="list post-list">
+<div class="px-5 lg:px-32">
+  <h1 class="mb-8 text-3xl font-semibold font-display tracking-tight uppercase">{{ title }}</h1>
   {% for post in posts %}
-  <li>
-    <a href="/{{ post.shorturl }}">{{ post.title }}</a>
-    <span class="date">{{ post.date|displayDate }}</span>
-  </li>
+  <div class="mb-16">
+    <h3 class="font-display tracking-tight text-3xl uppercase text-teal-600"><a href="/{{ post.shorturl }}">{{ post.title }}</a></h3>
+    <div class="mb-4 text-gray-400 text-sm">{{ post.date|displayDate }}</div>
+    <div class="leading-relaxed">{{ post.abstract }}</div>
+  </div>
   {% endfor %}
-</ul>
+</div>
 {% endblock %}

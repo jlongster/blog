@@ -1,91 +1,150 @@
 {% extends "base.html" %}
-
 {% set bodyclass = "index" %}
-{% set headerclass = "collapse" %}
 
-{% block afterHeader %}
-  <div class="intro light">
-    <div>
-      My name is <a href="http://twitter.com/jlongster">James</a>, and
-      I run my own contracting company called Shift Reset LLC. I like
-      to create things and write about technology.
-    </div>
-  </div>
-{% endblock %}
+{% block headerclass %}absolute inset-x-0{% endblock %}
 
 {% block content %}
-<main>
-  <section class="posts post-list">
-    {% for post in posts %}
-    <div class="post">
-      <h1><a href="/{{ post.shorturl }}">{{ post.title }}</a></h1>
-      <div class="date">{{ post.date|displayDate }}</div>
-      <p>{{ post.abstract }}</p>
+<div class="flex flex-col bg-gray-500">
+  <div class="demo-full-screen flex h-screen justify-center items-center flex-col bg-center bg-cover" style="background-image: url(/img/0001.jpg);">
+    <div class="relative" style="width: 100%; height: 100%; max-width: 800px; max-height: 700px">
+      <canvas class="object-contain" style="width: 100%; height: 100%"></canvas>
+      <div class="demo-touch-area absolute" style="top: 25%; left: 25%; right: 25%; bottom: 25%; user-select: none"></div>
     </div>
-    {% endfor %}
-
-    <div class="right-link"><a href="/archive">View All Posts</a></div>
-  </section>
-
-
-  <div class="static-content">
-    <section class="projects">
-      <h2>Projects</h2>
-
-      <ul class="list">
-        <li>
-          <a href="http://github.com/jlongster/LLJS">LLJS</a> fork of LLJS that compiles to asm.js
-        </li>
-
-        <li>
-          <a href="http://github.com/mozilla/nunjucks">nunjucks</a> powerful templating system for javascript
-        </li>
-
-        <li>
-          <a href="http://github.com/jlongster/outlet">outlet</a> simple Lisp languange that compiles to javascript
-        </li>
-
-        <li>
-          <a href="http://github.com/jlongster/dcpu-lisp">dcpu-lisp</a> static Lisp that compiles to DCPU-16 assembly code
-        </li>
-
-        <li>
-          <a href="https://github.com/jlongster/shade">shade</a> terrible WebGL graphics engine
-        </li>
-
-        <li>
-          <a href="https://github.com/jlongster/octoshot">octoshot</a> multiplayer WebGL 3d first person shooter
-        </li>
-
-        <li>
-          <a href="http://github.com/jlongster/css-animations.js">css-animations.js</a> easily use CSS3 keyframe animations from javascript
-        </li>
-
-        <li>
-          <a href="http://jlongster.com/s/dom3d/">dom3d</a> 3d objects with purely 2d CSS transforms
-        </li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Demos</h2>
-
-      <ul class="demos">
-        <li>
-          <a href="http://jlongster.com/s/lljs-cloth/">
-            <img src="/img/demos/cloth.png" />
-            <p>Cloth Simulation in asm.js</p>
-          </a>
-        </li>
-        <li>
-          <a href="http://jlongster.com/s/dom3d/">
-            <img src="/img/demos/teapot.png" />
-            <p>3d in 2d CSS</p>
-          </a>
-        </li>
-      </ul>
-    </section>
   </div>
-</main>
+
+  <div class="py-24 border-b bg-gray-500 bg-cover text-white" style="background-image: url(/img/projects-bg.png); border-color: #352947">
+    <div class="px-5 lg:px-32 container mx-auto">
+      <div class="flex items-center flex-col sm:flex-row">
+        <img src="/img/profile.jpg" class="rounded-full border-4 border-white bg-white shadow-lg mb-8 sm:mb-0 sm:mr-8" style="width: 130px; height: 130px"/>
+        <div>
+          <p><h1 class="text-5xl inline font-semibold font-display tracking-tighter mr-2 leading-none">JAMES LONG</h1>is a
+            developer & designer with over a decade of experience
+            building large-scale applications. He created Prettier, the
+            standard of JavaScript code formatting, led a long-term
+            effort to port Firefox developer tools to React at Mozilla,
+            is founder of <a class="text-teal-300" href="https://actualbudget.com/">Actual</a>, 
+            and explores new ideas for programming through blog posts. 
+            He focuses on solving real problems for users with a great user experience.
+            <a class="text-teal-300" href="mailto:longster@gmail.com">Let's work together</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-32 pb-24 bg-gray-500 text-white">
+    <div class="px-5 lg:px-16 container mx-auto flex flex-col items-center">
+      <div class="text-3xl font-semibold font-display tracking-tight leading-none">PROJECTS</div>
+
+        <div class="sm:w-1/2 flex flex-col mt-24 mb-32">
+          <a href="https://actualbudget.com/">
+            <div class="flex items-center font-display uppercase text-3xl">
+              <div class="flex-grow">Actual</div>
+              <img src="/img/actual.png" class="w-12 h-12"></img>
+            </div>
+          </a>
+          <div class="mt-4 text-lg">
+            The personal finance system of your dreams
+          </div>
+          <div class="mt-4 text-gray-300">
+            A product I've been working on for the last 3 years,
+            launched in January, and working on scaling up to become
+            my full-time income.
+          </div>
+          <div class="mt-4">
+            <a href="https://actualbudget.com/" class="text-teal-300">Check it out &rarr;</a>
+          </div>
+        </div>
+
+      
+      <div class="flex flex-col sm:flex-row">
+        <div class="sm:w-1/3 flex flex-col sm:mr-8">
+          <a href="https://prettier.io/">
+            <div class="flex items-center font-display uppercase text-2xl">
+              <div class="flex-grow">Prettier</div>
+              <img src="/img/prettier.svg" class="w-10 h-10"></img>
+            </div>
+          </a>
+          <div class="mt-4">
+            An opinionated JavaScript code formatter
+          </div>
+          <div class="mt-4 text-sm text-gray-300">
+            I created Prettier which has become the default JavaScript
+            code formatter. Other maintainers have taken over the
+            project.
+          </div>
+        </div>
+        <div class="sm:w-1/3 flex flex-col mt-16 sm:mt-0 sm:mr-8 sm:pl-8 sm:border-l border-dark-border">
+          <a href="https://itunes.apple.com/us/app/blink-video-editor/id1199289898?mt=8">
+            <div class="flex items-center font-display uppercase text-2xl">
+              <div class="flex-grow">Blink</div>
+              <img src="/img/blink.jpg" class="w-10 h-10"></img>
+            </div>
+          </a>
+            <div class="mt-4">
+              A video editor &mdash; make memes and lyric videos on iOS
+            </div>
+            <div class="mt-4 text-sm text-gray-300">
+              Helped a client explore new social video formats using
+              advanced typography and augmented reality overlays.
+          </div>
+        </div>
+
+        <div class="sm:w-1/3 flex flex-col mt-16 sm:mt-0 sm:pl-8 sm:border-l border-dark-border">
+          <ul class="text-sm">
+            <li class="sm:mb-4"><a href="https://github.com/jlongster/unwinder" class="text-teal-300">unwinder</a> &mdash; an implementation of continuations</li>
+            <li class="mb-4"><a href="https://github.com/jlongster/transducers.js" class="text-teal-300">transducers.js</a> &mdash; a library for transformation of data</li>
+            <li>
+              <a href="https://github.com/jlongster"><button class="mt-2 border text-xs rounded-lg px-3 py-1 hover:shadow-lg" style="transition: box-shadow .25s">View All Projects</button></a>
+
+
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bg-gray-100">
+    <div class="h-1" style="background: linear-gradient(#4fd1c5, #F3F2F7)"></div>
+
+    <div class="px-5 lg:px-32 container mx-auto" id="posts">
+      <h2 class="mb-8 text-3xl font-semibold font-display tracking-tight mt-24">POSTS</h2>
+
+      {% for post in posts %}
+      <div class="mb-16">
+        <a href="/{{ post.shorturl }}"><h3 class="font-display tracking-tight text-3xl uppercase text-teal-600">{{ post.title }}</h3></a>
+        <div class="mb-4 text-gray-400 text-sm">{{ post.date|displayDate }}</div>
+        <div class="leading-relaxed">{{ post.abstract }}</div>
+      </div>
+      {% endfor %}
+
+      <div class="relative">
+        <img class="absolute" style="bottom: 5px; left: -90px" src="/img/arrows-curved.svg" />
+        
+        <a href="/archive"><button class="border border-gray-500 rounded-lg px-4 py-2 hover:shadow-lg" style="transition: box-shadow .25s">View All Posts</button></a>
+      </div>
+    </div>
+
+    <div class="mt-32 px-5 lg:px-32 container mx-auto" id="talks">
+      <h2 class="mb-8 text-3xl font-semibold font-display tracking-tight mt-8">TALKS</h2>
+
+      <div class="relative">
+        <div class="absolute downarrow-flush md:downarrow-offset" style="background: url(/img/arrow.svg); height: 410px; width: 28px"></div>
+        
+        {% for talk in talks %}
+        <div class="mb-8">
+          <a href="{{talk.url}}"><h3 class="font-display tracking-tight text-2xl uppercase text-teal-600">{{ talk.title }}</h3></a>
+          <div class="mr-2 text-sm inline-block">{{ talk.about }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="/js/exploding-comp/bundle.js"></script>
+</div>
 
 {% endblock %}

@@ -2,34 +2,38 @@
   "name": "jlongster.com",
   "author": "James Long",
   "scripts": {
-    "start": "node server/run",
-    "watch": "webpack --watch & nodemon -w server server/run"
+    "start": "npm-run-all --parallel watch:*",
+    "watch:node": "nodemon -w server server/main",
+    "%css%": "rm -fr ./static/build && postcss -c postcss.config.js './static/css/**/*.css' -m -d static/build --base static/css",
+    "build:css": "NODE_ENV=production yarn %css%",
+    "watch:css": "yarn %css% -- -w"
   },
   "dependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "@mdx-js/mdx": "^1.0.19",
+    "@mdx-js/react": "^1.0.16",
     "express": "=4.13.4",
     "highlight.js": "=9.2.0",
+    "invariant": "^2.2.4",
     "moment": "=2.12.0",
     "nconf": "=0.8.4",
     "nunjucks": "=2.4.1",
-    "sqlite3": "^3.1.8",
-    "striptags": "^2.2.1",
-    "transducers.js": "=0.3.2",
+    "prism-react-renderer": "^0.1.6",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "sane": "^4.1.0",
+    "transducers.js": "^0.3.2",
     "yaml-front-matter": "=3.4.0"
   },
   "devDependencies": {
-    "babel": "=6.5.2",
-    "babel-plugin-transform-es2015-block-scoping": "=6.7.1",
-    "babel-plugin-transform-es2015-destructuring": "=6.6.5",
-    "babel-plugin-transform-es2015-parameters": "=6.7.0",
-    "babel-register": "=6.7.2",
-    "css-loader": "=0.23.1",
-    "extract-text-webpack-plugin": "=1.0.1",
-    "less": "=2.6.1",
-    "less-loader": "=2.2.3",
+    "@fullhuman/postcss-purgecss": "^1.2.0",
+    "autoprefixer": "^9.5.1",
     "minimist": "^1.2.0",
     "nodemon": "^1.9.1",
-    "sane": "^1.3.3",
-    "style-loader": "=0.13.1",
-    "webpack": "=1.12.14"
+    "npm-run-all": "^4.1.5",
+    "postcss": "^7.0.16",
+    "postcss-cli": "^6.1.2",
+    "tailwindcss": "^1.0.1"
   }
 }

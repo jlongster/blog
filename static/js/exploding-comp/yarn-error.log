@@ -1,0 +1,33 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.16.0/libexec/bin/yarn.js
+
+PATH: 
+  /Users/james/.fastlane/bin:/Users/james/.yarn/bin:/Users/james/projects/scripts:/Users/james/projects/outlet/bin:/Users/james/projects/jsshell:/Users/james/projects/LLJS/bin:/Users/james/projects/emscripten:/usr/local/pgsql/bin:/usr/local/sbin:/usr/local/bin:node_modules/.bin:/usr/local/opt/ruby/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/Library/TeX/texbin:/opt/X11/bin:/Applications/Wireshark.app/Contents/MacOS
+
+Yarn version: 
+  1.16.0
+
+Node version: 
+  12.2.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: ENOTDIR: not a directory, scandir '/Users/james/projects/jlongster/site/static/js/exploding-comp/node_modules'
+
+npm manifest: 
+  {
+    "devDependencies": {
+      "rollup": "^1.11.3"
+    },
+    "scripts": {
+      "start": "rollup -w -m --file=bundle.js --output.format iife main.js"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

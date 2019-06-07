@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 
+{% block headerclass %}bg-cover{% endblock %}
+{% block headerattr %}style="background-image: url(/img/header-bg.jpg)"{% endblock %}
+{% block afterheader %}<div class="h-1" style="background: linear-gradient(#4fd1c5, #F3F2F7)"></div>{% endblock %}
+
+
 {% block content %}
 <main>
-  <div class="main-wrapper">
+  <div class="container mx-auto pt-16">
     {% block pageContent %}{% endblock %}
   </div>
 </main>

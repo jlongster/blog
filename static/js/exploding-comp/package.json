@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "rollup": "^1.11.3"
+  },
+  "scripts": {
+    "start": "rollup -w -m --file=bundle.js --output.format iife main.js"
+  }
+}

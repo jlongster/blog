@@ -3,23 +3,21 @@
 {% set bodyid = shorturl|replace(',', '-') %}
 {% set bodyclass = "post-page" %}
 
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/css/post.css" />
+{% endblock %}
+
 {% block pageContent %}
-{% if headerimg %}
-<div class="intro-img oversized">
-  <img src="{{ headerimg }}" />
-</div>
-{% endif %}
 
-<article class="post">
-  <div class="header-text">
-    <h1>{{ title }}</h1>
-    <div class="date">{{ date|displayDate }}</div>
+<article class="post px-5 lg:px-40 mt-8">
+  <div>
+    <h1 class="mb-3 font-semibold font-display tracking-tight leading-none uppercase text-teal-600">{{ title }}</h1>
+    <div class="text-gray-400 text-sm mb-12">{{ date|displayDate }}</div>
   </div>
-  {% if bolded %}<b>{% endif %}
-  {{ content|ghm }}
-  {% if bolded %}</b>{% endif %}
 
-  <div class="tags">
+  {{ content|postContent(date) }}
+
+  <div class="text-gray-400 text-sm">
     {% for tag in tags %}
     <a href="/tag/{{ tag }}">{{ tag }}</a>
     {% endfor %}

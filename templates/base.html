@@ -5,48 +5,71 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="alternate" type="application/atom+xml" href="http://feedpress.me/jlongster" title="Atom Feed" />
+    <link rel="alternate" type="application/atom+xml" href="https://jlongster.com/atom.xml" title="Atom Feed" />
     <link rel="stylesheet" type="text/css" href="/css/highlight/tomorrow.css" />
-    <link rel="stylesheet" type="text/css" href="/build/styles.css" />
+    <link rel="stylesheet" type="text/css" href="/css/highlight/prism-light.css" />
+    <link rel="stylesheet" type="text/css" href="/build/base.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i|Unica+One&display=swap" rel="stylesheet">
+    {% block css %}{% endblock %}
   </head>
-  <body class="{{ bodyclass }}" id="{{ bodyid }}">
-    <header class="{{ headerclass }}">
-      {% if dev %}<div id="dev-mode">DEVELOPMENT MODE</div>{% endif %}
-      {% block afterHeader %}{% endblock %}
-      <div class="header-wrapper">
-      <div class="links">
-        <a href="/" class="home">J</a>
-        <ul>
-          <li><a href="/archive">posts</a></li>
-          {% if dev %}<li><a href="/drafts">drafts</a></li>{% endif %}
-          <li><a href="http://feedpress.me/jlongster">rss</a></li>
-          <li><a href="http://twitter.com/jlongster">twitter</a></li>
-        </ul>
-      </div>
-      {% if bodyclass != "index" %}
-      <!-- <div class="contracting">I am <a href="/contracting" class="red-link">available</a> for contract work.</div> -->
-      {% endif %}
+  <body class="font-body bg-gray-100 text-dark-text">
+    <header class="text-white font-display z-50 {% block headerclass %}{% endblock %}" {% block headerattr %}{% endblock %}>
+      <div class="container mx-auto flex flex-col md:flex-row items-center py-5 px-5">
+        <a href="/">
+          <div class="flex items-center text-2xl tracking-tight">
+            <img src="/img/logo.svg" class="w-10 h-10 mr-4"/>
+            JAMES LONG
+          </div>
+        </a>
+        <div class="flex-grow"></div>
 
-      {% if bodyclass != "search" %}
-      <div class="search">
-        Search: <input type="text" />
-      </div>
-      {% endif %}
+        <div class="mt-2 md:mt-0">
+          <a href="/#posts" class="text-xl tracking-tight">
+            POSTS
+          </a>
+          
+          <a href="/#talks" class="ml-2 md:ml-8 text-xl tracking-tight">
+            TALKS
+          </a>
+        </div>
+
       </div>
     </header>
+    {% block afterheader %}{% endblock %}
 
-    {% block content %}{% endblock %}
+    <div>
+      {% block content %}{% endblock %}
+    </div>
 
-    {% block additionalFooter %}{% endblock %}
-    <footer>
-      <div class="footer-wrapper">
-        <div class="footer-text">
-          <p>Written by James Long. <a href="http://twitter.com/jlongster">Follow me!</a></p>
+    <footer class="mt-20 bg-gray-500 text-white">
+      <div class="h-1" style="background: linear-gradient(#F3F2F7, #4fd1c5)"></div>
+
+      <div class="container mx-auto px-5 lg:px-32 flex flex-col items-center">
+        <img src="/img/logo.svg" class="w-10 h-10 mt-10 float-left mb-6"/>
+
+        <div class="mb-8 md:px-32 text-center text-gray-200">
+          James Long is a developer & designer with over a decade of
+          experience building large-scale applications.
+          <a class="text-teal-300" href="mailto:longster@gmail.com">Get in touch</a>
+        </div>
+
+        <div class="flex items-center mb-8">
+          <a href="/#posts" class="font-display uppercase text-xl">posts</a>
+          <a href="/#talks" class="font-display uppercase text-xl ml-4">talks</a>
+        </div>
+        
+
+        <ul class="flex items-center mb-3">
+          <li><a href="https://twitter.com/jlongster"><img src="/img/twitter.svg" class="w-10 h-10"/></a></li>
+          <li><a href="https://github.com/jlongster"><img src="/img/github.svg" class="w-10 h-10"/></a></li>
+          <li><a href="https://jlongster.com/atom.xml"><img src="/img/rss.svg" class="w-10 h-10"/></a></li>
+        </ul>
+
+        <div class="text-gray-400 mb-5 text-sm">
+          &copy; James Long 2019
         </div>
       </div>
     </footer>
-
-    <script src="/build/client.js"></script>
 
     {% if not dev %}
     <script>
@@ -59,21 +82,6 @@
       ga('send', 'pageview');
     </script>
     {% endif %}
-
-<script>
-  window.productHuntUpcoming = {
-    appId: 902,
-    position: 'bottomRight',
-  };
-
-  (function(doc, scr, src, a, b) {
-    a = doc.createElement(scr);
-    b = doc.getElementsByTagName(scr)[0];
-    a.async = true;
-    a.src = src;
-    b.parentNode.insertBefore(a, b);
-  })(document, 'script', 'https://assets.producthunt.com/assets/upwigloader.js');
-</script>
     
     {% if dev %}
     <script>

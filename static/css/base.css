@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@responsive {
+  .downarrow-offset {
+    top: 80px;
+    left: 575px;
+  }
+
+  .downarrow-flush {
+    top: 0px;
+    left: 350px;
+  }
+}
+
+@responsive {
+  .h-scrollable {
+    height: 400px
+  }
+}
+
+.post p {
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.post > * {
+  @apply my-16;
+  @apply mx-auto;
+}
+
+/* Put any stupid embedded widgets here that try to enforce their own
+   y margin and override them */
+.post > twitter-widget {
+  @apply my-16 !important;
+}
+
+.post > p, .post > ul, .post > ol {
+  @apply mb-8;
+  @apply mt-0;
+}
+
+.post h2, .post h3, .post h4 {
+  @apply text-teal-600 font-semibold font-display tracking-tight
+  leading-tight uppercase;
+}
+
+.post a, .post a:visited, .post a:active {
+  @apply underline;
+}
+
+.post h1 {
+  @apply text-5xl;
+  margin-left: -2px;
+}
+.post h2 {
+  @apply text-4xl mt-16 mb-4;
+  margin-left: -2px;
+}
+.post h3 {
+  @apply text-3xl mt-16 mb-4;
+  margin-left: -2px;
+}
+.post h4 {
+  @apply text-2xl mt-12 mb-4;
+  margin-left: -2px;
+}
+
+.post img {
+  @apply mb-16 mt-16 shadow-md rounded mx-auto;
+}
+
+.post code {
+  font-size: .85em;
+}
+
+.post pre code {
+  font-size: 1em;
+}
+
+.post pre {
+  @apply mb-16 mt-16 rounded-lg p-5 -ml-5 -mr-5 shadow-md bg-white;
+}
+
+@media screen and (max-width: 640px) {
+  .post pre {
+    @apply ml-0 mr-0;
+  }
+}
+
+.post ol {
+  @apply list-decimal;
+}
+
+.post ul {
+  @apply list-disc;
+}
+
+.post li {
+  @apply mx-6 my-1 px-1 text-lg text-gray-500 leading-loose;
+}
+
+.post .figure-label {
+  text-align: center;
+  font-size: .9em;
+  line-height: 1.5em;
+  font-style: italic;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -2rem;
+  @apply mb-12;
+}
