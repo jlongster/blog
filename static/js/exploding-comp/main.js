@@ -30,7 +30,6 @@ ctx.scale(2, 2);
 let camera = vec(0, 0, -1);
 let frustum = make_frustum(60.0, size[0] / size[1], 1.0, 1000.0);
 let currentColor = 'red';
-let backgroundColor = '#101010';
 
 let codeString = `(define (shift* f) (let* ((parent-denv (vector-ref *meta-continuation* 2)) (curr-denv (current-dynamic-env)) (diff-denv (dynamic-env-sub curr-denv parent-denv))) (let ((v (call/cc (lambda (k) (abort-env* (lambda () (f (lambda (v) (reset (k v)))))))))) (current-dynamic-env-set! (dynamic-env-add diff-denv (vector-ref *meta-continuation* 2))) v))) (define (reset* thunk) (let ((mc *meta-continuation*) (denv (current-dynamic-env))) (continuation-capture (lambda (k-pure) (current-dynamic-wind-set! ##initial-dynwind) (abort-pure* ((call/cc (lambda (k) (set! *meta-continuation* (make-vector-values (lambda (v) (set! *meta-continuation* mc) (current-dynamic-env-set! denv) (##continuation-return-no-winding k-pure v)) k denv)) thunk))))))))`;
 
@@ -163,22 +162,9 @@ let meshes = [
   }
 ];
 
-// document.querySelector('[name=line-color]').addEventListener('change', e => {
-//   meshes[0].color = e.target.value;
-//   localStorage['line-color'] = e.target.value;
-// });
-
-// document
-//   .querySelector('[name=computer-color]')
-//   .addEventListener('change', e => {
-//     meshes[1].color = e.target.value;
-//     localStorage['computer-color'] = e.target.value;
-//   });
-
 let explodeStarted = null;
 let explodeEnded = null;
 let touchArea = document.querySelector('.demo-touch-area');
-console.log(touchArea);
 
 function startExplode(e) {
   explodeStarted = Date.now();
@@ -208,9 +194,15 @@ touchArea.addEventListener('mouseenter', startExplode);
 touchArea.addEventListener('mouseleave', stopExplode);
 touchArea.addEventListener('touchstart', startExplode);
 
+// Newer iOS phones have sucky tendency to bring up a bottom tab bar
+// but still think that 100vh means you want to go underneath it. This
+// is stupid. window.innerHeight is correct so set it to that, and we
+// have to do it a little in the future because it's racy.
 if (window.innerWidth < 500) {
-  document.querySelector('.demo-full-screen').style.height =
-    window.innerHeight + 'px';
+  setTimeout(() => {
+    document.querySelector('.demo-full-screen').style.height =
+      window.innerHeight + 'px';
+  }, 100);
 }
 
 let resumeTimeout;
@@ -222,8 +214,6 @@ window.addEventListener('resize', () => {
   resumeTimeout = setTimeout(() => {
     let width = window.innerWidth;
     let ratio = Math.min(width, size[0]) / size[0];
-    // canvas.style.width = size[0] * ratio + 'px';
-    // canvas.style.height = size[1] * ratio + 'px';
 
     frame(0, 0, ctx);
   }, 250);
@@ -554,6 +544,7 @@ function render2dWords(ctx, points, color, opacity, codeIndex) {
     ctx.restore();
   }
 
+  // Debug lines
   // ctx.beginPath();
   // ctx.moveTo(points[0][X], points[0][Y]);
   // ctx.lineTo(points[1][X], points[1][Y]);

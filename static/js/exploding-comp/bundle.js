@@ -373,22 +373,9 @@
     }
   ];
 
-  // document.querySelector('[name=line-color]').addEventListener('change', e => {
-  //   meshes[0].color = e.target.value;
-  //   localStorage['line-color'] = e.target.value;
-  // });
-
-  // document
-  //   .querySelector('[name=computer-color]')
-  //   .addEventListener('change', e => {
-  //     meshes[1].color = e.target.value;
-  //     localStorage['computer-color'] = e.target.value;
-  //   });
-
   let explodeStarted = null;
   let explodeEnded = null;
   let touchArea = document.querySelector('.demo-touch-area');
-  console.log(touchArea);
 
   function startExplode(e) {
     explodeStarted = Date.now();
@@ -418,9 +405,15 @@
   touchArea.addEventListener('mouseleave', stopExplode);
   touchArea.addEventListener('touchstart', startExplode);
 
+  // Newer iOS phones have sucky tendency to bring up a bottom tab bar
+  // but still think that 100vh means you want to go underneath it. This
+  // is stupid. window.innerHeight is correct so set it to that, and we
+  // have to do it a little in the future because it's racy.
   if (window.innerWidth < 500) {
-    document.querySelector('.demo-full-screen').style.height =
-      window.innerHeight + 'px';
+    setTimeout(() => {
+      document.querySelector('.demo-full-screen').style.height =
+        window.innerHeight + 'px';
+    }, 100);
   }
 
   let resumeTimeout;
@@ -431,8 +424,6 @@
 
     resumeTimeout = setTimeout(() => {
       let width = window.innerWidth;
-      // canvas.style.width = size[0] * ratio + 'px';
-      // canvas.style.height = size[1] * ratio + 'px';
 
       frame(0, 0, ctx);
     }, 250);
@@ -751,6 +742,7 @@
       ctx.restore();
     }
 
+    // Debug lines
     // ctx.beginPath();
     // ctx.moveTo(points[0][X], points[0][Y]);
     // ctx.lineTo(points[1][X], points[1][Y]);

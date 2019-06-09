@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="/css/highlight/tomorrow.css" />
     <link rel="stylesheet" type="text/css" href="/css/highlight/prism-light.css" />
     <link rel="stylesheet" type="text/css" href="/build/base.css" />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i|Unica+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i|Unica+One&display=fallback" rel="stylesheet">
     {% block css %}{% endblock %}
   </head>
   <body class="font-body bg-gray-100 text-dark-text">
@@ -45,7 +45,7 @@
       <div class="h-1" style="background: linear-gradient(#F3F2F7, #4fd1c5)"></div>
 
       <div class="container mx-auto px-5 lg:px-32 flex flex-col items-center">
-        <img src="/img/logo.svg" class="w-10 h-10 mt-10 float-left mb-6"/>
+        <a href="/"><img src="/img/logo.svg" class="w-10 h-10 mt-10 float-left mb-6"/></a>
 
         <div class="mb-8 md:px-32 text-center text-gray-200">
           James Long is a developer & designer with over a decade of
