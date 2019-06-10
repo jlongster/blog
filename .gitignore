@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-build
 static/output
 config/config.json
 config/config-prod.json
