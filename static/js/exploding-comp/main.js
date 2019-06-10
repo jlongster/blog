@@ -48,7 +48,7 @@ let meshes = [
     pitch: Math.PI / 2,
     translate: vec(0, 0, 100),
     scale: vec(7, 7, 7),
-    color: localStorage['line-color'] || '#00ff00',
+    color: '#00ff00',
     data: [
       [[1.490947, 2.589018, 4.14739], [1.490947, 2.570464, -0.952927]],
       [[0.82669, 0.939331, 3.573287], [0.82669, 0.913141, -2.007562]],
@@ -62,7 +62,7 @@ let meshes = [
     pitch: Math.PI / 4,
     translate: vec(0, 0, 100),
     scale: vec(7, 7, 7),
-    color: localStorage['computer-color'] || '#FF9B9B',
+    color: '#FF9B9B',
     data: [
       [[4.146833, -2.017568, 3.361326], [-0.369471, -2.052729, 3.361326]],
       [[-0.369471, -2.052729, 3.361326], [-0.369471, -2.052729, -2.481019]],
