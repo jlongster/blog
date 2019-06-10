@@ -21,7 +21,7 @@
 }
 
 .post p {
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.75;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .post > p, .post > ul, .post > ol {
-  @apply mb-8;
+  @apply mb-6;
   @apply mt-0;
 }
 
@@ -98,7 +98,8 @@
 }
 
 .post li {
-  @apply mx-6 my-1 px-1 text-lg text-gray-500 leading-loose;
+  @apply mx-6 my-1 px-1 text-lg text-gray-500;
+  line-height: 1.75;
 }
 
 .post .figure-label {
