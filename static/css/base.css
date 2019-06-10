@@ -46,7 +46,7 @@
   leading-tight uppercase;
 }
 
-.post a, .post a:visited, .post a:active {
+.post a, .post a:visited, .post a:active, .formkit-form a {
   @apply underline;
 }
 
@@ -98,7 +98,8 @@
 }
 
 .post li {
-  @apply mx-6 my-1 px-1 text-lg text-gray-500;
+  @apply my-3 px-1 text-lg text-gray-500;
+  margin-left: 0;
   line-height: 1.75;
 }
 

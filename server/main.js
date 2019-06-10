@@ -167,6 +167,20 @@ app.get('/', function(req, res) {
   });
 });
 
+app.get('/subscribe-thanks', function(req, res) {
+  res.render('subscribe-message.html', {
+    title: 'Thanks',
+    message: 'Thanks for subscribing! Now check your email to confirm your subscription.'
+  })
+})
+
+app.get('/subscribe-confirm', function(req, res) {
+  res.render('subscribe-message.html', {
+    title: 'Confirmed',
+    message: 'Thank you for confirming your email! You will now receive posts in your inbox as they are published.'
+  })
+})
+
 app.get('/archive', function(req, res) {
   res.render('post-list.html', {
     title: 'All Posts',
