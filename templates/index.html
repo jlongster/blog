@@ -118,8 +118,8 @@
 
       {% for post in posts %}
       <div class="mb-16">
-        <a href="/{{ post.shorturl }}"><h3 class="font-display tracking-tight text-3xl uppercase text-teal-600">{{ post.title }}</h3></a>
-        <div class="mb-4 text-gray-400 text-sm">{{ post.date|displayDate }}</div>
+        <a href="/{{ post.shorturl }}"><h3 class="font-display tracking-tight text-3xl uppercase text-teal-600 leading-none mb-1">{{ post.title }}</h3></a>
+        <div class="mb-4 text-gray-300 text-sm">{{ post.date|displayDate }}</div>
         <div class="leading-relaxed">{{ post.abstract }}</div>
       </div>
       {% endfor %}
