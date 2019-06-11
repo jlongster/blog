@@ -78,23 +78,16 @@ function mdxFilter(content) {
     code: CodeBlock
   };
 
-  let element;
-  try {
-  element = React.createElement(
+  let element = React.createElement(
     MDXProvider,
     { components },
     fn(React, mdxCreateElement)
   );
-  }
-  catch(e) {
-    console.log(e)
-  }
 
   try {
-    console.log(renderToStaticMarkup(element))
-  }
-  catch(e) {
-    console.log(e)
+    console.log(renderToStaticMarkup(element));
+  } catch (e) {
+    console.log(e);
   }
 
   return new nunjucks.runtime.SafeString(renderToStaticMarkup(element));
@@ -170,16 +163,18 @@ app.get('/', function(req, res) {
 app.get('/subscribe-thanks', function(req, res) {
   res.render('subscribe-message.html', {
     title: 'Thanks',
-    message: 'Check your email to confirm your subscription. Thank you!'
-  })
-})
+    message:
+      "Check your email to confirm your subscription. If you don't see it within 30 seconds, check your spam folder. Thank you!"
+  });
+});
 
 app.get('/subscribe-confirm', function(req, res) {
   res.render('subscribe-message.html', {
     title: 'Confirmed',
-    message: 'Thank you for confirming your email! You will now receive posts in your inbox as they are published.'
-  })
-})
+    message:
+      'Thank you for confirming your email! You will now receive posts in your inbox as they are published.'
+  });
+});
 
 app.get('/archive', function(req, res) {
   res.render('post-list.html', {
