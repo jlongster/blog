@@ -98,7 +98,7 @@
 }
 
 .post li {
-  @apply my-3 px-1 text-lg text-gray-500;
+  @apply my-3 px-1 text-lg;
   margin-left: 0;
   line-height: 1.75;
 }
