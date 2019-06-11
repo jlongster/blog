@@ -14,6 +14,43 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#000000">
 
+    <meta name="title" content="James Long" />
+    <meta
+      name="description"
+      content="James Long's personal website and blog"
+      />
+
+    <meta property="og:type" content="website" />
+    {% block facebookMeta %}
+    <meta property="og:url" content="https://jlongster.com/" />
+    <meta property="og:title" content="James Long" />
+    {% endblock %}
+    <meta
+      property="og:description"
+      content="James Long's personal website and blog"
+      />
+    <meta
+      property="og:image"
+      content="https://jlongster.com/meta-image.png"
+      />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    {% block twitterMeta %}
+    <meta property="twitter:url" content="https://jlongster.com/" />
+    <meta
+      property="twitter:title"
+      content="James Long"
+      />
+    {% endblock %}
+    <meta
+      property="twitter:description"
+      content="James Long's personal website and blog"
+      />
+    <meta
+      property="twitter:image"
+      content="https://jlongster.com/meta-image.png"
+      />
+
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="alternate" type="application/atom+xml" href="https://jlongster.com/atom.xml" title="Atom Feed" />
     <link rel="stylesheet" type="text/css" href="/css/highlight/tomorrow.css" />

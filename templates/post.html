@@ -3,6 +3,19 @@
 {% set bodyid = shorturl|replace(',', '-') %}
 {% set bodyclass = "post-page" %}
 
+{% block facebookMeta %}
+<meta property="og:url" content="https://jlongster.com/{{ shorturl }}" />
+<meta property="og:title" content="{{ title }}" />
+{% endblock %}
+
+{% block twitterMeta %}
+<meta property="twitter:url" content="https://jlongster.com/{{ shorturl }}" />
+<meta
+  property="twitter:title"
+  content="{{ title }}"
+  />
+{% endblock %}
+
 {% block pageContent %}
 
 <article class="post px-5 lg:px-40 mt-8">
