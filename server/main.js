@@ -170,7 +170,7 @@ app.get('/', function(req, res) {
 app.get('/subscribe-thanks', function(req, res) {
   res.render('subscribe-message.html', {
     title: 'Thanks',
-    message: 'Thanks for subscribing! Now check your email to confirm your subscription.'
+    message: 'Check your email to confirm your subscription. Thank you!'
   })
 })
 
