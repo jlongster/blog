@@ -59,7 +59,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i|Unica+One&display=fallback" rel="stylesheet">
     {% block css %}{% endblock %}
   </head>
-  <body class="font-body bg-gray-100 text-dark-text">
+  <body class="font-body text-dark-text {{ bgcolor or "bg-gray-100" }}" id="{{ bodyid }}">
     <header class="text-white font-display z-50 {% block headerclass %}{% endblock %}" {% block headerattr %}{% endblock %}>
       <div class="container mx-auto flex flex-col md:flex-row items-center py-5 px-5">
         <a href="/">

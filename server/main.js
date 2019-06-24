@@ -12,6 +12,7 @@ const { mdx: mdxCreateElement, MDXProvider } = require('@mdx-js/react');
 const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
 const CodeBlock = require('./mdx/CodeBlock');
+const LazyImage = require('./mdx/LazyImage');
 
 const ghm = require('./util/showdown-ghm.js');
 const { displayDate } = require('./util/date');
@@ -75,7 +76,8 @@ function mdxFilter(content) {
   );
 
   let components = {
-    code: CodeBlock
+    code: CodeBlock,
+    LazyImage
   };
 
   let element = React.createElement(
@@ -162,7 +164,7 @@ app.get('/', function(req, res) {
 
 app.get('/subscribe-thanks', function(req, res) {
   res.render('subscribe-message.html', {
-    title: 'Thanks',
+    title: 'Please confirm your email',
     message:
       "Check your email to confirm your subscription. If you don't see it within 30 seconds, check your spam folder. Thank you!"
   });

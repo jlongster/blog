@@ -1,5 +1,4 @@
 let React = require('react');
-let { DOM } = require('react-dom');
 let { default: Highlight, defaultProps } = require('prism-react-renderer');
 let theme = require('./theme');
 Highlight = React.createFactory(Highlight);
