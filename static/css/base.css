@@ -81,7 +81,7 @@
 
 .post pre {
   @apply mb-16 mt-16 rounded-lg p-5 -ml-5 -mr-5 shadow-md;
-  background-color: #f5f4f9;
+  background-color: #f9f8fa;
 }
 
 @media screen and (max-width: 640px) {
