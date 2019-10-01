@@ -99,7 +99,7 @@
 }
 
 .post li {
-  @apply my-3 px-1 text-lg;
+  @apply my-6 text-lg;
   margin-left: 0;
   line-height: 1.75;
 }

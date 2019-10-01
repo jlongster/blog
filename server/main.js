@@ -86,12 +86,6 @@ function mdxFilter(content) {
     fn(React, mdxCreateElement)
   );
 
-  try {
-    console.log(renderToStaticMarkup(element));
-  } catch (e) {
-    console.log(e);
-  }
-
   return new nunjucks.runtime.SafeString(renderToStaticMarkup(element));
 }
 
