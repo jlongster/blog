@@ -1,14 +1,22 @@
 <div class="flex flex-col items-center">
   <form
     style="display: flex; flex-direction: column; align-items: center; width: 400px"
-    class="border border-gray-200 rounded p-5"
+    class="rounded p-5 {{ subscribeclass | default("bg-gray-100") }}"
     action="https://tinyletter.com/jlongster"
     method="post"
     target="popupwindow"
     onsubmit="window.open('https://tinyletter.com/jlongster', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true"
   >
-    <h1 class="mb-4" style="font-size:30px">Join the newsletter</h1>
-    <svg width="46" height="50" viewBox="0 0 46 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <h1 class="mb-4" style="font-size:30px">
+      Join the newsletter
+    </h1>
+    <svg
+      width="46"
+      height="50"
+      viewBox="0 0 46 50"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"
@@ -56,20 +64,46 @@
           />
           <feOffset />
           <feGaussianBlur stdDeviation="2" />
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+          />
+          <feBlend
+            mode="normal"
+            in2="BackgroundImageFix"
+            result="effect1_dropShadow"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_dropShadow"
+            result="shape"
+          />
         </filter>
       </defs>
     </svg>
-    <div class="py-4">
-      I am trying to bootstrap Actual and writing along the way. Subscribe to get posts in your inbox.
+    <div class="py-4 text-sm">
+      Working on <a href="https://actualbudget.com/">Actual</a> and
+      bootstrapping it. I write about what I'm learning along the way.
     </div>
 
-    <input class="shadow-lg rounded px-2 py-1" type="text" placeholder="Email" style="width:250px" name="email" id="tlemail" />
-    
+    <input
+      class="rounded px-2 py-1 border"
+      type="text"
+      placeholder="Email"
+      style="width:250px"
+      name="email"
+      id="tlemail"
+    />
+
     <input type="hidden" value="1" name="embed" />
-    <input class="px-2 py-1 my-4 bg-teal-700 text-white rounded" type="submit" value="Subscribe" />
-    <div class="text-sm text-gray-300">I'll never send you spam, I promise. Unsubscribe at any time.</div>
+    <input
+      class="px-2 py-1 my-4 bg-teal-700 text-white rounded"
+      type="submit"
+      value="Subscribe"
+    />
+    <div class="text-sm text-gray-300">
+      I'll never send you spam, I promise. Unsubscribe at any time.
+    </div>
   </form>
 </div>
