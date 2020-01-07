@@ -2730,10 +2730,10 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-nunjucks@=2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/nunjucks/-/nunjucks-2.4.1.tgz#d95c2100a0824b1df189a11c06ac2305831937ec"
-  integrity sha1-2VwhAKCCSx3xiaEcBqwjBYMZN+w=
+nunjucks@=2.4.3:
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/nunjucks/-/nunjucks-2.4.3.tgz#961ccb0f3180048ee9b69ccb6e82c1cb945e5ecd"
+  integrity sha1-lhzLDzGABI7ptpzLboLBy5ReXs0=
   dependencies:
     asap "^2.0.3"
     chokidar "^1.0.0"
