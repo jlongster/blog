@@ -13,6 +13,7 @@ const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
 const CodeBlock = require('./mdx/CodeBlock');
 const LazyImage = require('./mdx/LazyImage');
+const SpreadsheetWithGraph = require('./mdx/SpreadsheetWithGraph');
 
 const ghm = require('./util/showdown-ghm.js');
 const { displayDate } = require('./util/date');
@@ -77,7 +78,8 @@ function mdxFilter(content) {
 
   let components = {
     code: CodeBlock,
-    LazyImage
+    LazyImage,
+    SpreadsheetWithGraph
   };
 
   let element = React.createElement(
@@ -237,6 +239,7 @@ app.get('/*', function(req, res) {
     if (post.readnext) {
       post = Object.assign({}, post, { readnext: api.getPost(post.readnext) });
     }
+
     res.render('post.html', Object.assign({}, post));
   } else {
     res.status(404);

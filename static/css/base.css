@@ -115,3 +115,35 @@
   margin-top: -2rem;
   @apply mb-12;
 }
+
+.spreadsheet-with-graph {
+  margin-left: -200px;
+  margin-right: -200px;
+  display: flex;
+}
+
+.spreadsheet-with-graph.alone {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.spreadsheet {
+  flex: 1;
+  margin-right: 10px;
+}
+
+@media screen and (max-width: 1100px) {
+  .spreadsheet-with-graph {
+    flex-direction: column;
+    align-items: center;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .spreadsheet {
+    width: 100%;
+    flex: 0 0 250px;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}

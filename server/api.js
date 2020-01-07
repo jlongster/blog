@@ -86,12 +86,13 @@ function indexPosts(dirpath) {
 
     const contents = fs.readFileSync(path.join(dirpath, file));
     const results = yamlFront.loadFront(contents);
+
     const post = Object.assign(results, { content: results.__content });
 
     const m = post.content.match(/^\s*# ([^\n]*)\n\n/m);
     if (m) {
       post.title = m[1];
-      post.content = post.content.slice(m[0].length);
+      post.content = post.content.replace(m[0], '\n')
     }
 
     // Infer the URL from the filename
