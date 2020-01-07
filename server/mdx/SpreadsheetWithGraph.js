@@ -14,14 +14,16 @@ function SpreadsheetWithGraph({ src, graphSrc }) {
       style: { height: 285 }
     }),
     graphSrc &&
-      iframe({
-        width: 468.19407008086256,
-        height: 289.5,
-        seamless: true,
-        frameBorder: '0',
-        scrolling: 'no',
-        src: graphSrc
-      })
+      div(
+        { className: 'graph-container' },
+        iframe({
+          className: 'graph',
+          seamless: true,
+          frameBorder: '0',
+          scrolling: 'no',
+          src: graphSrc
+        })
+      )
   );
 }
 

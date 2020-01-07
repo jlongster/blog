@@ -7621,7 +7621,12 @@ video {
   margin-right: 0;
 }
 
-.spreadsheet {
+.spreadsheet-with-graph .graph {
+  width: 468.19407008086256px;
+  height: 289.5px;
+}
+
+.spreadsheet-with-graph .spreadsheet {
   flex: 1;
   margin-right: 10px;
 }
@@ -7634,11 +7639,17 @@ video {
     margin-right: 0;
   }
 
-  .spreadsheet {
+  .spreadsheet-with-graph .spreadsheet {
     width: 100%;
     flex: 0 0 250px;
     margin-right: 0;
     margin-bottom: 10px;
+  }
+
+  .graph-container {
+    max-width: 100%;
+    overflow: auto;
+    margin: 0 auto;
   }
 }
 
