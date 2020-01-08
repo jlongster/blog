@@ -9,6 +9,8 @@ const moment = require('moment');
 const babel = require('@babel/core');
 const mdx = require('@mdx-js/mdx');
 const { mdx: mdxCreateElement, MDXProvider } = require('@mdx-js/react');
+const remarkSlug = require('remark-slug')
+const remarkHeadings = require('remark-autolink-headings');
 const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
 const CodeBlock = require('./mdx/CodeBlock');
@@ -53,7 +55,10 @@ function ghmFilter(content) {
 function mdxFilter(content) {
   let code;
   try {
-    code = mdx.sync(content, { skipExport: true });
+    code = mdx.sync(content, {
+      skipExport: true,
+      remarkPlugins: [remarkSlug, remarkHeadings]
+    });
   } catch (e) {
     console.log('Error rendering (mdx), check the logs');
     console.log(e);

@@ -11,8 +11,8 @@
   "dependencies": {
     "@babel/core": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
-    "@mdx-js/mdx": "^1.0.19",
-    "@mdx-js/react": "^1.0.16",
+    "@mdx-js/mdx": "^1.5.3",
+    "@mdx-js/react": "^1.5.3",
     "express": "=4.13.4",
     "highlight.js": "=9.2.0",
     "invariant": "^2.2.4",
@@ -22,6 +22,8 @@
     "prism-react-renderer": "^0.1.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "remark-autolink-headings": "^5.2.1",
+    "remark-slug": "^5.1.2",
     "sane": "^4.1.0",
     "transducers.js": "^0.3.2",
     "yaml-front-matter": "=3.4.0"
