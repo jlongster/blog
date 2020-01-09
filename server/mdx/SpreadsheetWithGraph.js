@@ -6,13 +6,14 @@ let iframe = React.createFactory('iframe');
 
 function SpreadsheetWithGraph({ src, graphSrc }) {
   return div(
-    { className: 'spreadsheet-with-graph ' + (graphSrc ? '' : 'alone') },
+    { className: 'spreadsheet-with-graph ' + (graphSrc && src ? '' : 'alone') },
 
-    iframe({
-      className: 'spreadsheet',
-      src,
-      style: { height: 285 }
-    }),
+    src &&
+      iframe({
+        className: 'spreadsheet',
+        src,
+        style: { height: 285 }
+      }),
     graphSrc &&
       div(
         { className: 'graph-container' },

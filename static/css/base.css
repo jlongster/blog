@@ -36,7 +36,11 @@
   @apply my-16 !important;
 }
 
-.post > p, .post > ul, .post > ol {
+.post > p,
+.post > ul,
+.post > ol,
+.post > ul p,
+.post > ol p {
   @apply mb-6;
   @apply mt-0;
 }
@@ -132,6 +136,10 @@
     height: 289.5px;
 }
 
+.spreadsheet-with-graph.alone .graph-container {
+  margin: 0 auto;
+}
+
 .spreadsheet-with-graph .spreadsheet {
   flex: 1;
   margin-right: 10px;
@@ -157,4 +165,11 @@
     overflow: auto;
     margin: 0 auto;
   }
+}
+
+mjx-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 40px 0;
 }
