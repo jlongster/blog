@@ -114,6 +114,12 @@ app.get('/', function(req, res) {
     posts: api.queryPosts({ limit: 5 }),
     talks: [
       {
+        title: 'CRDTs for Mortals',
+        about: 'dotJS, Dec 2019',
+        url:
+          'https://www.dotconferences.com/2019/12/james-long-crdts-for-mortals'
+      },
+      {
         title: 'Go Ahead, Block the Main Thread',
         about: 'React Conf, Oct 2018',
         url: 'https://www.youtube.com/watch?v=ZXqyaslyXUw'
