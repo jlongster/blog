@@ -1,8 +1,7 @@
-let React = require('react')
-let { DOM } = require('react-dom')
+let React = require('react');
 
-let div = React.createFactory('div')
-let img = React.createFactory('img')
+let div = React.createFactory('div');
+let img = React.createFactory('img');
 
 function LazyImage({ width, height, src }) {
   return div(
@@ -27,7 +26,7 @@ function LazyImage({ width, height, src }) {
       },
       'Loading...'
     )
-  )
+  );
 }
 
-module.exports = LazyImage
+module.exports = LazyImage;

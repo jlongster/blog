@@ -16,6 +16,8 @@ const { renderToStaticMarkup } = require('react-dom/server');
 const CodeBlock = require('./mdx/CodeBlock');
 const LazyImage = require('./mdx/LazyImage');
 const SpreadsheetWithGraph = require('./mdx/SpreadsheetWithGraph');
+const HypeAnimation = require('./mdx/HypeAnimation');
+const AutoplayVideo = require('./mdx/AutoplayVideo');
 
 const ghm = require('./util/showdown-ghm.js');
 const { displayDate } = require('./util/date');
@@ -84,7 +86,9 @@ function mdxFilter(content) {
   let components = {
     code: CodeBlock,
     LazyImage,
-    SpreadsheetWithGraph
+    SpreadsheetWithGraph,
+    HypeAnimation,
+    AutoplayVideo
   };
 
   let element = React.createElement(
@@ -251,7 +255,10 @@ app.get('/*', function(req, res) {
       post = Object.assign({}, post, { readnext: api.getPost(post.readnext) });
     }
 
-    res.render('post.html', Object.assign({}, post));
+    res.render(
+      'post.html',
+      Object.assign({ assetPath: '/posts-assets/' + post.shorturl }, post)
+    );
   } else {
     res.status(404);
     res.render('404.html');

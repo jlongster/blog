@@ -41,7 +41,7 @@
     <div class="text-gray-400 text-sm mb-12">{{ date|displayDate }}</div>
   </div>
 
-  {{ content|postContent(date) }}
+  {{ content | replace("%ASSETS%", assetPath) | postContent(date) }}
 
   <div class="text-gray-400 text-sm">
     {% for tag in tags %}
