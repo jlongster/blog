@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  overflow-anchor: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 @responsive {
   .downarrow-offset {
     top: 80px;
@@ -46,8 +53,7 @@
 }
 
 .post h2, .post h3, .post h4 {
-  @apply text-teal-600 font-semibold font-display tracking-tight
-  leading-tight uppercase;
+  @apply text-blue-600 font-display tracking-tight leading-tight uppercase;
 }
 
 .post a, .post a:visited, .post a:active, .formkit-form a {
@@ -103,9 +109,10 @@
 }
 
 .post li {
-  @apply my-6 text-lg;
+  @apply my-6;
   margin-left: 0;
   line-height: 1.75;
+  font-size: 17px;
 }
 
 .post .figure-label {
@@ -172,4 +179,31 @@ mjx-container {
   flex-direction: column;
   align-items: center;
   margin: 40px 0;
+}
+
+.sidebyside {
+  display: flex;
+  width: 120%;
+  margin-left: -10%;
+  margin-top: 0;
+}
+
+.sidebyside .left, .sidebyside .right {
+  flex: 1
+}
+
+.sidebyside .right {
+  margin-left: 20px
+}
+
+@media screen and (max-width: 900px) {
+  .sidebyside {
+    width: 100%;
+    display: block;
+    margin-left: 0;
+  }
+
+  .sidebyside .right {
+    margin-left: 0
+  }
 }

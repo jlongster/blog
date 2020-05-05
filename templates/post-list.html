@@ -5,7 +5,7 @@
   <h1 class="mb-8 text-3xl font-semibold font-display tracking-tight uppercase">{{ title }}</h1>
   {% for post in posts %}
   <div class="mb-16">
-    <a href="/{{ post.shorturl }}"><h3 class="font-display tracking-tight text-3xl uppercase text-teal-600 leading-none mb-1">{{ post.title }}</h3></a>
+    <a href="/{{ post.shorturl }}"><h3 class="font-display tracking-tight text-3xl uppercase text-blue-600 leading-none mb-1">{{ post.title }}</h3></a>
     <div class="mb-4 text-gray-300 text-sm">{{ post.date|displayDate }}</div>
     <div class="leading-relaxed">{{ post.abstract }}</div>
   </div>

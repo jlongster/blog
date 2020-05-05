@@ -8,7 +8,6 @@ module.exports = {
     fontFamily: {
       display: ['Unica One'],
       body: [
-        'Open Sans',
         '-apple-system',
         'BlinkMacSystemFont',
         'Segoe UI',

@@ -18,6 +18,7 @@ const LazyImage = require('./mdx/LazyImage');
 const SpreadsheetWithGraph = require('./mdx/SpreadsheetWithGraph');
 const HypeAnimation = require('./mdx/HypeAnimation');
 const AutoplayVideo = require('./mdx/AutoplayVideo');
+const SideBySide = require('./mdx/SideBySide');
 
 const ghm = require('./util/showdown-ghm.js');
 const { displayDate } = require('./util/date');
@@ -88,7 +89,8 @@ function mdxFilter(content) {
     LazyImage,
     SpreadsheetWithGraph,
     HypeAnimation,
-    AutoplayVideo
+    AutoplayVideo,
+    SideBySide
   };
 
   let element = React.createElement(
