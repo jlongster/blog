@@ -9,16 +9,12 @@
 <meta property="og:title" content="{{ title }}" />
 <meta
   property="og:description"
-  content="James Long's blog"
-  />
-<meta
-  property="og:image"
-  content="https://jlongster.com/meta-image.png"
+  content="{{ abstract }}"
   />
 {% endblock %}
 
 {% block twitterMeta %}
-<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:card" content="summary" />
 <meta property="twitter:url" content="https://jlongster.com/{{ shorturl }}" />
 <meta
   property="twitter:title"
@@ -26,11 +22,7 @@
   />
 <meta
   property="twitter:description"
-  content="James Long's blog"
-  />
-<meta
-  property="twitter:image"
-  content="https://jlongster.com/meta-image.png"
+  content="{{ abstract }}"
   />
 {% endblock %}
 
