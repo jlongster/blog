@@ -3505,6 +3505,10 @@ video {
   font-family: Unica One;
 }
 
+.font-blog-display {
+  font-family: Roboto Slab;
+}
+
 .font-body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 }
@@ -7519,42 +7523,39 @@ body {
   margin-top: 0;
 }
 
-.post h2, .post h3, .post h4 {
-  color: #3182ce;
-  font-family: Unica One;
-  letter-spacing: -0.025em;
-  line-height: 1.25;
-  text-transform: uppercase;
-}
-
 .post a, .post a:visited, .post a:active, .formkit-form a {
   text-decoration: underline;
 }
 
+.post h1, .post h2, .post h3, .post h4 {
+  color: #3182ce;
+  font-family: Roboto Slab;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
 .post h1 {
-  font-size: 3rem;
-  margin-left: -2px;
+  font-size: 2.25rem;
+  line-height: 1;
+  line-height: 1.1em;
 }
 
 .post h2 {
-  font-size: 2.25rem;
-  margin-top: 4rem;
-  margin-bottom: 1rem;
-  margin-left: -2px;
-}
-
-.post h3 {
   font-size: 1.875rem;
   margin-top: 4rem;
   margin-bottom: 1rem;
-  margin-left: -2px;
+}
+
+.post h3 {
+  font-size: 1.5rem;
+  margin-top: 4rem;
+  margin-bottom: 1rem;
 }
 
 .post h4 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   margin-top: 3rem;
   margin-bottom: 1rem;
-  margin-left: -2px;
 }
 
 .post img {
@@ -7582,7 +7583,7 @@ body {
   margin-left: -1.25rem;
   margin-right: -1.25rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  background-color: #f9f8fa;
+  background-color: #fafafa;
 }
 
 @media screen and (max-width: 640px) {
@@ -10584,6 +10585,10 @@ mjx-container {
 
   .sm\:font-display {
     font-family: Unica One;
+  }
+
+  .sm\:font-blog-display {
+    font-family: Roboto Slab;
   }
 
   .sm\:font-body {
@@ -17450,6 +17455,10 @@ mjx-container {
     font-family: Unica One;
   }
 
+  .md\:font-blog-display {
+    font-family: Roboto Slab;
+  }
+
   .md\:font-body {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   }
@@ -24312,6 +24321,10 @@ mjx-container {
 
   .lg\:font-display {
     font-family: Unica One;
+  }
+
+  .lg\:font-blog-display {
+    font-family: Roboto Slab;
   }
 
   .lg\:font-body {

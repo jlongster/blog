@@ -52,29 +52,26 @@ body {
   @apply mt-0;
 }
 
-.post h2, .post h3, .post h4 {
-  @apply text-blue-600 font-display tracking-tight leading-tight uppercase;
-}
-
 .post a, .post a:visited, .post a:active, .formkit-form a {
   @apply underline;
 }
 
+.post h1, .post h2, .post h3, .post h4 {
+  @apply text-blue-600 font-blog-display tracking-tight leading-tight;
+}
+
 .post h1 {
-  @apply text-5xl;
-  margin-left: -2px;
+  @apply text-4xl leading-none;
+  line-height: 1.1em;
 }
 .post h2 {
-  @apply text-4xl mt-16 mb-4;
-  margin-left: -2px;
+  @apply text-3xl mt-16 mb-4;
 }
 .post h3 {
-  @apply text-3xl mt-16 mb-4;
-  margin-left: -2px;
+  @apply text-2xl mt-16 mb-4;
 }
 .post h4 {
-  @apply text-2xl mt-12 mb-4;
-  margin-left: -2px;
+  @apply text-xl mt-12 mb-4;
 }
 
 .post img {
@@ -91,7 +88,7 @@ body {
 
 .post pre {
   @apply mb-16 mt-16 rounded-lg p-5 -ml-5 -mr-5 shadow-md;
-  background-color: #f9f8fa;
+  background-color: #fafafa;
 }
 
 @media screen and (max-width: 640px) {

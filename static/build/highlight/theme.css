@@ -72,7 +72,7 @@ pre[class*="language-"] {
 .token.variable,
 .token.constant,
 .token.inserted {
-  color: #36acaa;
+  color: #319fa5;
 }
 
 .token.atrule,
@@ -82,7 +82,7 @@ pre[class*="language-"] {
 .language-json .token.boolean,
 .language-json .token.number,
 code[class*="language-css"] {
-  color: #0000ff;
+  color: #00009f;
 }
 
 .token.function {

@@ -6,7 +6,8 @@ module.exports = {
       lg: '1024px'
     },
     fontFamily: {
-      display: ['Unica One'],
+      display: ['Unica One', 'sans-serif'],
+      'blog-display': ['Roboto Slab', 'serif'],
       body: [
         '-apple-system',
         'BlinkMacSystemFont',
