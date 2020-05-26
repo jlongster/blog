@@ -3502,11 +3502,11 @@ video {
 }
 
 .font-display {
-  font-family: Unica One;
+  font-family: Unica One, sans-serif;
 }
 
 .font-blog-display {
-  font-family: Roboto Slab;
+  font-family: Roboto Slab, serif;
 }
 
 .font-body {
@@ -7529,7 +7529,7 @@ body {
 
 .post h1, .post h2, .post h3, .post h4 {
   color: #3182ce;
-  font-family: Roboto Slab;
+  font-family: Roboto Slab, serif;
   letter-spacing: -0.025em;
   line-height: 1.25;
 }
@@ -10584,11 +10584,11 @@ mjx-container {
   }
 
   .sm\:font-display {
-    font-family: Unica One;
+    font-family: Unica One, sans-serif;
   }
 
   .sm\:font-blog-display {
-    font-family: Roboto Slab;
+    font-family: Roboto Slab, serif;
   }
 
   .sm\:font-body {
@@ -17452,11 +17452,11 @@ mjx-container {
   }
 
   .md\:font-display {
-    font-family: Unica One;
+    font-family: Unica One, sans-serif;
   }
 
   .md\:font-blog-display {
-    font-family: Roboto Slab;
+    font-family: Roboto Slab, serif;
   }
 
   .md\:font-body {
@@ -24320,11 +24320,11 @@ mjx-container {
   }
 
   .lg\:font-display {
-    font-family: Unica One;
+    font-family: Unica One, sans-serif;
   }
 
   .lg\:font-blog-display {
-    font-family: Roboto Slab;
+    font-family: Roboto Slab, serif;
   }
 
   .lg\:font-body {
