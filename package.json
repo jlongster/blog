@@ -16,7 +16,7 @@
     "express": "=4.13.4",
     "highlight.js": "=9.2.0",
     "invariant": "^2.2.4",
-    "moment": "=2.12.0",
+    "moment": "=2.29.2",
     "nconf": "=0.8.4",
     "nunjucks": "=2.4.1",
     "prism-react-renderer": "^0.1.6",
