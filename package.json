@@ -13,7 +13,7 @@
     "@babel/preset-react": "^7.0.0",
     "@mdx-js/mdx": "^1.5.3",
     "@mdx-js/react": "^1.5.3",
-    "express": "=4.13.4",
+    "express": "=4.17.3",
     "highlight.js": "=9.2.0",
     "invariant": "^2.2.4",
     "moment": "=2.12.0",
